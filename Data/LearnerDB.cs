@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using FuturePathGroup10.Learner;
 
 namespace FuturePathGroup10.Data
@@ -10,7 +11,7 @@ namespace FuturePathGroup10.Data
     public class LearnerDB : DB
     {
 
-        private Collection<Learner.Learner> learners {get;}
+        public Collection<Learner.Learner> learners { get; private set; }
         private DataSet learnerDS;
         private DataSet gradeDS;
 
@@ -36,24 +37,41 @@ namespace FuturePathGroup10.Data
             LoadLearners();
         }
 
+        #region get learners
+        //Get learner with a certain ID. Returns null if not found.
+        public Learner.Learner getLearner(int learnerID)
+        {
+            foreach (Learner.Learner learner in learners)
+            {
+                if (learner.learnerID == learnerID)
+                {
+                    return learner;
+                }
+            }
+            return null;
+        }
+
+        #endregion
+
         #region Load Collection of Learners
+        //Fill the learners collection from the dataset. done during initialisation.
         public void LoadLearners()
         {
             
             //New dataset because we'll need to load multiple datasets
-            foreach (DataRow row in learnerDS[TABLE_LEARNERS].Rows)
+            foreach (DataRow row in learnerDS.Tables[TABLE_LEARNERS].Rows)
             {
                 
-                string learnerID = row["LearnerID"];
-                string username = row["Username"];
-                DataRow gradeRow = getGrades(learnerID);
+                string learnerID = row["LearnerID"].ToString();
+                string username = row["Username"].ToString();
+                DataRow gradeRow = getGrades(Convert.ToInt32(learnerID));
                 string grade11 = gradeRow["Grade11Mark"].ToString();
                 string grade12 = gradeRow["Grade12Mark"].ToString();
-                string phoneNumber = row["PhoneNumber"];
-                string fullname = row["FullName"];
-                string school = row["School"];
-                string email = row["Email"];
-                string province = row["Province"];
+                string phoneNumber = row["PhoneNumber"].ToString();
+                string fullname = row["FullName"].ToString();
+                string school = row["School"].ToString();
+                string email = row["Email"].ToString();
+                string province = row["Province"].ToString();
 
                 Learner.Learner learner = new Learner.Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
                 learners.Add(learner);
@@ -71,6 +89,7 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region DataSet Updates
+        //Helper methods to fill rows and find rows in the dataset for learners
         private void FillLearnerRow(DataRow row, Learner.Learner learner)
         {
             row["LearnerID"] = learner.learnerID;
@@ -81,32 +100,32 @@ namespace FuturePathGroup10.Data
             row["Email"] = learner.email;
             row["Province"] = learner.province;
         }
-
+        //Helper methods to fill rows and find rows in the dataset for grade level
         private void FillGradeRow(DataRow row, int learnerID, float grade11Mark, float grade12Mark)
         {
             row["LearnerID"] = learnerID;
             row["Grade11Mark"] = grade11Mark;
             row["Grade12Mark"] = grade12Mark;
         }
-
+        //overloaded of previous
         private void FillGradeRow(DataRow row, Learner.Learner learner)
         {
             FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.grade11), Convert.ToSingle(learner.grade12));
         }
-
+        //Helper method that finds the row in the dataset for a given learner. Returns null if not found.
         private DataRow FindLearnerRow(Learner.Learner learner)
         {
           
-            for (int i = 0; i < LearnerDS.Tables[TABLE_LEARNERS].Rows.Count; i++)
+            for (int i = 0; i < learnerDS.Tables[TABLE_LEARNERS].Rows.Count; i++)
             {
-                if (Convert.ToInt32(LearnerDS.Tables[TABLE_LEARNERS].Rows[i]["LearnerID"]) == learner.learnerID)
+                if (Convert.ToInt32(learnerDS.Tables[TABLE_LEARNERS].Rows[i]["LearnerID"]) == learner.learnerID)
                 {
-                    return LearnerDS.Tables[TABLE_LEARNERS].Rows[i];
+                    return learnerDS.Tables[TABLE_LEARNERS].Rows[i];
                 }
             }
             return null;
         }
-
+        //Helper method that finds the row in the dataset for a grade level. Returns null if not found.
         private DataRow FindGradeRow(Learner.Learner learner)
         {
             for (int i = 0; i < gradeDS.Tables[TABLE_GRADE].Rows.Count; i++)
@@ -118,9 +137,9 @@ namespace FuturePathGroup10.Data
             }
             return null;
         }
-
-        //Internal?
-        internal void DataSetChange(Learner.Learner learner, DBOperation operation)
+        //Modifies the dataset based on the operation given to it using a learner object. DOES NOT UPDATE THE ACTUAL DATABASE. Use UpdateDataSource() to update the database.
+        //Throws an exception if the learner couldn't be found in edits and deletes. Handle appropriately.
+        public void DataSetChange(Learner.Learner learner, DBOperation operation)
         {
             DataRow learnerRow;
             DataRow gradeRow;
@@ -163,6 +182,7 @@ namespace FuturePathGroup10.Data
                     {
                         throw new Exception("Learner not found in Tables");
                     }
+                    break;
             }
         }
         #endregion
@@ -171,12 +191,12 @@ namespace FuturePathGroup10.Data
         private void Build_INSERT_Parameters()
         {
             //LearnerDA setup
-            SQLParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"ID");
+            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"ID");
             learnerDA.InsertCommand.Parameters.Add(param);
             gradeDA.InsertCommand.Parameters.Add(param);
             
             param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255,"FullName");
-            learnerDA.InsertCommand.Paramets.Add(param);
+            learnerDA.InsertCommand.Parameters.Add(param);
             
             param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10,"PhoneNumber");
             learnerDA.InsertCommand.Parameters.Add(param);
@@ -193,11 +213,10 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@Province", SqlDbType.NVarChar, 255,"Province");
             learnerDA.InsertCommand.Parameters.Add(param);
             
-            //GradeDA setup
-            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 10, "Grade11Mark");
+            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
             gradeDA.InsertCommand.Parameters.Add(param);
             
-            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 10, "Grade12Mark");
+            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
             gradeDA.InsertCommand.Parameters.Add(param);
         }
 
@@ -207,7 +226,7 @@ namespace FuturePathGroup10.Data
             gradeDA.InsertCommand = new OleDbCommand("INSERT into Grade_Level (LearnerID, Grade11Mark, Grade12Mark) VALUES (@LearnerID, @Grade11Mark, @Grade12Mark)", cnMain);
             Build_INSERT_Parameters();
         }
-
+        //Important! Required to update the real database with all changes!!!
         public bool UpdateDataSource(DBOperation operation)
         {
             switch (operation)
@@ -224,6 +243,14 @@ namespace FuturePathGroup10.Data
             }
             return UpdateAllSources();
         }
+        //This could be useful but it really shouldn't be.
+        public bool RecklessUpdate()
+        {
+            Create_UPDATE_Command();
+            Create_DELETE_Command();
+            Create_INSERT_Command();
+            return UpdateAllSources();
+        }
 
         private bool UpdateAllSources()
         {
@@ -236,7 +263,7 @@ namespace FuturePathGroup10.Data
 
         private void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"LearnerID");
+            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
             learnerDA.UpdateCommand.Parameters.Add(param);
             gradeDA.UpdateCommand.Parameters.Add(param);
             
@@ -258,10 +285,10 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@Province", SqlDbType.NVarChar, 255,"Province");
             learnerDA.UpdateCommand.Parameters.Add(param);
             
-            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 10, "Grade11Mark");
+            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
             gradeDA.UpdateCommand.Parameters.Add(param);
             
-            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 10, "Grade12Mark");
+            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
             gradeDA.UpdateCommand.Parameters.Add(param);
         }
 
@@ -281,7 +308,7 @@ namespace FuturePathGroup10.Data
 
         private void Build_DELETE_Parameters()
         {
-            param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"LearnerID");
+            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
             learnerDA.DeleteCommand.Parameters.Add(param);
             gradeDA.DeleteCommand.Parameters.Add(param);
         }

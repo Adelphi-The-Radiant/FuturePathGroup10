@@ -5,18 +5,18 @@ using System.Text;
 
 namespace FuturePathGroup10.Learner
 {
-    internal class Learner
+    public class Learner
     {
-        private int learnerID { get;}
-        private string username { get;}
-        private string phoneNumber { get; }
-        private string email { get; }
+        public int learnerID { get; private set; }
+        public string username { get; private set; }
+        public string phoneNumber { get; private set; }
+        public string email { get; private set; }
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
-        private string fullname { get; }
-        private string school { get; }
-        private string grade11 { get; }
-        private string grade12 { get; }
-        private string province { get; }
+        public string fullname { get; private set; }
+        public string school { get; private set; }
+        public string grade11 { get; private set; }
+        public string grade12 { get; private set; }
+        public string province { get; private set; }
 
         public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province)
         {
