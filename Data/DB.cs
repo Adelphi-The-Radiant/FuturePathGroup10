@@ -57,8 +57,9 @@ namespace FuturePathGroup10.Data
 
         #endregion
 
-        #region Update the data source 
-        protected bool UpdateDataSource(string sqlLocal, string table)
+        #region Update the data source
+
+        protected bool UpdateDataSource(string sqlLocal, string table, OleDbDataAdapter DA)
         {
             bool success;
             try
@@ -66,7 +67,7 @@ namespace FuturePathGroup10.Data
                 //open the connection
                 cnMain.Open();
                 //***update the database table via the data adapter
-                daMain.Update(dsMain, table);
+                DA.Update(dsMain, table);
                 //---close the connection
                 cnMain.Close();
                 //refresh the dataset
@@ -75,13 +76,17 @@ namespace FuturePathGroup10.Data
             }
             catch (Exception errObj)
             {
-                MessageBox.Show(errObj.Message + "  " + errObj.StackTrace);
+                MessageBox.Show(errObj.Message + " " + errObj.StackTrace);
                 success = false;
             }
             finally
             {
             }
-            return success;
+            return success;    
+        }
+        protected bool UpdateDataSource(string sqlLocal, string table)
+        {
+            return UpdateDataSource(sqlLocal, table, daMain);
         }
         #endregion
 

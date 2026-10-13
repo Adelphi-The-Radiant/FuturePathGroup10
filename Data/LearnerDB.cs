@@ -170,7 +170,35 @@ namespace FuturePathGroup10.Data
         #region Build Parameters, Create Commands & Update database
         private void Build_INSERT_Parameters()
         {
-            throw new NotImplementedException();
+            //LearnerDA setup
+            SQLParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"ID");
+            learnerDA.InsertCommand.Parameters.Add(param);
+            gradeDA.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255,"FullName");
+            learnerDA.InsertCommand.Paramets.Add(param);
+            
+            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10,"PhoneNumber");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
+            learnerDA.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255,"Username");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
+            learnerDA.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255,"Province");
+            learnerDA.InsertCommand.Parameters.Add(param);
+            
+            //GradeDA setup
+            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 10, "Grade11Mark");
+            gradeDA.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 10, "Grade12Mark");
+            gradeDA.InsertCommand.Parameters.Add(param);
         }
 
         private void Create_INSERT_Command()
@@ -180,20 +208,85 @@ namespace FuturePathGroup10.Data
             Build_INSERT_Parameters();
         }
 
-        public bool UpdateDataSource()
+        public bool UpdateDataSource(DBOperation operation)
         {
-            throw new NotImplementedException();
+            switch (operation)
+            {
+                case DBOperation.Add:
+                    Create_INSERT_Command();
+                    break;
+                case DBOperation.Edit:
+                    Create_UPDATE_Command();
+                    break;
+                case DBOperation.Delete:
+                   Create_DELETE_Command();
+                    break;
+            }
+            return UpdateAllSources();
+        }
+
+        private bool UpdateAllSources()
+        {
+            bool check1 = UpdateDataSource(SQL_SELECT_LEARNERS,TABLE_LEARNERS, learnerDA);
+            learnerDS = dsMain;
+            bool check2 = UpdateDataSource(SQL_SELECT_GRADE,TABLE_GRADE, gradeDA);
+            gradeDS = dsMain;
+            return check1 && check2;
         }
 
         private void Build_UPDATE_Parameters()
         {
-            throw new NotImplementedException();
+            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"LearnerID");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            gradeDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255,"FullName");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10,"PhoneNumber");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255,"Username");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255,"Province");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 10, "Grade11Mark");
+            gradeDA.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 10, "Grade12Mark");
+            gradeDA.UpdateCommand.Parameters.Add(param);
         }
 
         private void Create_UPDATE_Command()
         {
-            throw new NotImplementedException();
+            learnerDA.UpdateCommand = new OleDbCommand("UPDATE Learners SET (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province) WHERE LearnerID = @LearnerID",cnMain);
+            gradeDA.UpdateCommand = new OleDbCommand("UPDATE Grade_Level SET(@LearnerID, @Grade11Mark, @Grade12Mark) WHERE LearnerID = @LearnerID", cnMain);
+            Build_UPDATE_Parameters();  
         }
+
+        private void Create_DELETE_Command()
+        {
+            learnerDA.DeleteCommand = new OleDbCommand("DELETE FROM LEARNERS  WHERE LearnerID = @LearnerID", cnMain);
+            gradeDA.DeleteCommand = new OleDbCommand("DELETE from Grade_Level  WHERE LearnerID = @LearnerID", cnMain);
+            Build_DELETE_Parameters();
+        }
+
+        private void Build_DELETE_Parameters()
+        {
+            param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"LearnerID");
+            learnerDA.DeleteCommand.Parameters.Add(param);
+            gradeDA.DeleteCommand.Parameters.Add(param);
+        }
+            
+        
 
         #endregion
 
