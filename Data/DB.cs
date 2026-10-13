@@ -12,6 +12,13 @@ namespace FuturePathGroup10.Data
         protected OleDbConnection cnMain;
         protected DataSet dsMain;
         protected OleDbDataAdapter daMain;
+
+        public enum DBOperation
+        {
+            Add,
+            Edit,
+            Delete
+        }
         #endregion
 
         #region Constructor
@@ -77,5 +84,7 @@ namespace FuturePathGroup10.Data
             return success;
         }
         #endregion
+
+        
     }
 }
