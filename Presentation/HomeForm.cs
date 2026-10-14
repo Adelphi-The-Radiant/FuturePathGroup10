@@ -6,13 +6,18 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace FuturePathGroup10.Presentation.Learner
+namespace FuturePathGroup10.Presentation
 {
-    public partial class LearnerHomeForm : Form
+    public partial class HomeForm : Form
     {
-        public LearnerHomeForm()
+        public HomeForm()
         {
             InitializeComponent();
+        }
+
+        private void menuStrip2_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }
