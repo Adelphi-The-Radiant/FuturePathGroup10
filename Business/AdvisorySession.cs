@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Advisory
+namespace FuturePathGroup10.Business
 {
     internal class AdvisorySession
     {

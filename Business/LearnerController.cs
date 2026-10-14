@@ -1,4 +1,4 @@
-﻿using FuturePathGroup10.Funding;
+﻿using FuturePathGroup10.Business;
 using System;
 using System.Collections.Generic;
 using System.Text;
