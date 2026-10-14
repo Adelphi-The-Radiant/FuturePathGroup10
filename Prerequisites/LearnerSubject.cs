@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FuturePathGroup10.Learner;
 
 namespace FuturePathGroup10.Prerequisites
 {
-    internal class LearnerSubject
+    public class LearnerSubject
     {
-        private int learnerID;
-        private string subjectName;
-        private int result;
+        public Learner.Learner learner { get; private set; }
+        public Subject subject { get; private set; }
+        public float result { get; private set; }
 
-        public void setMark(int result)
+        public LearnerSubject(Learner.Learner learner, Subject subject, float result)
+        {
+            this.learner = learner;
+            this.subject = subject;
+            this.result = result;
+        }
+
+        public void setMark(float result)
         {
             throw new NotImplementedException();
         }
 
-        public void validateMark(int result)
+        //Either the mark is between 0 and 1 or its between 0 and 100. Pick a standard and keep to it.
+        public void validateMark(float result)
         {
             throw new NotImplementedException();
         }

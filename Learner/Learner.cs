@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections.ObjectModel;
 
 namespace FuturePathGroup10.Learner
 {
@@ -18,6 +19,8 @@ namespace FuturePathGroup10.Learner
         public string grade12 { get; private set; }
         public string province { get; private set; }
 
+        private Collection<LearnerSubject> learnerSubjects ;
+
         public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province)
         {
             this.learnerID = learnerID;
@@ -29,6 +32,14 @@ namespace FuturePathGroup10.Learner
             this.grade11 = grade11;
             this.grade12 = grade12;
             this.province = province;
+            this.learnerSubjects = new Collection<LearnerSubject>();
+        }
+
+
+
+        public void addLearnerSubject(LearnerSubject learnerSubject)
+        {
+            this.learnerSubjects.Add(learnerSubject);
         }
 
         public void setCurrentGrade(string currentGrade)

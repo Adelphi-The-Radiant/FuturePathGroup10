@@ -4,10 +4,16 @@ using System.Text;
 
 namespace FuturePathGroup10.Prerequisites
 {
-    internal class Subject
+    public class Subject
     {
-        private string subjectName;
-        private string subjectDescription;
+        public string subjectName { get; private set; }
+        public string subjectDescription { get; private set; }
+
+        public Subject(string subjectName, string subjectDescription)
+        {
+            this.subjectName = subjectName;
+            this.subjectDescription = subjectDescription;
+        }
 
         public string getSubject()
         {

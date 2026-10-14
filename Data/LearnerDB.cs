@@ -61,20 +61,28 @@ namespace FuturePathGroup10.Data
             //New dataset because we'll need to load multiple datasets
             foreach (DataRow row in learnerDS.Tables[TABLE_LEARNERS].Rows)
             {
-                
-                string learnerID = row["LearnerID"].ToString();
-                string username = row["Username"].ToString();
-                DataRow gradeRow = getGrades(Convert.ToInt32(learnerID));
-                string grade11 = gradeRow["Grade11Mark"].ToString();
-                string grade12 = gradeRow["Grade12Mark"].ToString();
-                string phoneNumber = row["PhoneNumber"].ToString();
-                string fullname = row["FullName"].ToString();
-                string school = row["School"].ToString();
-                string email = row["Email"].ToString();
-                string province = row["Province"].ToString();
+                try
+                {
 
-                Learner.Learner learner = new Learner.Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
-                learners.Add(learner);
+                    string learnerID = row["LearnerID"].ToString();
+                    string username = row["Username"].ToString();
+                    DataRow gradeRow = getGrades(Convert.ToInt32(learnerID));
+                    string grade11 = gradeRow["Grade11Mark"].ToString();
+                    string grade12 = gradeRow["Grade12Mark"].ToString();
+                    string phoneNumber = row["PhoneNumber"].ToString();
+                    string fullname = row["FullName"].ToString();
+                    string school = row["School"].ToString();
+                    string email = row["Email"].ToString();
+                    string province = row["Province"].ToString();
+
+                    Learner.Learner learner = new Learner.Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
+                    learners.Add(learner);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error loading learner: " + e.Message);
+                    continue;
+                }
             }
         }
 
