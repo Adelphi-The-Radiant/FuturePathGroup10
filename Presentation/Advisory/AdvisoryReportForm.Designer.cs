@@ -28,10 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "AdvisoryReportForm";
+            SuspendLayout();
+            // 
+            // AdvisoryReportForm
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(79, 184, 156);
+            ClientSize = new Size(800, 450);
+            Name = "AdvisoryReportForm";
+            Text = "AdvisoryReportForm";
+            ResumeLayout(false);
         }
 
         #endregion
