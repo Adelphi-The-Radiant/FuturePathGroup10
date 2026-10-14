@@ -4,7 +4,7 @@ using System.Data.OleDb;
 
 namespace FuturePathGroup10.Data
 {
-    public class DB
+    public abstract class DB
     {
         #region Variable declaration
         private static string dbPath = Path.Combine(AppContext.BaseDirectory, "Data", "FuturePath.accdb");
@@ -89,7 +89,37 @@ namespace FuturePathGroup10.Data
             return UpdateDataSource(sqlLocal, table, daMain);
         }
         #endregion
-
         
+        #region Abstract CRUD
+        //Important! Required to update the real database with all changes!!!
+        public bool UpdateDataSource(DBOperation operation)
+        {
+            switch (operation)
+            {
+                case DBOperation.Add:
+                    Create_INSERT_Command();
+                    break;
+                case DBOperation.Edit:
+                    Create_UPDATE_Command();
+                    break;
+                case DBOperation.Delete:
+                    Create_DELETE_Command();
+                    break;
+            }
+            return UpdateAllSources();
+        }
+        abstract internal void Create_INSERT_Command();
+        abstract internal void Create_UPDATE_Command();
+        abstract internal void Create_DELETE_Command();
+        
+        abstract internal void Build_INSERT_Parameters();
+        abstract internal void Build_UPDATE_Parameters();
+        abstract internal void Build_DELETE_Parameters();
+        
+        abstract public  bool UpdateAllSources();
+
+        #endregion
+
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using FuturePathGroup10.Prerequisites;
 using FuturePathGroup10.Learner;
 using System.Data;
@@ -8,7 +9,9 @@ using System.Data.SqlClient;
 
 namespace FuturePathGroup10.Data
 {
-
+    //Used to get access to learnerSubject instances from the DB accessed via the learnerSubjects collection.
+    //This class also fills up the learner Collection from LearnerDB which is required.
+    //Obviously also allows editing of the DB through DataSetChange and UpdateDataSource TOGETHER
     public class SubjectDB : DB
     {
         private const string SQL_SELECT_SUBJECT_JOIN = "SELECT * FROM " +
@@ -22,30 +25,46 @@ namespace FuturePathGroup10.Data
         private const string SUBJECT_TABLE = "Subject";
         private const string LEARNERSUBJECT_TABLE = "LearnerSubject";
 
-        private Collection<LearnerSubject> learnerSubjects { get; private set; }
+        private DataSet dsLearnerSubject;
+        private DataSet dsSubject;
+        
+        private OleDbDataAdapter daLearnerSubject;
+        private OleDbDataAdapter daSubject;
+
+        public Collection<LearnerSubject> learnerSubjects { get; private set; }
         private LearnerDB learnerDB;
         //Requires a learnerDB to be passed so that there is consistency between objects
         public SubjectDB(LearnerDB learnerDB) : base()
         {
             learnerSubjects = new Collection<LearnerSubject>();
-            learnerDB = learnerDB;
+            this.learnerDB = learnerDB;
+            
+            FillDataSet(SQL_SELECT_LEARNERSUBJECT, LEARNERSUBJECT_TABLE);
+            dsLearnerSubject = dsMain;
+            daLearnerSubject = daMain;
+            
+            FillDataSet(SQL_SELECT_SUBJECT, SUBJECT_TABLE);
+            dsLearnerSubject = dsMain;
+            daLearnerSubject = daMain;
+            
+            //dsMain and daMain remain for the joined table. I will probably have to change this later.
             FillDataSet(SQL_SELECT_SUBJECT_JOIN, JOINED_TABLE);
         }
         #region Load Learner Subjects
         //This also fills up our learner object with all their subjects.
+        //Also this has O(n^2) complexity because of how it finds learners LOL
         private void LoadLearnerSubjects()
         {
             string subjectName = "Not A String";
             string candidateString;
-
-            string subjectDecription;
-
-
+            string subjectDescription;
+            float  result;
+            
             Subject subject = null;
             LearnerSubject learnerSubject;
             Learner.Learner learner;
 
-            foreach (DataRow row in dataSet.Tables[JOINED_TABLE].Rows)
+            foreach (DataRow row in dsMain.Tables[JOINED_TABLE].Rows)
             {
                 candidateString = row["SubjectName"].ToString();
 
@@ -67,25 +86,45 @@ namespace FuturePathGroup10.Data
                 learnerSubjects.Add(learnerSubject);
                 learner.addLearnerSubject(learnerSubject);
             }
+            
         }
         #endregion
 
         #region Dataset Updates
-        private void fillDataRow(DataRow row, LearnerSubject learnerSubject)
+        private void fillLearnerSubjectRow(DataRow row, LearnerSubject learnerSubject)
         {
             row["LearnerID"] = learnerSubject.learner.learnerID;
             row["SubjectName"] = learnerSubject.subject.subjectName;
-            row["SubjectDescription"] = learnerSubject.subject.subjectDescription;
             row["Result"] = learnerSubject.result;
         }
 
-        private DataRow findDataRow(LearnerSubject learnerSubject)
+        private void fillSubjectRow(DataRow row, LearnerSubject learnerSubject)
         {
-            for (int i = 0; i < dataSet.Tables[JOINED_TABLE].Rows.Count; i++)
+            row["SubjectName"] = learnerSubject.subject.subjectName;
+            row["SubjectDescription"] = learnerSubject.subject.subjectDescription;
+        }
+
+        private DataRow findLearnerSubjectRow(LearnerSubject learnerSubject)
+        {
+            for (int i = 0; i < dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].Rows.Count; i++)
             {
-                DataRow row = dataSet.Tables[JOINED_TABLE].Rows[i];
+                DataRow row = dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].Rows[i];
                 //Two primary keys so we check both...
-                if (row["LearnerID"].ToString() == learnerSubject.learner.learnerID.ToString() && row["SubjectName"].ToString() == learnerSubject.subject.subjectName)
+                if (row["LearnerID"].ToString() == learnerSubject.learner.learnerID.ToString())
+                {
+                    return row;
+                }
+            }
+            return null;
+        }
+        
+        private DataRow findSubjectRow(LearnerSubject learnerSubject)
+        {
+            for (int i = 0; i < dsSubject.Tables[SUBJECT_TABLE].Rows.Count; i++)
+            {
+                DataRow row = dsSubject.Tables[SUBJECT_TABLE].Rows[i];
+                //Two primary keys so we check both...
+                if (row["SubjectName"].ToString() == learnerSubject.subject.subjectName)
                 {
                     return row;
                 }
@@ -95,33 +134,43 @@ namespace FuturePathGroup10.Data
 
         public void DataSetChange(LearnerSubject learnerSubject, DBOperation operation)
         {
+            DataRow rowLearnerSubject;
+            DataRow rowSubject;
             switch (operation)
             {
                 case DBOperation.Add:
-                    DataRow newRow = dataSet.Tables[JOINED_TABLE].NewRow();
-                    fillDataRow(newRow, learnerSubject);
-                    dataSet.Tables[JOINED_TABLE].Rows.Add(newRow);
+                    rowLearnerSubject = dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].NewRow();
+                    rowSubject = dsSubject.Tables[SUBJECT_TABLE].NewRow();
+                    fillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
+                    fillLearnerSubjectRow(rowSubject, learnerSubject);
+                    
+                    dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].Rows.Add(rowLearnerSubject);
+                    dsSubject.Tables[SUBJECT_TABLE].Rows.Add(rowSubject);
                     break;
-                case DBOperation.Update:
-                    DataRow updateRow = findDataRow(learnerSubject);
-                    if (updateRow != null)
+                case DBOperation.Edit:
+                    rowLearnerSubject = findLearnerSubjectRow(learnerSubject);
+                    rowSubject = findSubjectRow(learnerSubject);
+                    if (rowSubject != null && rowLearnerSubject != null)
                     {
-                        fillDataRow(updateRow, learnerSubject);
+                        fillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
+                        fillLearnerSubjectRow(rowSubject, learnerSubject);
                     }
                     else
                     {
-                        throw new Exception("LearnerSubject not found in table")
+                        throw new Exception("LearnerSubject not found in table");
                     }
                     break;
                 case DBOperation.Delete:
-                    DataRow deleteRow = findDataRow(learnerSubject);
-                    if (deleteRow != null)
+                    rowLearnerSubject = findLearnerSubjectRow(learnerSubject);
+                    rowSubject = findSubjectRow(learnerSubject);
+                    if (rowSubject != null && rowLearnerSubject != null)
                     {
-                        deleteRow.Delete();
+                        rowLearnerSubject.Delete();
+                        rowSubject.Delete();
                     }
                     else
                     {
-                        throw new Exception("LearnerSubject not found in table")
+                        throw new Exception("LearnerSubject not found in table");
                     }
                     break;
             }
@@ -130,10 +179,78 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Build Parameters, Create Commands & Update database
-        //Under construction
-        private void Create_INSERT_Command()
+        public override bool UpdateAllSources()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO ")
+            dsMain = dsLearnerSubject;
+            bool check1 = UpdateDataSource(SQL_SELECT_LEARNERSUBJECT, LEARNERSUBJECT_TABLE, daLearnerSubject);
+            dsLearnerSubject = dsMain;
+            dsMain = dsSubject;
+            bool check2 = UpdateDataSource(SQL_SELECT_SUBJECT, SUBJECT_TABLE, daSubject);
+            dsSubject = dsMain;
+            return check1 && check2;
+        }
+
+        internal override void Create_INSERT_Command()
+        {
+            daLearnerSubject.InsertCommand = new OleDbCommand("INSERT INTO LearnerSubject (LearnerID, SubjectName, Result) VALUES (@LearnerID, @SubjectName, @Result)", cnMain);
+            daSubject.InsertCommand = new OleDbCommand("INSERT INTO Subject (SubjectName, SubjectDescription) VALUES (@SubjectName, @SubjectDescription)", cnMain);
+            Build_INSERT_Parameters();
+        }
+
+        internal override void Create_UPDATE_Command()
+        {
+            daLearnerSubject.UpdateCommand = new OleDbCommand("UPDATE LearnerSubject SET(@LearnerID, @SubjectName, @Result) WHERE LearnerID = @LearnerID AND SubjectName = @SubjectName", cnMain);
+            daSubject.UpdateCommand = new OleDbCommand("UPDATE Subject SET(@SubjectName, @SubjectDescription) WHERE SubjectName = @SubjectName", cnMain);
+            Build_UPDATE_Parameters();
+        }
+        
+        internal override void Create_DELETE_Command()
+        {
+            daLearnerSubject.DeleteCommand = new OleDbCommand("DELETE FROM LearnerSubject WHERE LearnerID = @LearnerID AND SubjectName = @SubjectName", cnMain);
+            daLearnerSubject.DeleteCommand = new OleDbCommand("DELETE FROM Subject WHERE SubjectName = @SubjectName", cnMain);
+            Build_DELETE_Parameters();
+        }
+
+        internal override void Build_INSERT_Parameters()
+        {
+            SqlParameter param = new  SqlParameter("@LearnerID", SqlDbType.Int,4, "LearnerID");
+            daLearnerSubject.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@SubjectName", SqlDbType.NVarChar, 255, "SubjectName");
+            daLearnerSubject.InsertCommand.Parameters.Add(param);
+            daSubject.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Result", SqlDbType.Float, 4, "Result");
+            daLearnerSubject.InsertCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@SubjectDescription", SqlDbType.NVarChar, 255, "SubjectDescription");
+            daSubject.InsertCommand.Parameters.Add(param);
+        }
+
+        internal override void Build_UPDATE_Parameters()
+        {
+            SqlParameter param = new  SqlParameter("@LearnerID", SqlDbType.Int,4, "LearnerID");
+            daLearnerSubject.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@SubjectName", SqlDbType.NVarChar, 255, "SubjectName");
+            daLearnerSubject.UpdateCommand.Parameters.Add(param);
+            daSubject.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@Result", SqlDbType.Float, 4, "Result");
+            daLearnerSubject.UpdateCommand.Parameters.Add(param);
+            
+            param = new SqlParameter("@SubjectDescription", SqlDbType.NVarChar, 255, "SubjectDescription");
+            daSubject.UpdateCommand.Parameters.Add(param);
+        }
+
+        internal override void Build_DELETE_Parameters()
+        {
+            SqlParameter param = new  SqlParameter("@LearnerID", SqlDbType.Int,4, "LearnerID");
+            daLearnerSubject.DeleteCommand.Parameters.Add(param);    
+            
+            param = new SqlParameter("@SubjectName", SqlDbType.NVarChar, 255, "SubjectName");
+            daLearnerSubject.DeleteCommand.Parameters.Add(param);
+            daSubject.DeleteCommand.Parameters.Add(param);
         }
 
         #endregion

@@ -8,10 +8,13 @@ using FuturePathGroup10.Learner;
 
 namespace FuturePathGroup10.Data
 {
+    //Used to fill up the Learners collection which contains learners from the DB. 
+    //Obviously also allows editing of the DB through DataSetChange and UpdateDataSource TOGETHER
     public class LearnerDB : DB
     {
 
         public Collection<Learner.Learner> learners { get; private set; }
+        
         private DataSet learnerDS;
         private DataSet gradeDS;
 
@@ -196,7 +199,7 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Build Parameters, Create Commands & Update database
-        private void Build_INSERT_Parameters()
+        internal override void Build_INSERT_Parameters()
         {
             //LearnerDA setup
             SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"ID");
@@ -228,28 +231,11 @@ namespace FuturePathGroup10.Data
             gradeDA.InsertCommand.Parameters.Add(param);
         }
 
-        private void Create_INSERT_Command()
+        internal override void Create_INSERT_Command()
         {
             learnerDA.InsertCommand = new OleDbCommand("INSERT into Learners (LearnerID, FullName, PhoneNumber, Email, Username, School, Province) VALUES (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province)", cnMain);
             gradeDA.InsertCommand = new OleDbCommand("INSERT into Grade_Level (LearnerID, Grade11Mark, Grade12Mark) VALUES (@LearnerID, @Grade11Mark, @Grade12Mark)", cnMain);
             Build_INSERT_Parameters();
-        }
-        //Important! Required to update the real database with all changes!!!
-        public bool UpdateDataSource(DBOperation operation)
-        {
-            switch (operation)
-            {
-                case DBOperation.Add:
-                    Create_INSERT_Command();
-                    break;
-                case DBOperation.Edit:
-                    Create_UPDATE_Command();
-                    break;
-                case DBOperation.Delete:
-                   Create_DELETE_Command();
-                    break;
-            }
-            return UpdateAllSources();
         }
         //This could be useful but it really shouldn't be.
         public bool RecklessUpdate()
@@ -260,16 +246,18 @@ namespace FuturePathGroup10.Data
             return UpdateAllSources();
         }
 
-        private bool UpdateAllSources()
+        public override bool UpdateAllSources() 
         {
+            dsMain = learnerDS;
             bool check1 = UpdateDataSource(SQL_SELECT_LEARNERS,TABLE_LEARNERS, learnerDA);
             learnerDS = dsMain;
+            dsMain = gradeDS;
             bool check2 = UpdateDataSource(SQL_SELECT_GRADE,TABLE_GRADE, gradeDA);
             gradeDS = dsMain;
             return check1 && check2;
         }
 
-        private void Build_UPDATE_Parameters()
+        internal override void Build_UPDATE_Parameters()
         {
             SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
             learnerDA.UpdateCommand.Parameters.Add(param);
@@ -299,22 +287,22 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
             gradeDA.UpdateCommand.Parameters.Add(param);
         }
-
-        private void Create_UPDATE_Command()
+        
+        internal override void Create_UPDATE_Command()
         {
             learnerDA.UpdateCommand = new OleDbCommand("UPDATE Learners SET (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province) WHERE LearnerID = @LearnerID",cnMain);
             gradeDA.UpdateCommand = new OleDbCommand("UPDATE Grade_Level SET(@LearnerID, @Grade11Mark, @Grade12Mark) WHERE LearnerID = @LearnerID", cnMain);
             Build_UPDATE_Parameters();  
         }
 
-        private void Create_DELETE_Command()
+        internal override void Create_DELETE_Command()
         {
             learnerDA.DeleteCommand = new OleDbCommand("DELETE FROM LEARNERS  WHERE LearnerID = @LearnerID", cnMain);
             gradeDA.DeleteCommand = new OleDbCommand("DELETE from Grade_Level  WHERE LearnerID = @LearnerID", cnMain);
             Build_DELETE_Parameters();
         }
 
-        private void Build_DELETE_Parameters()
+        internal override void Build_DELETE_Parameters()
         {
             SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
             learnerDA.DeleteCommand.Parameters.Add(param);
