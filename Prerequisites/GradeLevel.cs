@@ -7,8 +7,8 @@ namespace FuturePathGroup10.Prerequisites
 {
     internal class GradeLevel
     {
-        private float grade11Result;
-        private float grade12Result;
+        public float grade11Result { get; private set; }
+        public float grade12Result { get; private set; }
 
         public GradeLevel(float grade11Result, float grade12Result)
         {
