@@ -19,5 +19,11 @@ namespace FuturePathGroup10.Prerequisites
         {
             throw new NotImplementedException();
         }
+
+        public bool Equals(Object obj)
+        {
+            Subject other = (Subject)obj;
+            return subjectName.Equals(other.subjectName);
+        }
     }
 }

@@ -132,6 +132,18 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
+        private int findSubjectIndex(LearnerSubject learnerSubject)
+        {
+            for (int i = 0; i < learnerSubjects.Count; i++)
+            {
+                if (learnerSubjects[i].Equals(learnerSubject))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         public void DataSetChange(LearnerSubject learnerSubject, DBOperation operation)
         {
             DataRow rowLearnerSubject;

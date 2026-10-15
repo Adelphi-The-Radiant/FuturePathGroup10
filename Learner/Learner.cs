@@ -61,5 +61,11 @@ namespace FuturePathGroup10.Learner
         {
             throw new NotImplementedException();
         }
+
+        public bool Equals(Object obj)
+        {
+            Learner other = (Learner)obj;
+            return learnerID.Equals(other.learnerID);
+        }
     }
 }

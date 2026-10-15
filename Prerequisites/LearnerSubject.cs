@@ -28,5 +28,14 @@ namespace FuturePathGroup10.Prerequisites
         {
             throw new NotImplementedException();
         }
+
+        public bool equals(object obj)
+        {
+            LearnerSubject other = (LearnerSubject)obj;
+
+            return learner.Equals(other.learner) && subject.Equals(other.subject);
+
+        }
+        
     }
 }

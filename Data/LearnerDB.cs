@@ -12,7 +12,6 @@ namespace FuturePathGroup10.Data
     //Obviously also allows editing of the DB through DataSetChange and UpdateDataSource TOGETHER
     public class LearnerDB : DB
     {
-
         public Collection<Learner.Learner> learners { get; private set; }
         
         private DataSet learnerDS;
@@ -25,7 +24,6 @@ namespace FuturePathGroup10.Data
         private const string SQL_SELECT_LEARNERS = "SELECT * FROM Learners";
         private const string TABLE_LEARNERS = "Learners";
         private const string TABLE_GRADE = "Grade_Level";
-
 
         LearnerDB() : base()
         {
@@ -58,15 +56,13 @@ namespace FuturePathGroup10.Data
 
         #region Load Collection of Learners
         //Fill the learners collection from the dataset. done during initialisation.
-        public void LoadLearners()
+        private void LoadLearners()
         {
-            
             //New dataset because we'll need to load multiple datasets
             foreach (DataRow row in learnerDS.Tables[TABLE_LEARNERS].Rows)
             {
                 try
                 {
-
                     string learnerID = row["LearnerID"].ToString();
                     string username = row["Username"].ToString();
                     DataRow gradeRow = getGrades(Convert.ToInt32(learnerID));
@@ -126,7 +122,6 @@ namespace FuturePathGroup10.Data
         //Helper method that finds the row in the dataset for a given learner. Returns null if not found.
         private DataRow FindLearnerRow(Learner.Learner learner)
         {
-          
             for (int i = 0; i < learnerDS.Tables[TABLE_LEARNERS].Rows.Count; i++)
             {
                 if (Convert.ToInt32(learnerDS.Tables[TABLE_LEARNERS].Rows[i]["LearnerID"]) == learner.learnerID)
@@ -148,12 +143,25 @@ namespace FuturePathGroup10.Data
             }
             return null;
         }
+
+        private int findLearnerIndex(Learner.Learner learner)
+        {
+            for (int i = 0; i < learners.Count; i++)
+            {
+                if (learners[i].Equals(learner))
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
         //Modifies the dataset based on the operation given to it using a learner object. DOES NOT UPDATE THE ACTUAL DATABASE. Use UpdateDataSource() to update the database.
         //Throws an exception if the learner couldn't be found in edits and deletes. Handle appropriately.
         public void DataSetChange(Learner.Learner learner, DBOperation operation)
         {
             DataRow learnerRow;
             DataRow gradeRow;
+            int learnerIndex;
 
             switch (operation)
             {
@@ -165,15 +173,19 @@ namespace FuturePathGroup10.Data
                     gradeRow = gradeDS.Tables[TABLE_GRADE].NewRow();
                     FillGradeRow(gradeRow,learner);
                     gradeDS.Tables[TABLE_GRADE].Rows.Add(gradeRow);
+                    learners.Add(learner);
                     break;
 
                 case DBOperation.Edit:
                     learnerRow = FindLearnerRow(learner);
                     gradeRow = FindGradeRow(learner);
-                    if (learnerRow != null && gradeRow != null)
+                    learnerIndex = findLearnerIndex(learner);
+                    if (learnerRow != null && gradeRow != null && learnerIndex != -1)
                     {
                         FillLearnerRow(learnerRow, learner);
                         FillGradeRow(gradeRow, learner);
+                        learners.RemoveAt(learnerIndex);
+                        learners.Insert(learnerIndex, learner);
                     }
                     else
                     {
@@ -184,10 +196,12 @@ namespace FuturePathGroup10.Data
                 case DBOperation.Delete:
                     learnerRow = FindLearnerRow(learner);
                     gradeRow = FindGradeRow(learner);
-                    if (learnerRow != null && gradeRow != null)
+                    learnerIndex = findLearnerIndex(learner);
+                    if (learnerRow != null && gradeRow != null && learnerIndex != -1)
                     {
                         learnerRow.Delete();
                         gradeRow.Delete();
+                        learners.RemoveAt(learnerIndex);
                     }
                     else
                     {
