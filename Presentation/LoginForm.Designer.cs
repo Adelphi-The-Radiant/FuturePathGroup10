@@ -67,6 +67,7 @@
             // 
             loginButton.BackColor = Color.FromArgb(66, 159, 132);
             loginButton.Cursor = Cursors.Hand;
+            loginButton.FlatStyle = FlatStyle.Popup;
             loginButton.Font = new Font("Arial Narrow", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
             loginButton.ForeColor = Color.White;
             loginButton.Location = new Point(302, 252);

@@ -19,5 +19,10 @@ namespace FuturePathGroup10.Presentation
         {
 
         }
+
+        private void fundsButton_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

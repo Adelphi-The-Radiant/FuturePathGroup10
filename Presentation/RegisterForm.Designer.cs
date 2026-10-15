@@ -66,7 +66,7 @@
             // 
             button1.BackColor = Color.FromArgb(66, 159, 132);
             button1.Cursor = Cursors.Hand;
-            button1.FlatStyle = FlatStyle.Flat;
+            button1.FlatStyle = FlatStyle.Popup;
             button1.Font = new Font("Arial Narrow", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
             button1.ForeColor = Color.White;
             button1.Location = new Point(255, 361);

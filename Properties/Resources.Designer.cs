@@ -83,6 +83,16 @@ namespace FuturePathGroup10.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Screenshot_15_10_2026_124343_docs_google_com {
+            get {
+                object obj = ResourceManager.GetObject("Screenshot_15-10-2026_124343_docs.google.com", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Screenshot_2026_10_14_112451 {
             get {
                 object obj = ResourceManager.GetObject("Screenshot 2026-10-14 112451", resourceCulture);

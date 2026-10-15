@@ -127,7 +127,4 @@ The system is not intended to make official admission decisions. Instead, it pro
  based on locally stored degree information, subject requirements, interest categories, funding options
 and rule-based recommendation logic.</value>
   </data>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
 </root>

@@ -6,11 +6,11 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace FuturePathGroup10.Presentation.Administration
+namespace FuturePathGroup10.Presentation
 {
-    public partial class AdminReportForm : Form
+    public partial class ReportForm : Form
     {
-        public AdminReportForm()
+        public ReportForm()
         {
             InitializeComponent();
         }
