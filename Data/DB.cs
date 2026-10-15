@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.OleDb;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace FuturePathGroup10.Data
 {
@@ -59,7 +61,7 @@ namespace FuturePathGroup10.Data
 
         #region Update the data source
 
-        protected bool UpdateDataSource(string sqlLocal, string table, OleDbDataAdapter DA)
+        internal bool UpdateDataSource(string sqlLocal, string table, OleDbDataAdapter DA)
         {
             bool success;
             try
@@ -84,7 +86,7 @@ namespace FuturePathGroup10.Data
             }
             return success;    
         }
-        protected bool UpdateDataSource(string sqlLocal, string table)
+        internal bool UpdateDataSource(string sqlLocal, string table)
         {
             return UpdateDataSource(sqlLocal, table, daMain);
         }

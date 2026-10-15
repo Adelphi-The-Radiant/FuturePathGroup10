@@ -1,4 +1,5 @@
 ﻿using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,10 +7,9 @@ using System.Collections.ObjectModel;
 
 namespace FuturePathGroup10.Learner
 {
-    public class Learner
+    public class Learner : AccountHolder
     {
         public int learnerID { get; private set; }
-        public string username { get; private set; }
         public string phoneNumber { get; private set; }
         public string email { get; private set; }
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
@@ -20,10 +20,9 @@ namespace FuturePathGroup10.Learner
 
         private Collection<LearnerSubject> learnerSubjects ;
 
-        public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province)
+        public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province) : base(username)
         {
             this.learnerID = learnerID;
-            this.username = username;
             this.phoneNumber = phoneNumber;
             this.email = email;
             this.fullname = fullname;

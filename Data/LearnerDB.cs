@@ -183,13 +183,10 @@ namespace FuturePathGroup10.Data
                 case DBOperation.Edit:
                     learnerRow = FindLearnerRow(learner);
                     gradeRow = FindGradeRow(learner);
-                    learnerIndex = findLearnerIndex(learner);
-                    if (learnerRow != null && gradeRow != null && learnerIndex != -1)
+                    if (learnerRow != null && gradeRow != null)
                     {
                         FillLearnerRow(learnerRow, learner);
                         FillGradeRow(gradeRow, learner);
-                        learners.RemoveAt(learnerIndex);
-                        learners.Insert(learnerIndex, learner);
                     }
                     else
                     {
@@ -200,12 +197,11 @@ namespace FuturePathGroup10.Data
                 case DBOperation.Delete:
                     learnerRow = FindLearnerRow(learner);
                     gradeRow = FindGradeRow(learner);
-                    learnerIndex = findLearnerIndex(learner);
-                    if (learnerRow != null && gradeRow != null && learnerIndex != -1)
+                    if (learnerRow != null && gradeRow != null)
                     {
                         learnerRow.Delete();
                         gradeRow.Delete();
-                        learners.RemoveAt(learnerIndex);
+                        learners.Remove(learner);
                     }
                     else
                     {

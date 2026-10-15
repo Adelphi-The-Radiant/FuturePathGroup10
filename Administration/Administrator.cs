@@ -4,11 +4,16 @@ using System.Text;
 
 namespace FuturePathGroup10.Administration
 {
-    internal class Administrator
+    internal class Administrator : AccountHolder
     {
         private int adminID;
         private string username;
         private string fullName;
+
+        public Administrator(string username) : base(username)
+        {
+
+        }
 
         public void addReferenceData(ReferenceData data)
         {

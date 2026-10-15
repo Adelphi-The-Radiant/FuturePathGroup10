@@ -7,11 +7,26 @@ namespace FuturePathGroup10
     // AuthController stereotype
     internal class UserAccount
     {
-        private string username;
-        private string password;
+        public string username {get; private set;}
+        public string password {get; private set;}
         // Should be a more specialized type for dates
-        private int dateCreated;
-        private string permissionLevel;
+        public DateTime dateCreated { get; private set;}
+        public Permission permissionLevel { get; private set; }
+
+        public enum Permission
+        {
+            user = 0,
+            employee = 1,
+            admin = 2
+        }
+
+        public UserAccount(string username, string password, DateTime dateCreated, Permission permissionLevel)
+        {
+            this.username = username;
+            this.password = password;
+            this.dateCreated = dateCreated;
+            this.permissionLevel = permissionLevel;
+        }
 
         public void login(string username, string password)
         {

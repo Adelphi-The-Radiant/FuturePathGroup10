@@ -170,11 +170,9 @@ namespace FuturePathGroup10.Data
                     break;
                 case DBOperation.Edit:
                     rowLearnerSubject = findLearnerSubjectRow(learnerSubject);
-                    rowSubject = findSubjectRow(learnerSubject);
-                    if (rowSubject != null && rowLearnerSubject != null)
+                    if (rowLearnerSubject != null)
                     {
                         fillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
-                        fillLearnerSubjectRow(rowSubject, learnerSubject);
                     }
                     else
                     {
@@ -188,6 +186,7 @@ namespace FuturePathGroup10.Data
                     {
                         rowLearnerSubject.Delete();
                         rowSubject.Delete();
+                        learnerSubjects.Remove(learnerSubject);
                     }
                     else
                     {
