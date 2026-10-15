@@ -12,6 +12,7 @@ namespace FuturePathGroup10.Data
     //Obviously also allows editing of the DB through DataSetChange and UpdateDataSource TOGETHER
     public class LearnerDB : DB
     {
+        #region Attributes
         public Collection<Learner.Learner> learners { get; private set; }
         
         private DataSet learnerDS;
@@ -24,7 +25,9 @@ namespace FuturePathGroup10.Data
         private const string SQL_SELECT_LEARNERS = "SELECT * FROM Learners";
         private const string TABLE_LEARNERS = "Learners";
         private const string TABLE_GRADE = "Grade_Level";
+        #endregion
 
+        #region Constructor
         LearnerDB() : base()
         {
             learners = new Collection<Learner.Learner>();
@@ -37,8 +40,9 @@ namespace FuturePathGroup10.Data
 
             LoadLearners();
         }
+        #endregion
 
-        #region get learners
+        #region Get earners
         //Get learner with a certain ID. Returns null if not found.
         public Learner.Learner getLearner(int learnerID)
         {

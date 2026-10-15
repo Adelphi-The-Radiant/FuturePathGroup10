@@ -14,6 +14,7 @@ namespace FuturePathGroup10.Data
     //Obviously also allows editing of the DB through DataSetChange and UpdateDataSource TOGETHER
     public class SubjectDB : DB
     {
+        #region Attributes
         private const string SQL_SELECT_SUBJECT_JOIN = "SELECT * FROM " +
             "(SELECT * FROM Subject LEFT JOIN LearnerSubject ON Subject.SubjectName = LearnerSubject.SubjectName ORDER BY Subject.SubjectName) " +
             "AS SubjectJoined";
@@ -34,6 +35,8 @@ namespace FuturePathGroup10.Data
         public Collection<LearnerSubject> learnerSubjects { get; private set; }
         public Collection<Subject> subjects { get; private set; }
         private LearnerDB learnerDB;
+        #endregion
+        #region Constructor
         //Requires a learnerDB to be passed so that there is consistency between objects
         public SubjectDB(LearnerDB learnerDB) : base()
         {
@@ -51,7 +54,10 @@ namespace FuturePathGroup10.Data
             
             //dsMain and daMain remain for the joined table. I will probably have to change this later.
             FillDataSet(SQL_SELECT_SUBJECT_JOIN, JOINED_TABLE);
+
+            LoadLearnerSubjects();
         }
+        #endregion
         #region Load Learner Subjects
         //This also fills up our learner object with all their subjects.
         //Also this has O(n^2) complexity because of how it finds learners LOL
