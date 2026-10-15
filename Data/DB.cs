@@ -110,6 +110,14 @@ namespace FuturePathGroup10.Data
             }
             return UpdateAllSources();
         }
+
+        public bool RecklessUpdate()
+        {
+            Create_UPDATE_Command();
+            Create_DELETE_Command();
+            Create_INSERT_Command();
+            return UpdateAllSources();
+        }
         abstract internal void Create_INSERT_Command();
         abstract internal void Create_UPDATE_Command();
         abstract internal void Create_DELETE_Command();
@@ -118,7 +126,8 @@ namespace FuturePathGroup10.Data
         abstract internal void Build_UPDATE_Parameters();
         abstract internal void Build_DELETE_Parameters();
         
-        abstract public  bool UpdateAllSources();
+        //Have this inbetween step incase there are multiple DBs that need to be updated
+        abstract internal bool UpdateAllSources();
 
         #endregion
 

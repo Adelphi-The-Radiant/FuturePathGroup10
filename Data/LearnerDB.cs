@@ -213,54 +213,7 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Build Parameters, Create Commands & Update database
-        internal override void Build_INSERT_Parameters()
-        {
-            //LearnerDA setup
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32,"ID");
-            learnerDA.InsertCommand.Parameters.Add(param);
-            gradeDA.InsertCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255,"FullName");
-            learnerDA.InsertCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10,"PhoneNumber");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
-            learnerDA.InsertCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255,"Username");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
-            learnerDA.InsertCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255,"Province");
-            learnerDA.InsertCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
-            gradeDA.InsertCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
-            gradeDA.InsertCommand.Parameters.Add(param);
-        }
-
-        internal override void Create_INSERT_Command()
-        {
-            learnerDA.InsertCommand = new OleDbCommand("INSERT into Learners (LearnerID, FullName, PhoneNumber, Email, Username, School, Province) VALUES (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province)", cnMain);
-            gradeDA.InsertCommand = new OleDbCommand("INSERT into Grade_Level (LearnerID, Grade11Mark, Grade12Mark) VALUES (@LearnerID, @Grade11Mark, @Grade12Mark)", cnMain);
-            Build_INSERT_Parameters();
-        }
-        //This could be useful but it really shouldn't be.
-        public bool RecklessUpdate()
-        {
-            Create_UPDATE_Command();
-            Create_DELETE_Command();
-            Create_INSERT_Command();
-            return UpdateAllSources();
-        }
-
-        public override bool UpdateAllSources() 
+        internal override bool UpdateAllSources() 
         {
             dsMain = learnerDS;
             bool check1 = UpdateDataSource(SQL_SELECT_LEARNERS,TABLE_LEARNERS, learnerDA);
@@ -271,37 +224,13 @@ namespace FuturePathGroup10.Data
             return check1 && check2;
         }
 
-        internal override void Build_UPDATE_Parameters()
+        internal override void Create_INSERT_Command()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            gradeDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255,"FullName");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10,"PhoneNumber");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255,"Username");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255,"Province");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
-            gradeDA.UpdateCommand.Parameters.Add(param);
-            
-            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
-            gradeDA.UpdateCommand.Parameters.Add(param);
+            learnerDA.InsertCommand = new OleDbCommand("INSERT into Learners (LearnerID, FullName, PhoneNumber, Email, Username, School, Province) VALUES (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province)", cnMain);
+            gradeDA.InsertCommand = new OleDbCommand("INSERT into Grade_Level (LearnerID, Grade11Mark, Grade12Mark) VALUES (@LearnerID, @Grade11Mark, @Grade12Mark)", cnMain);
+            Build_INSERT_Parameters();
         }
-        
+
         internal override void Create_UPDATE_Command()
         {
             learnerDA.UpdateCommand = new OleDbCommand("UPDATE Learners SET (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province) WHERE LearnerID = @LearnerID",cnMain);
@@ -316,15 +245,75 @@ namespace FuturePathGroup10.Data
             Build_DELETE_Parameters();
         }
 
+        internal override void Build_INSERT_Parameters()
+        {
+            //LearnerDA setup
+            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32, "ID");
+            learnerDA.InsertCommand.Parameters.Add(param);
+            gradeDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255, "FullName");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10, "PhoneNumber");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255, "Username");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255, "Province");
+            learnerDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
+            gradeDA.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
+            gradeDA.InsertCommand.Parameters.Add(param);
+        }
+
+        internal override void Build_UPDATE_Parameters()
+        {
+            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+            gradeDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255, "FullName");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10, "PhoneNumber");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255, "Username");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255, "Province");
+            learnerDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
+            gradeDA.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
+            gradeDA.UpdateCommand.Parameters.Add(param);
+        }
+
         internal override void Build_DELETE_Parameters()
         {
             SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
             learnerDA.DeleteCommand.Parameters.Add(param);
             gradeDA.DeleteCommand.Parameters.Add(param);
         }
-            
-        
-
         #endregion
 
     }

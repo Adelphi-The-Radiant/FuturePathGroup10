@@ -15,27 +15,24 @@ namespace FuturePathGroup10.Data
 	public class UserAccountDB : DB
 	{
         #region Attributes
-        private const USERACCOUNT_TABLE = "UserAccount";
-		private const SQL_SELECT_USERACCOUNT = "SELECT * FROM UserAccount";
+        private const string USERACCOUNT_TABLE = "UserAccount";
+		private const string SQL_SELECT_USERACCOUNT = "SELECT * FROM UserAccount";
 		public Collection<UserAccount> accounts { get; private set; }
 		private LearnerDB learnerDB;
         //private AdminDB adminDB;
         //private AdvisorDB advisorDB;
         #endregion
         #region Constructor
-        public UserAccountDB(LearnerDB learnerDB); //AdminDB adminDB, AdvisorDB advisorDB
-		{
-			accounts = new Collection<UserAccount>();
-			FillDataSet(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
-			this.learnerDB = learnerDB;
-            //this.adminDB = adminDB
-            //this.advisorDB = advisorDB
-
+        public UserAccountDB(LearnerDB learnerDB) //Include admins and advisors
+        {
+            accounts = new Collection<UserAccount>();
+            FillDataSet(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
+            this.learnerDB = learnerDB;
             LoadAccounts();
-		}
+        }
         #endregion
 
-		private void LoadAccounts()
+        private void LoadAccounts()
 		{
 			foreach (DataRow row in dsMain.Tables[USERACCOUNT_TABLE].Rows)
 			{
@@ -46,7 +43,7 @@ namespace FuturePathGroup10.Data
 
 				UserAccount account = new UserAccount(username, password, dateCreated, permissionLevel);
 				accounts.Add(account);
-				Utilities.FindAndSetAccountHolder(learnerDB.learners, account);
+                Utilities.FindAndSetAccountHolder(learnerDB.learners, account);
                 //Do this for when you make an adminDB and an advisorDB
             }
 		}
@@ -117,42 +114,63 @@ namespace FuturePathGroup10.Data
 
         #region CRUD
 
-        public override bool UpdateAllSources()
+        internal override bool UpdateAllSources()
         {
-           UpdateDataSource(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE)
+            UpdateDataSource(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
         }
 
-        internal override Create_INSERT_Command()
+        internal override void Create_INSERT_Command()
         {
             daMain.InsertCommand = new OleDbCommand("INSERT INTO UserAccount (@Username, @Password, @DateCreated,@PermissionLevel) VALUES (Username,Password,DateCreated,PermissionLevel)", cnMain);
-            Build_INSERT_Parameters():
+            Build_INSERT_Parameters();
         }
 
-        internal override Create_UPDATE_Command()
+        internal override void Create_UPDATE_Command()
         {
             daMain.UpdateCommand = new OleDbCommand("UPDATE UserAccount SET (@Username, @Password, @DateCreated,@PermissionLevel) WHERE Username = @Username", cnMain);
             Build_UPDATE_Parameters();
         }
 
-        internal override Create_DELETE_Command()
+        internal override void Create_DELETE_Command()
         {
             daMain.DeleteCommand = new OleDbCommand("DELETE FROM UserAccount WHERE Username = @Username");
             Build_DELETE_Parameters();
         }
 
-        internal override Build_INSERT_Parameters()
+        internal override void Build_INSERT_Parameters()
         {
-            throw new NotImplementedException();
+            SqlParameter param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
+            daMain.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Password", SqlDbType.NChar, 255, "Password");
+            daMain.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "Password");
+            daMain.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@PermissionLevel", SqlDbType.Int, 2, "PermissionLevel");
+            daMain.InsertCommand.Parameters.Add(param);
         }
 
-        internal override Build_UPDATE_Parameters()
+        internal override void Build_UPDATE_Parameters()
         {
-            throw new NotImplementedException();
+            SqlParameter param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
+            daMain.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Password", SqlDbType.NChar, 255, "Password");
+            daMain.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "Password");
+            daMain.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@PermissionLevel", SqlDbType.Int, 2, "PermissionLevel");
+            daMain.UpdateCommand.Parameters.Add(param);
         }
 
-        internal override Build_DELETE_Parameters()
+        internal override void Build_DELETE_Parameters()
         {
-            throw new NotImplementedException();
+            SqlParameter param = new SqlParameter("@Delete", SqlDbType.NChar, 255, "Delete");
+            daMain.DeleteCommand.Parameters.Add(param);
         }
 
         #endregion

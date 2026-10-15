@@ -199,7 +199,7 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Build Parameters, Create Commands & Update database
-        public override bool UpdateAllSources()
+        internal override bool UpdateAllSources()
         {
             dsMain = dsLearnerSubject;
             bool check1 = UpdateDataSource(SQL_SELECT_LEARNERSUBJECT, LEARNERSUBJECT_TABLE, daLearnerSubject);
