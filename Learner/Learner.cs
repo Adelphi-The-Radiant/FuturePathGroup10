@@ -15,8 +15,8 @@ namespace FuturePathGroup10.Learner
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
         public string fullname { get; private set; }
         public string school { get; private set; }
-        public string grade11 { get; private set; }
-        public string grade12 { get; private set; }
+
+        internal GradeLevel grades { get; private set; }
         public string province { get; private set; }
 
         private Collection<LearnerSubject> learnerSubjects ;
@@ -29,8 +29,7 @@ namespace FuturePathGroup10.Learner
             this.email = email;
             this.fullname = fullname;
             this.school = school;
-            this.grade11 = grade11;
-            this.grade12 = grade12;
+            this.grades = new GradeLevel(Convert.ToSingle(grade11), Convert.ToSingle(grade12));
             this.province = province;
             this.learnerSubjects = new Collection<LearnerSubject>();
         }

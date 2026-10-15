@@ -32,11 +32,13 @@ namespace FuturePathGroup10.Data
         private OleDbDataAdapter daSubject;
 
         public Collection<LearnerSubject> learnerSubjects { get; private set; }
+        public Collection<Subject> subjects { get; private set; }
         private LearnerDB learnerDB;
         //Requires a learnerDB to be passed so that there is consistency between objects
         public SubjectDB(LearnerDB learnerDB) : base()
         {
             learnerSubjects = new Collection<LearnerSubject>();
+            subjects = new Collection<Subject>();
             this.learnerDB = learnerDB;
             
             FillDataSet(SQL_SELECT_LEARNERSUBJECT, LEARNERSUBJECT_TABLE);
@@ -75,6 +77,7 @@ namespace FuturePathGroup10.Data
                     subjectDescription = (string)row["SubjectDescription"];
                     //Ensures we dont have a bunch of duplicate subjects as this is a many to one relation. This method works because the rows will be ordered by subjectName.
                     subject = new Subject(subjectName, subjectDescription);
+                    subjects.Add(subject);
                 }
 
                 result = Convert.ToSingle(row["Result"]);
