@@ -56,6 +56,11 @@ namespace FuturePathGroup10.Business
             return true;
         }
 
+        public Learner getLearner(int learnerId) 
+        {
+            return learnerDB.GetById(learnerId);
+        }
+
         // Helper method to validate if the mandotory fileds have information profile creation and update
         private string Validate(Learner l)
         {
@@ -66,34 +71,35 @@ namespace FuturePathGroup10.Business
 
 
 
-        public bool selectFaculty(int facultyId, out string error)
-        {
-            error = "";
-            Faculty faculty = facultyDB.GetById(facultyId);      // delegates to the data class
-            if (faculty == null )
-            {
-                error = "Please choose a valid faculty.";
-                return false;
-            }
-
-            //SelectedFaculty = faculty;                            
-            return true;
-        }
-
-        public bool selectDegreeProgramme(int degreeProgrammeId, out string error)
-        {
-            error = "";
-            DegreeProgramme programme = degreeProgrammeDB.getById (degreeProgrammeId);
+        //public bool selectFaculty(int facultyId, out string error)
+        //{
+        //    error = "";
             
-            if (programme == null )
-            {
-                error = "Please choose a valid degree programme.";
-                return false;
-            }
+        //    Faculty faculty = facultyDB.GetById(facultyId);      // delegates to the data class
+        //    if (faculty == null )
+        //    {
+        //        error = "Please choose a valid faculty.";
+        //        return false;
+        //    }
 
-            Programme = programme;
-            return true;
-        }
+        //    //SelectedFaculty = faculty;                            
+        //    return true;
+        //}
+
+        //public bool selectDegreeProgramme(int degreeProgrammeId, out string error)
+        //{
+        //    error = "";
+        //    DegreeProgramme programme = degreeProgrammeDB.getById (degreeProgrammeId);
+            
+        //    if (programme == null )
+        //    {
+        //        error = "Please choose a valid degree programme.";
+        //        return false;
+        //    }
+
+        //    Programme = programme;
+        //    return true;
+        //}
 
 
         public Collection<string> viewFundingOption(FundingOption options)

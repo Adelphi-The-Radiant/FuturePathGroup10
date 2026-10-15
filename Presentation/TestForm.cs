@@ -14,14 +14,17 @@ namespace FuturePathGroup10.Presentation
 {
     public partial class TestForm : Form
     {
+        LearnerController controller;
+        Learner learner;
         public TestForm()
         {
             InitializeComponent();
+            controller = new LearnerController();
         }
 
         private void testButton_Click(object sender, EventArgs e)
         {
-            Learner learner = new Learner(
+             learner = new Learner(
                 2,
                 "thabo.mokoena",
                 "0821234567",
@@ -34,10 +37,16 @@ namespace FuturePathGroup10.Presentation
             );
 
             LearnerController controller = new LearnerController();
-            controller.createProfile(learner, out string erro);
+            controller.createProfile(learner, out string error);
             MessageBox.Show("Saved. Learner ID: " + learner.learnerID);
 
 
+        }
+
+        private void load_Click(object sender, EventArgs e)
+        {
+            Learner l = controller.getLearner(learner.learnerID);
+            MessageBox.Show(l == null ? "Not found" : l.fullname + " / " + l.school);
         }
     }
 }
