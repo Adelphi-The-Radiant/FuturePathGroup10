@@ -1,24 +1,23 @@
-﻿using FuturePathGroup10.Prerequisites;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Learner
+namespace FuturePathGroup10.Business
 {
     public class Learner
     {
-        public int learnerID { get; private set; }
-        public string username { get; private set; }
-        public string phoneNumber { get; private set; }
-        public string email { get; private set; }
+        public int learnerID { get; set; }
+        public string username { get; set; }
+        public string phoneNumber { get;  set; }
+        public string email { get;  set; }
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
-        public string fullname { get; private set; }
-        public string school { get; private set; }
-        public string grade11 { get; private set; }
-        public string grade12 { get; private set; }
-        public string province { get; private set; }
+        public string fullname { get;  set; }
+        public string school { get;  set; }
+        public string grade11 { get;  set; }
+        public string grade12 { get;  set; }
+        public string province { get;  set; }
 
-        public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province)
+        public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11,string grade12, string email, string province)
         {
             this.learnerID = learnerID;
             this.username = username;

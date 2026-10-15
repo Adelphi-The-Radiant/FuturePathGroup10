@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
-namespace FuturePathGroup10.Funding
+namespace FuturePathGroup10.Business
 {
     internal class FundingOption : ReferenceData
     {
@@ -11,7 +12,7 @@ namespace FuturePathGroup10.Funding
         /// This should be decimal
         private float amount;
 
-        public List<string> getFundingOptions()
+        public Collection<string> getFundingOptions()
         {
             throw new NotImplementedException();
         }

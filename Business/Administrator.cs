@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Domain
+namespace FuturePathGroup10.Business
+
 {
     internal class Administrator
     {

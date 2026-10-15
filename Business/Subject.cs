@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Prerequisites
+namespace FuturePathGroup10.Business
 {
-    internal class Subject
+    public class Subject
     {
         private string subjectName;
         private string subjectDescription;
