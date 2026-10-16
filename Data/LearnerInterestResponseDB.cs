@@ -13,7 +13,7 @@ namespace FuturePathGroup10.Data
 	{
         #region Attributes
         private const string TABLE_LIR = "LearnerInterestResponse";
-		private const string SQL_SELECT_LIR;
+		private const string SQL_SELECT_LIR = "SELECT * FROM LearnerInterestResponse";
 
 		public Collection<LearnerInterestResponse> LIRs
 		private LearnerDB learnerDB;
