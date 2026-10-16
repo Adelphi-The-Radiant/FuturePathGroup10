@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FuturePathGroup10.Business
@@ -11,7 +12,7 @@ namespace FuturePathGroup10.Business
         /// This should be decimal
         private float amount;
 
-        public List<string> getFundingOptions()
+        public Collection<string> getFundingOptions()
         {
             throw new NotImplementedException();
         }

@@ -10,7 +10,7 @@ namespace FuturePathGroup10.Business
         public string fullName { get;  set; }
 
         public CareerAdvisor(int advisorID, string fullName, string username) : base(username)
-        {
+    {
             this.advisorID = advisorID;
             this.fullName = fullName;
         }

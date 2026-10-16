@@ -11,7 +11,7 @@ namespace FuturePathGroup10.Business
         public string response { get; private set; }
 
         public LearnerInterestResponse(int responseID,Learner learner, string response)
-        {
+    {
             this.responseID = responseID;
             this.learner = learner;
             this.response = response;
