@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FuturePathGroup10.Reccomendation
 {
-    internal class DegreeProgramme
+    public class DegreeProgramme
     {
         private int facultyID;
         private int degreeID;

@@ -1,17 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10.Reccomendation;
 
 namespace FuturePathGroup10.Advisory
 {
-    internal class AdvisorySession
+    public class AdvisorySession
     {
-        private int sessionID;
-        private int learnerID;
-        private int advisorID;
+        public int sessionID;
+        public int learnerID;
+        public int advisorID;
         // Should be a more specialized type for dates
-        private string date;
-        private string notes;
+        public DateTime date;
+        public string notes;
+
+        public AdvisorySession(int sessionID, int learnerID, int advisorID, DateTime date, string notes)
+        {
+            this.sessionID = sessionID;
+            this.learnerID = learnerID;
+            this.advisorID = advisorID;
+            this.date = date;
+            this.notes = notes;
+        }
 
         public void addSubject(Subject subjectName)
         {
