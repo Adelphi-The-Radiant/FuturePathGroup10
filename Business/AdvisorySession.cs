@@ -1,10 +1,8 @@
-﻿using FuturePathGroup10.Prerequisites;
-using FuturePathGroup10.Recommendation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Advisory
+namespace FuturePathGroup10.Business
 {
     internal class AdvisorySession
     {

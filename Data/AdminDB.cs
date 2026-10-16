@@ -1,4 +1,4 @@
-﻿using FuturePathGroup10.Administration;
+﻿using FuturePathGroup10.Business;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -15,7 +15,8 @@ namespace FuturePathGroup10.Data
 		#region Attributes
 
 		private const string ADMIN_TABLE = "Administrator";
-        private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator";
+        private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator;";
+
 
         public Collection<Administrator> admins { get; private set; }
 
@@ -31,6 +32,7 @@ namespace FuturePathGroup10.Data
 		{
 			foreach(DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
 			{
+
 				int adminID = Convert.ToInt32(row["AdminID"]);
 				string username = row["Username"].ToString();
 				string fullName = row["FullName"].ToString();

@@ -1,4 +1,4 @@
-﻿using FuturePathGroup10.Advisory;
+﻿using FuturePathGroup10.Business;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -15,6 +15,7 @@ namespace FuturePathGroup10.Data
         #region Attributes
 
         private const string CAREER_ADVISOR_TABLE = "Administrator";
+
         private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator";
 
 

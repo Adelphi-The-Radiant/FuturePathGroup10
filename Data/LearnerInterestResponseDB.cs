@@ -1,5 +1,4 @@
-﻿using FuturePathGroup10.Interest;
-using FuturePathGroup10.Learner;
+﻿using FuturePathGroup10.Business;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -30,11 +29,12 @@ namespace FuturePathGroup10.Data
 		{
 			foreach(DataRow row in dsMain.Tables[TABLE_LIR].Rows)
 			{
+
 				int responseID = Convert.ToInt32(row["ResponseID"]);
 				int learnerID = Convert.ToInt32(row["LearnerID"]);
 				string result = row["Result"].ToString();
 
-				Learner.Learner learner = learnerDB.getLearner(learnerID);
+				Learner learner = learnerDB.getLearner(learnerID);
 
 				LearnerInterestResponse LIR = new LearnerInterestResponse(responseID, learner, result);
 				learner.addLIR(LIR);
@@ -108,7 +108,7 @@ namespace FuturePathGroup10.Data
                     }
                     else
                     {
-                        throw new Exception("LearnerInterestResponse not found in Tables");
+                        throw new Exception("LearnerInterestResponse not found in table.");
                     }
                     break;
             }

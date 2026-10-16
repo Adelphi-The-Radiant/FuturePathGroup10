@@ -1,33 +1,32 @@
-﻿using FuturePathGroup10.Funding;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Learner
+namespace FuturePathGroup10.Business
 {
-    internal class LearnerController
+    internal class AdvisorController
     {
-        public void createProfile(Learner learner)
+        public void viewAdvisoryOutcome(int learnerID)
         {
             throw new NotImplementedException();
         }
 
-        public void updateProfile(Learner learner)
+        public void viewLearnerInformation(int learnerID)
         {
             throw new NotImplementedException();
         }
 
-        public void selectFaculty(Learner learner)
+        public void viewExportSummary(int learnerID)
         {
             throw new NotImplementedException();
         }
 
-        public void selectDegreeProgramme(Learner learner)
+        public void exportSummary(string fullReport)
         {
             throw new NotImplementedException();
         }
 
-        public void viewFundingOption(FundingOption options)
+        public void viewAdvisorySession(int learnerID)
         {
             throw new NotImplementedException();
         }

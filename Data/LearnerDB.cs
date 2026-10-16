@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
-using FuturePathGroup10.Learner;
+using FuturePathGroup10.Business;
 
 namespace FuturePathGroup10.Data
 {
@@ -13,7 +13,7 @@ namespace FuturePathGroup10.Data
     public class LearnerDB : DB
     {
         #region Attributes
-        public Collection<Learner.Learner> learners { get; private set; }
+        public Collection<Learner> learners { get; private set; }
         
         private DataSet learnerDS;
         private DataSet gradeDS;
@@ -27,26 +27,32 @@ namespace FuturePathGroup10.Data
         private const string TABLE_GRADE = "Grade_Level";
         #endregion
 
-        #region Constructor
-        LearnerDB() : base()
+
+        public LearnerDB() : base()
         {
-            learners = new Collection<Learner.Learner>();
+            learners = new Collection<Business.Learner>();
+        }
+
+        // Called by AdvisorController 
+        public Collection<Business.Learner> GetAllLearners()
+        {
+            learners.Clear();                                // otherwise a second call adds duplicates
             FillDataSet(SQL_SELECT_LEARNERS, TABLE_LEARNERS);
             learnerDS = dsMain;
             learnerDA = daMain;
             FillDataSet(SQL_SELECT_GRADE, TABLE_GRADE);
             gradeDS = dsMain;
             gradeDA = daMain;
-
             LoadLearners();
+            return learners;
         }
         #endregion
 
         #region Get earners
         //Get learner with a certain ID. Returns null if not found.
-        public Learner.Learner getLearner(int learnerID)
+        public Learner getLearner(int learnerID)
         {
-            foreach (Learner.Learner learner in learners)
+            foreach (Learner learner in learners)
             {
                 if (learner.learnerID == learnerID)
                 {
@@ -78,7 +84,7 @@ namespace FuturePathGroup10.Data
                     string email = row["Email"].ToString();
                     string province = row["Province"].ToString();
 
-                    Learner.Learner learner = new Learner.Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
+                    Learner learner = new Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
                     learners.Add(learner);
                 }
                 catch (Exception e)
@@ -101,7 +107,7 @@ namespace FuturePathGroup10.Data
 
         #region DataSet Updates
         //Helper methods to fill rows and find rows in the dataset for learners
-        private void FillLearnerRow(DataRow row, Learner.Learner learner)
+        private void FillLearnerRow(DataRow row, Learner learner)
         {
             row["LearnerID"] = learner.learnerID;
             row["Username"] = learner.username;
@@ -119,12 +125,12 @@ namespace FuturePathGroup10.Data
             row["Grade12Mark"] = grade12Mark;
         }
         //overloaded of previous
-        private void FillGradeRow(DataRow row, Learner.Learner learner)
+        private void FillGradeRow(DataRow row, Learner learner)
         {
             FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.overallGrade.grade11Result), Convert.ToSingle(learner.overallGrade.grade12Result));
         }
         //Helper method that finds the row in the dataset for a given learner. Returns null if not found.
-        private DataRow FindLearnerRow(Learner.Learner learner)
+        private DataRow FindLearnerRow(Learner learner)
         {
             for (int i = 0; i < learnerDS.Tables[TABLE_LEARNERS].Rows.Count; i++)
             {
@@ -136,7 +142,7 @@ namespace FuturePathGroup10.Data
             return null;
         }
         //Helper method that finds the row in the dataset for a grade level. Returns null if not found.
-        private DataRow FindGradeRow(Learner.Learner learner)
+        private DataRow FindGradeRow(Learner learner)
         {
             for (int i = 0; i < gradeDS.Tables[TABLE_GRADE].Rows.Count; i++)
             {
@@ -148,7 +154,7 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
-        private int findLearnerIndex(Learner.Learner learner)
+        private int findLearnerIndex(Learner learner)
         {
             for (int i = 0; i < learners.Count; i++)
             {
@@ -161,7 +167,7 @@ namespace FuturePathGroup10.Data
         }
         //Modifies the dataset based on the operation given to it using a learner object. DOES NOT UPDATE THE ACTUAL DATABASE. Use UpdateDataSource() to update the database.
         //Throws an exception if the learner couldn't be found in edits and deletes. Handle appropriately.
-        public void DataSetChange(Learner.Learner learner, DBOperation operation)
+        public void DataSetChange(Learner learner, DBOperation operation)
         {
             DataRow learnerRow;
             DataRow gradeRow;
@@ -313,7 +319,95 @@ namespace FuturePathGroup10.Data
             learnerDA.DeleteCommand.Parameters.Add(param);
             gradeDA.DeleteCommand.Parameters.Add(param);
         }
+
+
+
         #endregion
+
+        #region Simple single-learner methods (used by LearnerController)
+
+        // Inserts ONE learner and returns the new AutoNumber ID.
+        public int Add(Business.Learner learner)
+        {
+            using (OleDbConnection cn = new OleDbConnection(cnMain.ConnectionString))
+            {
+                cn.Open();
+                OleDbCommand cmd = new OleDbCommand(
+                    "INSERT INTO Learner (FullName, PhoneNumber, Email, Username, School, Province) VALUES ( ?, ?, ?, ?, ?, ?)", cn);
+   
+                cmd.Parameters.AddWithValue("@FullName", learner.fullname ?? "");
+                cmd.Parameters.AddWithValue("@PhoneNumber", learner.phoneNumber ?? "");
+                cmd.Parameters.AddWithValue("@Email", learner.email ?? "");
+                cmd.Parameters.AddWithValue("@Username", learner.username ?? "");
+                cmd.Parameters.AddWithValue("@School", learner.school ?? "");
+                cmd.Parameters.AddWithValue("@Province", learner.province ?? "");
+                cmd.ExecuteNonQuery();
+
+
+                return Convert.ToInt32(new OleDbCommand("SELECT @@IDENTITY", cn).ExecuteScalar());
+            }
+        }
+
+        // Returns one learner, or null if not found.
+        public Business.Learner GetById(int learnerId)
+        {
+            using (OleDbConnection cn = new OleDbConnection(cnMain.ConnectionString))
+            {
+                cn.Open();
+                OleDbCommand cmd = new OleDbCommand("SELECT * FROM Learner WHERE LearnerID = ?", cn);
+                cmd.Parameters.AddWithValue("@LearnerID", learnerId);
+
+                string username, phone, fullname, school, email, province;
+                using (OleDbDataReader rdr = cmd.ExecuteReader())
+                {
+                    if (!rdr.Read()) return null;
+                    username = rdr["Username"].ToString();
+                    phone = rdr["PhoneNumber"].ToString();
+                    fullname = rdr["FullName"].ToString();
+                    school = rdr["School"].ToString();
+                    email = rdr["Email"].ToString();
+                    province = rdr["Province"].ToString();
+                }
+
+                // grade marks live in their own table; a learner may not have a row yet
+                string grade11 = "", grade12 = "";
+                OleDbCommand gcmd = new OleDbCommand("SELECT * FROM GradeLevel WHERE LearnerID = ?", cn);
+                gcmd.Parameters.AddWithValue("@LearnerID", learnerId);
+                using (OleDbDataReader grd = gcmd.ExecuteReader())
+                {
+                    if (grd.Read())
+                    {
+                        grade11 = grd["Grade11Mark"].ToString();
+                        grade12 = grd["Grade12Mark"].ToString();
+                    }
+                }
+
+                return new Business.Learner(learnerId, username, phone, fullname, school, grade11, grade12, email, province);
+            }
+        }
+
+        // Updates ONE learner's profile row.
+        public void Update(Business.Learner learner)
+        {
+            using (OleDbConnection cn = new OleDbConnection(cnMain.ConnectionString))
+            {
+                cn.Open();
+                OleDbCommand cmd = new OleDbCommand(
+                    "UPDATE Learner SET FullName = ?, PhoneNumber = ?, Email = ?, Username = ?, School = ?, Province = ? WHERE LearnerID = ?", cn);
+                cmd.Parameters.AddWithValue("@FullName", learner.fullname ?? "");
+                cmd.Parameters.AddWithValue("@PhoneNumber", learner.phoneNumber ?? "");
+                cmd.Parameters.AddWithValue("@Email", learner.email ?? "");
+                cmd.Parameters.AddWithValue("@Username", learner.username ?? "");
+                cmd.Parameters.AddWithValue("@School", learner.school ?? "");
+                cmd.Parameters.AddWithValue("@Province", learner.province ?? "");
+                cmd.Parameters.AddWithValue("@LearnerID", learner.learnerID);   // WHERE parameter goes LAST
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        #endregion
+
+
 
     }
 }

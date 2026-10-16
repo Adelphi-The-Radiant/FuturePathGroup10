@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FuturePathGroup10.Learner;
 
-namespace FuturePathGroup10.Prerequisites
+namespace FuturePathGroup10.Business
 {
     internal class GradeLevel
     {
