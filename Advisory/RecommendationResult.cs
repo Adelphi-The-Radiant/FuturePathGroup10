@@ -9,7 +9,7 @@ namespace FuturePathGroup10.Advisory
         private int learnerID;
         private int degreeID;
         // Should be a specialized type for dates
-        private string date;
+        private DateTime date;
         private string results;
 
         public string getRecommendationResults()

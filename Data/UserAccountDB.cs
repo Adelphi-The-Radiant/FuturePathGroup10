@@ -1,7 +1,4 @@
-﻿using FuturePathGroup10;
-using FuturePathGroup10.Learner;
-using FuturePathGroup10.Prerequisites;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;

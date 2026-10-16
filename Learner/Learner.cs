@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
+using FuturePathGroup10.Interest;
 
 namespace FuturePathGroup10.Learner
 {
@@ -18,7 +19,8 @@ namespace FuturePathGroup10.Learner
         internal GradeLevel overallGrade { get; private set; }
         public string province { get; private set; }
 
-        private Collection<LearnerSubject> learnerSubjects ;
+        private Collection<LearnerSubject> learnerSubjects;
+        private Collection<LearnerInterestResponse> LIRs;
 
         public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province) : base(username)
         {
@@ -30,13 +32,19 @@ namespace FuturePathGroup10.Learner
             this.overallGrade = new GradeLevel(Convert.ToSingle(grade11), Convert.ToSingle(grade12));
             this.province = province;
             this.learnerSubjects = new Collection<LearnerSubject>();
+            this.LIRs = new Collection<LearnerInterestResponse>();
         }
 
 
 
         public void addLearnerSubject(LearnerSubject learnerSubject)
         {
-            this.learnerSubjects.Add(learnerSubject);
+            learnerSubjects.Add(learnerSubject);
+        }
+
+        public void addLIR(LearnerInterestResponse LIR)
+        {
+            LIRs.Add(LIR);
         }
 
         public void setCurrentGrade(string currentGrade)
