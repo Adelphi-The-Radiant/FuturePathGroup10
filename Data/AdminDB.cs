@@ -3,6 +3,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Security.Principal;
+using System.Data.OleDb;
+using System.Data.SqlClient;
 
 namespace FuturePathGroup10.Data
 {
@@ -22,10 +24,10 @@ namespace FuturePathGroup10.Data
 		{
 			admins = new Collection<Administrator>();
 			FillDataSet(SQL_SELECT_ADMIN, ADMIN_TABLE);
-
+            LoadAdmins();
 		}
 
-		private void LoadAccounts()
+		private void LoadAdmins()
 		{
 			foreach(DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
 			{
@@ -38,7 +40,9 @@ namespace FuturePathGroup10.Data
 			}
 		}
 
-		private void FillDataRow(DataRow row, Administrator admin)
+        #region Database Updates
+
+        private void FillDataRow(DataRow row, Administrator admin)
 		{
 			row["AdminID"] = admin.adminID;
 			row["Username"] = admin.username;
@@ -68,7 +72,7 @@ namespace FuturePathGroup10.Data
                     FillDataRow(row, admin);
                     dsMain.Tables[ADMIN_TABLE].Rows.Add(row);
 
-                    accounts.Add(admin);
+                    admins.Add(admin);
                     break;
 
                 case DBOperation.Edit:
@@ -88,7 +92,7 @@ namespace FuturePathGroup10.Data
                     if (row != null)
                     {
                         row.Delete();
-                        accounts.Remove(admin);
+                        admins.Remove(admin);
                     }
                     else
                     {
@@ -96,8 +100,68 @@ namespace FuturePathGroup10.Data
                     }
                     break;
             }
-
         }
+
+        #endregion
+
+        #region CRUD
+
+        internal override bool UpdateAllSources()
+        {
+            return UpdateDataSource(SQL_SELECT_ADMIN, ADMIN_TABLE);
+        }
+
+        internal override void Create_INSERT_Command()
+        {
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO Administrator (@AdminID, @Username, @FullName) VALUES (AdminID, Username, FullName)", cnMain);
+            Build_INSERT_Parameters();
+        }
+
+        internal override void Create_UPDATE_Command()
+        {
+            daMain.UpdateCommand = new OleDbCommand("UPDATE Administrator SET (@AdminID, @Username, @FullName) WHERE AdminID = @AdminID", cnMain);
+            Build_UPDATE_Parameters();
+        }
+
+        internal override void Create_DELETE_Command()
+        {
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM Administrator WHERE AdminID = @AdminID", cnMain);
+            Build_DELETE_Parameters();
+        }
+
+        internal override void Build_INSERT_Parameters()
+        {
+            SqlParameter param = new SqlParameter("@AdminID", SqlDbType.Int, 32, "AdminID");
+            daMain.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
+            daMain.InsertCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@FullName", SqlDbType.NChar, 255, "FullName");
+            daMain.InsertCommand.Parameters.Add(param);
+        }
+
+        internal override void Build_UPDATE_Parameters()
+        {
+            SqlParameter param = new SqlParameter("@AdminID", SqlDbType.Int, 32, "AdminID");
+            daMain.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
+            daMain.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@FullName", SqlDbType.NChar, 255, "FullName");
+            daMain.UpdateCommand.Parameters.Add(param);
+        }
+
+        internal override void Build_DELETE_Parameters()
+        {
+            SqlParameter param = new SqlParameter("@AdminID", SqlDbType.Int, 32, "AdminID");
+            daMain.DeleteCommand.Parameters.Add(param);
+        }
+
+        #endregion
+
+
     }
 
 }

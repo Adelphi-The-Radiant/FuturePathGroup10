@@ -19,15 +19,17 @@ namespace FuturePathGroup10.Data
 		private const string SQL_SELECT_USERACCOUNT = "SELECT * FROM UserAccount";
 		public Collection<UserAccount> accounts { get; private set; }
 		private LearnerDB learnerDB;
+        private AdminDB adminDB;
         //private AdminDB adminDB;
         //private AdvisorDB advisorDB;
         #endregion
         #region Constructor
-        public UserAccountDB(LearnerDB learnerDB) //Include admins and advisors
+        public UserAccountDB(LearnerDB learnerDB, AdminDB adminDB) //Include admins and advisors
         {
             accounts = new Collection<UserAccount>();
             FillDataSet(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
             this.learnerDB = learnerDB;
+            this.adminDB = adminDB;
             LoadAccounts();
         }
         #endregion
@@ -44,6 +46,7 @@ namespace FuturePathGroup10.Data
 				UserAccount account = new UserAccount(username, password, dateCreated, permissionLevel);
 				accounts.Add(account);
                 Utilities.FindAndSetAccountHolder(learnerDB.learners, account);
+                Utilities.FindAndSetAccountHolder(adminDB.admins, account);
                 //Do this for when you make an adminDB and an advisorDB
             }
 		}
@@ -133,7 +136,7 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM UserAccount WHERE Username = @Username");
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM UserAccount WHERE Username = @Username", cnMain);
             Build_DELETE_Parameters();
         }
 

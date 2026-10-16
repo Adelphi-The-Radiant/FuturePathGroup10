@@ -165,7 +165,6 @@ namespace FuturePathGroup10.Data
         {
             DataRow learnerRow;
             DataRow gradeRow;
-            int learnerIndex;
 
             switch (operation)
             {
