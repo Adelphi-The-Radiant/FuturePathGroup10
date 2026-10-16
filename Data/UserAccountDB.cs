@@ -20,16 +20,16 @@ namespace FuturePathGroup10.Data
 		public Collection<UserAccount> accounts { get; private set; }
 		private LearnerDB learnerDB;
         private AdminDB adminDB;
-        //private AdminDB adminDB;
-        //private AdvisorDB advisorDB;
+        private CareerAdvisorDB advisorDB;
         #endregion
         #region Constructor
-        public UserAccountDB(LearnerDB learnerDB, AdminDB adminDB) //Include admins and advisors
+        public UserAccountDB(LearnerDB learnerDB, AdminDB adminDB, CareerAdvisorDB advisorDB) //Include admins and advisors
         {
             accounts = new Collection<UserAccount>();
             FillDataSet(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
             this.learnerDB = learnerDB;
             this.adminDB = adminDB;
+            this.advisorDB = advisorDB;
             LoadAccounts();
         }
         #endregion
@@ -45,9 +45,21 @@ namespace FuturePathGroup10.Data
 
 				UserAccount account = new UserAccount(username, password, dateCreated, permissionLevel);
 				accounts.Add(account);
-                Utilities.FindAndSetAccountHolder(learnerDB.learners, account);
-                Utilities.FindAndSetAccountHolder(adminDB.admins, account);
-                //Do this for when you make an adminDB and an advisorDB
+                //Check each collection to find a username match and when we do we continue to the next loop to prevent wasted work
+                if (Utilities.FindAndSetAccountHolder(learnerDB.learners, account))
+                {
+                    continue;
+                }
+                
+                if (Utilities.FindAndSetAccountHolder(adminDB.admins, account))
+                {
+                    continue;
+                }
+                
+                if (Utilities.FindAndSetAccountHolder(advisorDB.advisors, account))
+                {
+                    continue;
+                }
             }
 		}
 
