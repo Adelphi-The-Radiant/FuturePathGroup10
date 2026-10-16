@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Interest
 {
     public class InterestQuestionnaire
     {

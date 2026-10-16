@@ -2,13 +2,23 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Interest
 {
-    internal class Degree : ReferenceData
+    internal class InterestCategory : ReferenceData
     {
-        private int degreeID;
+        private int interestCategoryID;
         private string title;
         private string description;
+
+        public InterestCategory getCategory()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void addCategory(string title)
+        {
+            throw new NotImplementedException();
+        }
 
         public override void add()
         {

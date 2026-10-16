@@ -1,24 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Text;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Reccomendation
 {
-    internal class FundingOption : ReferenceData
+    internal class Faculty : ReferenceData
     {
-        private int optionID;
+        private int facultyID;
+        private string title;
         private string description;
-        /// This should be decimal
-        private float amount;
 
-        public Collection<string> getFundingOptions()
-        {
-            throw new NotImplementedException();
-        }
-
-        // This takes no parameters and returns a string? Weird for a setter
-        public string setFundingOptions()
+        public Faculty getFaculty()
         {
             throw new NotImplementedException();
         }

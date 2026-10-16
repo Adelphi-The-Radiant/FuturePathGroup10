@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Learner
 {
     internal class LearnerController
     {
@@ -58,7 +58,7 @@ namespace FuturePathGroup10.Business
 
         public Learner getLearner(int learnerId) 
         {
-            return learnerDB.GetById(learnerId);
+            return learnerDB.getLearner(learnerId);
         }
 
         // Helper method to validate if the mandotory fileds have information profile creation and update

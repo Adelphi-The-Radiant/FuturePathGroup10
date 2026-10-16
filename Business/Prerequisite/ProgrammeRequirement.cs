@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FuturePathGroup10.Reccomendation;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Prerequisites
 {
     internal class ProgrammeRequirement : ReferenceData
     {

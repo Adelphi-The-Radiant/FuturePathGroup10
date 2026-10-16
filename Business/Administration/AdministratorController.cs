@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Administration
 {
     internal class AdministratorController
     {

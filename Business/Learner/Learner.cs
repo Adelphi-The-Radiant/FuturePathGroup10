@@ -1,9 +1,10 @@
-﻿using FuturePathGroup10;
+﻿using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10.Interest;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Learner
 {
     public class Learner : AccountHolder
     {

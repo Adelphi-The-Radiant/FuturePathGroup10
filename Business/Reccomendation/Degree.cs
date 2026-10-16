@@ -2,18 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Business
+namespace FuturePathGroup10.Reccomendation
 {
-    internal class Faculty : ReferenceData
+    internal class Degree : ReferenceData
     {
-        private int facultyID;
+        private int degreeID;
         private string title;
         private string description;
-
-        public Faculty getFaculty()
-        {
-            throw new NotImplementedException();
-        }
 
         public override void add()
         {
