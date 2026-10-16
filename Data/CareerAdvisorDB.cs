@@ -1,4 +1,4 @@
-﻿using FuturePathGroup10.Business;
+﻿using FuturePathGroup10.Advisory;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;

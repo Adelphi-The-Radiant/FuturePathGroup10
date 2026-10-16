@@ -1,4 +1,4 @@
-﻿using FuturePathGroup10.Business;
+﻿using FuturePathGroup10.Interest;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -34,7 +34,7 @@ namespace FuturePathGroup10.Data
 				int learnerID = Convert.ToInt32(row["LearnerID"]);
 				string result = row["Result"].ToString();
 
-				Learner learner = learnerDB.getLearner(learnerID);
+				Learner.Learner learner = learnerDB.getLearner(learnerID);
 
 				LearnerInterestResponse LIR = new LearnerInterestResponse(responseID, learner, result);
 				learner.addLIR(LIR);
