@@ -15,13 +15,13 @@ namespace FuturePathGroup10.Data
         #region Attributes
 
         private const string CAREER_ADVISOR_TABLE = "Administrator";
-        private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator0;"
+        private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator";
 
 
         public Collection<CareerAdvisor> advisors;
 
         #endregion
-        public CareerAdvisorDBB()
+        public CareerAdvisorDB()
         {
             advisors = new Collection<CareerAdvisor>();
             FillDataSet(SQL_SELECT_CAREER_ADVISOR, CAREER_ADVISOR_TABLE);
@@ -31,11 +31,11 @@ namespace FuturePathGroup10.Data
 
         private void LoadAdvisors()
         {
-            foreach (DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
+            foreach (DataRow row in dsMain.Tables[CAREER_ADVISOR_TABLE].Rows)
             {
-                int advisorID = row<int>("AdvisorID");
-                string username = row["Username"];
-                string fullName = row["FullName"];
+                int advisorID = Convert.ToInt32(row["AdvisorID"]);
+                string username = row["Username"].ToString();
+                string fullName = row["FullName"].ToString();
 
                 CareerAdvisor advisor = new CareerAdvisor(advisorID, fullName, username);
                 advisors.Add(advisor);
@@ -51,11 +51,11 @@ namespace FuturePathGroup10.Data
             row["FullName"] = advisor.fullName;
         }
 
-        private DataRow FindDataRow(Administrator advisor)
+        private DataRow FindDataRow(CareerAdvisor advisor)
         {
             for (int i = 0; i < dsMain.Tables[CAREER_ADVISOR_TABLE].Rows.Count; i++)
             {
-                if (Convert.ToInt32(dsMain.Tables[CAREER_ADVISOR_TABLE].Rows[i]["AdvisorID"]) == advisor.AdvisorID)
+                if (Convert.ToInt32(dsMain.Tables[CAREER_ADVISOR_TABLE].Rows[i]["AdvisorID"]) == advisor.advisorID)
                 {
                     return dsMain.Tables[CAREER_ADVISOR_TABLE].Rows[i];
                 }
@@ -78,7 +78,7 @@ namespace FuturePathGroup10.Data
                     break;
 
                 case DBOperation.Edit:
-                    row = findDataRow(advisor);
+                    row = FindDataRow(advisor);
                     if (row != null)
                     {
                         FillDataRow(row, advisor);
@@ -90,7 +90,7 @@ namespace FuturePathGroup10.Data
                     break;
 
                 case DBOperation.Delete:
-                    row = findDataRow(advisor);
+                    row = FindDataRow(advisor);
                     if (row != null)
                     {
                         row.Delete();

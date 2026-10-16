@@ -15,9 +15,9 @@ namespace FuturePathGroup10.Data
 		#region Attributes
 
 		private const string ADMIN_TABLE = "Administrator";
-		private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator0;"
+        private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator";
 
-		public Collection<Administrator> admins;
+        public Collection<Administrator> admins { get; private set; }
 
         #endregion
         public AdminDB()
@@ -31,9 +31,9 @@ namespace FuturePathGroup10.Data
 		{
 			foreach(DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
 			{
-				int adminID = row<int>("AdminID");
-				string username = row["Username"];
-				string fullName = row["FullName"];
+				int adminID = Convert.ToInt32(row["AdminID"]);
+				string username = row["Username"].ToString();
+				string fullName = row["FullName"].ToString();
 
 				Administrator admin = new Administrator(adminID, fullName, username);
 				admins.Add(admin);
@@ -53,7 +53,7 @@ namespace FuturePathGroup10.Data
         {
             for (int i = 0; i < dsMain.Tables[ADMIN_TABLE].Rows.Count; i++)
             {
-                if (Convert.ToInt32(dsMain.Tables[ADMIN_TABLE].Rows[i]["AdminID"]) == admin.AdminID)
+                if (Convert.ToInt32(dsMain.Tables[ADMIN_TABLE].Rows[i]["AdminID"]) == admin.adminID)
                 {
                     return dsMain.Tables[ADMIN_TABLE].Rows[i];
                 }
@@ -76,7 +76,7 @@ namespace FuturePathGroup10.Data
                     break;
 
                 case DBOperation.Edit:
-                    row = findDataRow(admin);
+                    row = FindDataRow(admin);
                     if (row != null)
                     {
                         FillDataRow(row, admin);
@@ -88,7 +88,7 @@ namespace FuturePathGroup10.Data
                     break;
 
                 case DBOperation.Delete:
-                    row = findDataRow(admin);
+                    row = FindDataRow(admin);
                     if (row != null)
                     {
                         row.Delete();

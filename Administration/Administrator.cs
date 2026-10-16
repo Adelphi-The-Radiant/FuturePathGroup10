@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FuturePathGroup10.Administration
 {
-    internal class Administrator : AccountHolder
+    public class Administrator : AccountHolder
     {
         public int adminID { get; private set; }
         public string fullName { get; private set; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FuturePathGroup10.Advisory
 {
-    internal class CareerAdvisor : AccountHolder
+    public class CareerAdvisor : AccountHolder
     {
         public int advisorID { get; private set; }
         public string fullName { get; private set; }
