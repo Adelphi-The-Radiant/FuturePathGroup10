@@ -91,7 +91,7 @@ namespace FuturePathGroup10.Data
                     }
                     else
                     {
-                        throw new Exception("Learner not found in Tables");
+                        throw new Exception("UserAccount not found in Tables");
                     }
                     break;
 
@@ -104,7 +104,7 @@ namespace FuturePathGroup10.Data
                     }
                     else
                     {
-                        throw new Exception("Learner not found in Tables");
+                        throw new Exception("UserAccount not found in Tables");
                     }
                     break;
             }

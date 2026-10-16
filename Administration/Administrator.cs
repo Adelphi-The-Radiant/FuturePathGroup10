@@ -6,13 +6,13 @@ namespace FuturePathGroup10.Administration
 {
     internal class Administrator : AccountHolder
     {
-        private int adminID;
-        private string username;
-        private string fullName;
+        public int adminID { get; private set; }
+        public string fullName { get; private set; }
 
-        public Administrator(string username) : base(username)
+        public Administrator(int adminID, string fullName,string username) : base(username)
         {
-
+            this.adminID = adminID;
+            this.fullName = fullName;
         }
 
         public void addReferenceData(ReferenceData data)
