@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Administration
+namespace FuturePathGroup10.Business
 {
-    internal class Administrator : AccountHolder
+    public class Administrator : AccountHolder
     {
-        public int adminID { get; private set; }
-        public string fullName { get; private set; }
+        public int adminID { get;  set; }
+        public string fullName { get;  set; }
 
         public Administrator(int adminID, string fullName,string username) : base(username)
         {

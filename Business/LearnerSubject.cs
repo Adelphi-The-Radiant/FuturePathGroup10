@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FuturePathGroup10.Learner;
-
-namespace FuturePathGroup10.Prerequisites
+namespace FuturePathGroup10.Business
 {
     public class LearnerSubject
     {
-        public Learner.Learner learner { get; private set; }
+        public Learner learner { get; private set; }
         public Subject subject { get; private set; }
         public float result { get; private set; }
 
-        public LearnerSubject(Learner.Learner learner, Subject subject, float result)
+        public LearnerSubject(Learner learner, Subject subject, float result)
         {
             this.learner = learner;
             this.subject = subject;

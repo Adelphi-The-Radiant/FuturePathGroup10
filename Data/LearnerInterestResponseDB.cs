@@ -1,5 +1,4 @@
-﻿using FuturePathGroup10.Interest;
-using FuturePathGroup10.Learner;
+﻿using FuturePathGroup10.Business;
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -13,9 +12,9 @@ namespace FuturePathGroup10.Data
 	{
         #region Attributes
         private const string TABLE_LIR = "LearnerInterestResponse";
-		private const string SQL_SELECT_LIR;
+        private const string SQL_SELECT_LIR = "SELECT ResponseID, LearnerID, Response FROM LearnerInterestResponse";
 
-		public Collection<LearnerInterestResponse> LIRs
+        public Collection<LearnerInterestResponse> LIRs;
 		private LearnerDB learnerDB;
         #endregion
         public LearnerInterestResponseDB(LearnerDB learnerDB)
@@ -29,14 +28,14 @@ namespace FuturePathGroup10.Data
 		{
 			foreach(DataRow row in dsMain.Tables[TABLE_LIR].Rows)
 			{
-				int responseID = row["ResponseID"];
-				int learnerID = row["LearnerID"];
-				string response = row["Response"];
+				int responseID = row.Field<int>("ResponseID");
+				int learnerID = row.Field<int>("LearnerID");
+				string response = row.Field<string>("Response");
 
-				Learner.Learner learner = learnerDB.getLearner(learnerID);
+				Learner learner = learnerDB.getLearner(learnerID);
 
 				LearnerInterestResponse LIRs = new LearnerInterestResponse(responseID, learner, response);
-				learner.addLIR(LIR);
+				learner.addLIR(LIRs);
 			}
 		}
 
@@ -75,7 +74,7 @@ namespace FuturePathGroup10.Data
                     break;
 
                 case DBOperation.Edit:
-                    row = findDataRow(LIR);
+                    row = FindDataRow(LIR);
                     if (row != null)
                     {
                         FillDataRow(row, LIR);
@@ -87,15 +86,15 @@ namespace FuturePathGroup10.Data
                     break;
 
                 case DBOperation.Delete:
-                    row = findDataRow(LIR);
+                    row = FindDataRow(LIR);
                     if (row != null)
                     {
                         row.Delete();
-                        LIRs.Remove(account);
+                        LIRs.Remove(LIR);
                     }
                     else
                     {
-                        throw new Exception("UserAccount not found in Tables");
+                        throw new Exception("LearnerInterestResponse not found in table.");
                     }
                     break;
             }

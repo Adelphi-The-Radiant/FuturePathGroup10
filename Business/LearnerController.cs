@@ -1,9 +1,8 @@
-﻿using FuturePathGroup10.Funding;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FuturePathGroup10.Learner
+namespace FuturePathGroup10.Business
 {
     internal class LearnerController
     {

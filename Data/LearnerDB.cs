@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
-using FuturePathGroup10.Learner;
+using FuturePathGroup10.Business;
 
 namespace FuturePathGroup10.Data
 {
@@ -13,7 +13,7 @@ namespace FuturePathGroup10.Data
     public class LearnerDB : DB
     {
         #region Attributes
-        public Collection<Learner.Learner> learners { get; private set; }
+        public Collection<Learner> learners { get; private set; }
         
         private DataSet learnerDS;
         private DataSet gradeDS;
@@ -30,7 +30,7 @@ namespace FuturePathGroup10.Data
         #region Constructor
         LearnerDB() : base()
         {
-            learners = new Collection<Learner.Learner>();
+            learners = new Collection<Learner>();
             FillDataSet(SQL_SELECT_LEARNERS, TABLE_LEARNERS);
             learnerDS = dsMain;
             learnerDA = daMain;
@@ -44,9 +44,9 @@ namespace FuturePathGroup10.Data
 
         #region Get earners
         //Get learner with a certain ID. Returns null if not found.
-        public Learner.Learner getLearner(int learnerID)
+        public Learner getLearner(int learnerID)
         {
-            foreach (Learner.Learner learner in learners)
+            foreach (Learner learner in learners)
             {
                 if (learner.learnerID == learnerID)
                 {
@@ -78,7 +78,7 @@ namespace FuturePathGroup10.Data
                     string email = row["Email"].ToString();
                     string province = row["Province"].ToString();
 
-                    Learner.Learner learner = new Learner.Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
+                    Learner learner = new Learner(Convert.ToInt32(learnerID), username, phoneNumber, fullname, school, grade11, grade12, email, province);
                     learners.Add(learner);
                 }
                 catch (Exception e)
@@ -101,7 +101,7 @@ namespace FuturePathGroup10.Data
 
         #region DataSet Updates
         //Helper methods to fill rows and find rows in the dataset for learners
-        private void FillLearnerRow(DataRow row, Learner.Learner learner)
+        private void FillLearnerRow(DataRow row, Learner learner)
         {
             row["LearnerID"] = learner.learnerID;
             row["Username"] = learner.username;
@@ -119,12 +119,12 @@ namespace FuturePathGroup10.Data
             row["Grade12Mark"] = grade12Mark;
         }
         //overloaded of previous
-        private void FillGradeRow(DataRow row, Learner.Learner learner)
+        private void FillGradeRow(DataRow row, Learner learner)
         {
             FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.overallGrade.grade11Result), Convert.ToSingle(learner.overallGrade.grade12Result));
         }
         //Helper method that finds the row in the dataset for a given learner. Returns null if not found.
-        private DataRow FindLearnerRow(Learner.Learner learner)
+        private DataRow FindLearnerRow(Learner learner)
         {
             for (int i = 0; i < learnerDS.Tables[TABLE_LEARNERS].Rows.Count; i++)
             {
@@ -136,7 +136,7 @@ namespace FuturePathGroup10.Data
             return null;
         }
         //Helper method that finds the row in the dataset for a grade level. Returns null if not found.
-        private DataRow FindGradeRow(Learner.Learner learner)
+        private DataRow FindGradeRow(Learner learner)
         {
             for (int i = 0; i < gradeDS.Tables[TABLE_GRADE].Rows.Count; i++)
             {
@@ -148,7 +148,7 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
-        private int findLearnerIndex(Learner.Learner learner)
+        private int findLearnerIndex(Learner learner)
         {
             for (int i = 0; i < learners.Count; i++)
             {
@@ -161,7 +161,7 @@ namespace FuturePathGroup10.Data
         }
         //Modifies the dataset based on the operation given to it using a learner object. DOES NOT UPDATE THE ACTUAL DATABASE. Use UpdateDataSource() to update the database.
         //Throws an exception if the learner couldn't be found in edits and deletes. Handle appropriately.
-        public void DataSetChange(Learner.Learner learner, DBOperation operation)
+        public void DataSetChange(Learner learner, DBOperation operation)
         {
             DataRow learnerRow;
             DataRow gradeRow;

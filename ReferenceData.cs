@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FuturePathGroup10
 {
-    internal abstract class ReferenceData
+    public abstract class ReferenceData
     {
         public abstract void add();
 

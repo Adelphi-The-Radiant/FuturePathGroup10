@@ -16,5 +16,17 @@ namespace FuturePathGroup10
 		{
 			this.account = account;
 		}
-	}
+
+        public UserAccount getAccount(string username)
+        {
+            if (this.username.Equals(username))
+            {
+                return account;
+            }
+            else
+            {
+                throw new Exception("Username does not match.");
+            }
+        }
+    }
 }

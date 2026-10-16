@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FuturePathGroup10.Learner;
 
-namespace FuturePathGroup10.Interest
+namespace FuturePathGroup10.Business
 {
     public class LearnerInterestResponse
     {
         public int responseID { get; private set; }
-        public Learner.Learner learner { get; private set; }
+        public Learner learner { get; private set; }
         public string response { get; private set; }
 
-        public LearnerInterestResponse(int responseID,Learner.Learner learner, string response)
+        public LearnerInterestResponse(int responseID,Learner learner, string response)
         {
             this.responseID = responseID;
             this.learner = learner;
