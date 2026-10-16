@@ -36,9 +36,9 @@ namespace FuturePathGroup10.Data
 		{
 			foreach (DataRow row in dsMain.Tables[USERACCOUNT_TABLE].Rows)
 			{
-                string username = row["Username"];
-				string password = row["Password"];
-				DateTime dateCreated = row<DateTime>["DateCreated"];
+                string username = row["Username"].ToString();
+                string password = row["Password"].ToString();
+				DateTime dateCreated = row.Field<DateTime>("DateCreated");
 				UserAccount.Permission permissionLevel = (UserAccount.Permission) Convert.ToInt16(row["PermissionLevel"]);
 
 				UserAccount account = new UserAccount(username, password, dateCreated, permissionLevel);
@@ -54,7 +54,7 @@ namespace FuturePathGroup10.Data
 		{
 			row["Username"] = account.username;
 			row["Password"] = account.password;
-			row<DateTime>["DateCreated"] = account.dateCreated;
+			row["DateCreated"] = account.dateCreated;
 			row["PermissionLevel"] = account.permissionLevel;
 		}
 
@@ -62,7 +62,7 @@ namespace FuturePathGroup10.Data
 		{
             for (int i = 0; i < dsMain.Tables[USERACCOUNT_TABLE].Rows.Count; i++)
             {
-                if (Convert.ToInt32(dsMain.Tables[USERACCOUNT_TABLE].Rows[i]["Username"]) == account.username)
+                if ((dsMain.Tables[USERACCOUNT_TABLE].Rows[i]["Username"].Equals(account.username)))
                 {
                     return dsMain.Tables[USERACCOUNT_TABLE].Rows[i];
                 }
@@ -77,8 +77,8 @@ namespace FuturePathGroup10.Data
 			{
                 case DBOperation.Add:
                     row = dsMain.Tables[USERACCOUNT_TABLE].NewRow();
-                    FillLearnerRow(row,account);
-                    dsMain.Tables[USERACCOUNT_TABLE].Add(learnerRow);
+                    FillDataRow(row,account);
+                    dsMain.Tables[USERACCOUNT_TABLE].Rows.Add(row);
 
                     accounts.Add(account);
                     break;
@@ -97,7 +97,7 @@ namespace FuturePathGroup10.Data
 
                 case DBOperation.Delete:
                     row = findDataRow(account);
-                    if (learnerRow != null && gradeRow != null && learnerIndex != -1)
+                    if (row != null)
                     {
                         row.Delete();
                         accounts.Remove(account);
@@ -116,7 +116,7 @@ namespace FuturePathGroup10.Data
 
         internal override bool UpdateAllSources()
         {
-            UpdateDataSource(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
+            return UpdateDataSource(SQL_SELECT_USERACCOUNT, USERACCOUNT_TABLE);
         }
 
         internal override void Create_INSERT_Command()

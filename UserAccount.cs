@@ -5,7 +5,7 @@ using System.Text;
 namespace FuturePathGroup10
 {
     // AuthController stereotype
-    internal class UserAccount
+    public class UserAccount
     {
         public string username {get; private set;}
         public string password {get; private set;}
