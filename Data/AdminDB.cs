@@ -15,9 +15,10 @@ namespace FuturePathGroup10.Data
 		#region Attributes
 
 		private const string ADMIN_TABLE = "Administrator";
-        private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator0;";
+        private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator;";
 
-		public Collection<Administrator> admins;
+
+        public Collection<Administrator> admins { get; private set; }
 
         #endregion
         public AdminDB()
@@ -31,9 +32,10 @@ namespace FuturePathGroup10.Data
 		{
 			foreach(DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
 			{
-				int adminID = row.Field<int>("AdminID");
-				string username = row.Field<string>("Username");
-				string fullName = row.Field<string>("FullName");
+
+				int adminID = Convert.ToInt32(row["AdminID"]);
+				string username = row["Username"].ToString();
+				string fullName = row["FullName"].ToString();
 
 				Administrator admin = new Administrator(adminID, fullName, username);
 				admins.Add(admin);

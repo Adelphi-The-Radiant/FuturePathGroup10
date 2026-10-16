@@ -15,7 +15,8 @@ namespace FuturePathGroup10.Data
         #region Attributes
 
         private const string CAREER_ADVISOR_TABLE = "Administrator";
-        private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator0;";
+
+        private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator";
 
 
         public Collection<CareerAdvisor> advisors;
@@ -33,9 +34,9 @@ namespace FuturePathGroup10.Data
         {
             foreach (DataRow row in dsMain.Tables[CAREER_ADVISOR_TABLE].Rows)
             {
-                int advisorID = row.Field<int>("AdvisorID");
-                string username = row.Field<string>("Username");
-                string fullName = row.Field<string>("FullName");
+                int advisorID = Convert.ToInt32(row["AdvisorID"]);
+                string username = row["Username"].ToString();
+                string fullName = row["FullName"].ToString();
 
                 CareerAdvisor advisor = new CareerAdvisor(advisorID, fullName, username);
                 advisors.Add(advisor);

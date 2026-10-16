@@ -12,7 +12,7 @@ namespace FuturePathGroup10.Data
 	{
         #region Attributes
         private const string TABLE_LIR = "LearnerInterestResponse";
-        private const string SQL_SELECT_LIR = "SELECT ResponseID, LearnerID, Response FROM LearnerInterestResponse";
+		private const string SQL_SELECT_LIR = "SELECT * FROM LearnerInterestResponse";
 
         public Collection<LearnerInterestResponse> LIRs;
 		private LearnerDB learnerDB;
@@ -28,9 +28,10 @@ namespace FuturePathGroup10.Data
 		{
 			foreach(DataRow row in dsMain.Tables[TABLE_LIR].Rows)
 			{
-				int responseID = row.Field<int>("ResponseID");
-				int learnerID = row.Field<int>("LearnerID");
-				string response = row.Field<string>("Response");
+
+				int responseID = Convert.ToInt32(row["ResponseID"]);
+				int learnerID = Convert.ToInt32(row["LearnerID"]);
+				string response = row["Response"].ToString();
 
 				Learner learner = learnerDB.getLearner(learnerID);
 
@@ -81,7 +82,7 @@ namespace FuturePathGroup10.Data
                     }
                     else
                     {
-                        throw new Exception("UserAccount not found in Tables");
+                        throw new Exception("LearnerInterestResponse not found in Tables");
                     }
                     break;
 
