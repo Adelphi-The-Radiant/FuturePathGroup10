@@ -1,13 +1,28 @@
-﻿using System;
+﻿using FuturePathGroup10.Data;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FuturePathGroup10.Interest
 {
-    internal class InterestQuestionnaire
+    public class InterestQuestionnaire
     {
-        private int questionID;
-        private int responseID;
+        public LearnerInterestResponse LIR { get; private set; }
+        public Collection<InterestQuestion> questions { get; private set; }
+        public string response { get; private set; }
+
+        public InterestQuestionnaire(LearnerInterestResponse LIR, string response)
+        {
+            this.LIR = LIR;
+            questions = new Collection<InterestQuestion>();
+            this.response = response;
+        }
+
+        public void addQuestion(InterestQuestion question)
+        {
+            questions.Add(question);
+        }
 
         public string mapToInterestAlignment()
         {

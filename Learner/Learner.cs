@@ -21,6 +21,7 @@ namespace FuturePathGroup10.Learner
 
         private Collection<LearnerSubject> learnerSubjects;
         private Collection<LearnerInterestResponse> LIRs;
+        private Collection<InterestQuestionnaire> questionnaires;
 
         public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province) : base(username)
         {

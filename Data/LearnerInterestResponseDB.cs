@@ -23,6 +23,7 @@ namespace FuturePathGroup10.Data
 			LIRs = new Collection<LearnerInterestResponse>();
             this.learnerDB = learnerDB;
 			FillDataSet(SQL_SELECT_LIR, TABLE_LIR);
+            LoadLIR();
 		}
 
 		private void LoadLIR()
@@ -31,14 +32,26 @@ namespace FuturePathGroup10.Data
 			{
 				int responseID = Convert.ToInt32(row["ResponseID"]);
 				int learnerID = Convert.ToInt32(row["LearnerID"]);
-				string response = row["Response"].ToString();
+				string result = row["Result"].ToString();
 
 				Learner.Learner learner = learnerDB.getLearner(learnerID);
 
-				LearnerInterestResponse LIR = new LearnerInterestResponse(responseID, learner, response);
+				LearnerInterestResponse LIR = new LearnerInterestResponse(responseID, learner, result);
 				learner.addLIR(LIR);
 			}
 		}
+
+        public LearnerInterestResponse getLIR(int responseID)
+        {
+            foreach(LearnerInterestResponse LIR in LIRs)
+            {
+                if (LIR.responseID == responseID)
+                {
+                    return LIR;
+                }
+            }
+            return null;
+        }
 
         #region Update Database
 
@@ -46,7 +59,7 @@ namespace FuturePathGroup10.Data
 		{
 			row["ResponseID"] = LIR.responseID;
 			row["LearnerID"] = LIR.learner.learnerID;
-			row["Response"] = LIR.response;
+			row["Result"] = LIR.result;
 		}
 
 		private DataRow FindDataRow(LearnerInterestResponse LIR)
@@ -112,13 +125,13 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO LearnerInterestResponse (@ResponseID, @LearnerID, @Response) VALUES (ResponseID,LearnerID,Response)", cnMain);
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO LearnerInterestResponse (@ResponseID, @LearnerID, @Result) VALUES (ResponseID,LearnerID,Result)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE LearnerInterestResponse SET (@ResponseID, @LearnerID, @Response) WHERE ResponseID = @ResponseID", cnMain);
+            daMain.UpdateCommand = new OleDbCommand("UPDATE LearnerInterestResponse SET (@ResponseID, @LearnerID, @Result) WHERE ResponseID = @ResponseID", cnMain);
             Build_UPDATE_Parameters();
         }
         internal override void Create_DELETE_Command()
@@ -135,7 +148,7 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
             daMain.InsertCommand.Parameters.Add(param);
 
-            param = new SqlParameter("@Response", SqlDbType.NChar, 255, "Response");
+            param = new SqlParameter("@Result", SqlDbType.NChar, 255, "Result");
             daMain.InsertCommand.Parameters.Add(param);
         }
 
@@ -147,7 +160,7 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
             daMain.UpdateCommand.Parameters.Add(param);
 
-            param = new SqlParameter("@Response", SqlDbType.NChar, 255, "Response");
+            param = new SqlParameter("@Result", SqlDbType.NChar, 255, "Result");
             daMain.UpdateCommand.Parameters.Add(param);
         }
 

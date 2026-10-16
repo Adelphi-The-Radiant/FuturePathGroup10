@@ -49,8 +49,8 @@ namespace FuturePathGroup10.Data
             daLearnerSubject = daMain;
             
             FillDataSet(SQL_SELECT_SUBJECT, SUBJECT_TABLE);
-            dsLearnerSubject = dsMain;
-            daLearnerSubject = daMain;
+            dsSubject = dsMain;
+            daSubject = daMain;
             
             //dsMain and daMain remain for the joined table. I will probably have to change this later.
             FillDataSet(SQL_SELECT_SUBJECT_JOIN, JOINED_TABLE);
@@ -100,26 +100,26 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Dataset Updates
-        private void fillLearnerSubjectRow(DataRow row, LearnerSubject learnerSubject)
+        private void FillLearnerSubjectRow(DataRow row, LearnerSubject learnerSubject)
         {
             row["LearnerID"] = learnerSubject.learner.learnerID;
             row["SubjectName"] = learnerSubject.subject.subjectName;
             row["Result"] = learnerSubject.result;
         }
 
-        private void fillSubjectRow(DataRow row, LearnerSubject learnerSubject)
+        private void FillSubjectRow(DataRow row, LearnerSubject learnerSubject)
         {
             row["SubjectName"] = learnerSubject.subject.subjectName;
             row["SubjectDescription"] = learnerSubject.subject.subjectDescription;
         }
 
-        private DataRow findLearnerSubjectRow(LearnerSubject learnerSubject)
+        private DataRow FindLearnerSubjectRow(LearnerSubject learnerSubject)
         {
             for (int i = 0; i < dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].Rows.Count; i++)
             {
                 DataRow row = dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].Rows[i];
                 //Two primary keys so we check both...
-                if (row["LearnerID"].ToString() == learnerSubject.learner.learnerID.ToString())
+                if (Convert.ToInt32(row["LearnerID"]) == learnerSubject.learner.learnerID)
                 {
                     return row;
                 }
@@ -127,7 +127,7 @@ namespace FuturePathGroup10.Data
             return null;
         }
         
-        private DataRow findSubjectRow(LearnerSubject learnerSubject)
+        private DataRow FindSubjectRow(LearnerSubject learnerSubject)
         {
             for (int i = 0; i < dsSubject.Tables[SUBJECT_TABLE].Rows.Count; i++)
             {
@@ -162,17 +162,17 @@ namespace FuturePathGroup10.Data
                 case DBOperation.Add:
                     rowLearnerSubject = dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].NewRow();
                     rowSubject = dsSubject.Tables[SUBJECT_TABLE].NewRow();
-                    fillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
-                    fillLearnerSubjectRow(rowSubject, learnerSubject);
+                    FillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
+                    FillLearnerSubjectRow(rowSubject, learnerSubject);
                     
                     dsLearnerSubject.Tables[LEARNERSUBJECT_TABLE].Rows.Add(rowLearnerSubject);
                     dsSubject.Tables[SUBJECT_TABLE].Rows.Add(rowSubject);
                     break;
                 case DBOperation.Edit:
-                    rowLearnerSubject = findLearnerSubjectRow(learnerSubject);
+                    rowLearnerSubject = FindLearnerSubjectRow(learnerSubject);
                     if (rowLearnerSubject != null)
                     {
-                        fillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
+                        FillLearnerSubjectRow(rowLearnerSubject, learnerSubject);
                     }
                     else
                     {
@@ -180,8 +180,8 @@ namespace FuturePathGroup10.Data
                     }
                     break;
                 case DBOperation.Delete:
-                    rowLearnerSubject = findLearnerSubjectRow(learnerSubject);
-                    rowSubject = findSubjectRow(learnerSubject);
+                    rowLearnerSubject = FindLearnerSubjectRow(learnerSubject);
+                    rowSubject = FindSubjectRow(learnerSubject);
                     if (rowSubject != null && rowLearnerSubject != null)
                     {
                         rowLearnerSubject.Delete();
@@ -219,8 +219,8 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_UPDATE_Command()
         {
-            daLearnerSubject.UpdateCommand = new OleDbCommand("UPDATE LearnerSubject SET(@LearnerID, @SubjectName, @Result) WHERE LearnerID = @LearnerID AND SubjectName = @SubjectName", cnMain);
-            daSubject.UpdateCommand = new OleDbCommand("UPDATE Subject SET(@SubjectName, @SubjectDescription) WHERE SubjectName = @SubjectName", cnMain);
+            daLearnerSubject.UpdateCommand = new OleDbCommand("UPDATE LearnerSubject SET (@LearnerID, @SubjectName, @Result) WHERE LearnerID = @LearnerID AND SubjectName = @SubjectName", cnMain);
+            daSubject.UpdateCommand = new OleDbCommand("UPDATE Subject SET (@SubjectName, @SubjectDescription) WHERE SubjectName = @SubjectName", cnMain);
             Build_UPDATE_Parameters();
         }
         
