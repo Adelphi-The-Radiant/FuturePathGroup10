@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FuturePathGroup10.Interest
@@ -9,12 +9,19 @@ namespace FuturePathGroup10.Interest
         public int questionID { get; private set; }
         public int interestCategoryID { get; private set; }
         public string question { get; private set; }
+        public Collection<InterestCategory> categories { get; private set; }
 
         public InterestQuestion(int questionID, int interestCategoryID, string question)
         {
             this.questionID = questionID;
             this.interestCategoryID = interestCategoryID;
             this.question = question;
+            categories = new Collection<InterestCategory>();
+        }
+
+        public void addCategory(InterestCategory category)
+        {
+            categories.Add(category);
         }
 
         public void responseToCategory(string response)

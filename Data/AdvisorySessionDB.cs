@@ -119,17 +119,17 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO AdvisorySession (@SessionID,@LearnerID,@AdvisorID,@SessionDate,@Notes) VALUES (SessionID,LearnerID,AdvisorID,SessionDate,Notes)");
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO AdvisorySession (@SessionID,@LearnerID,@AdvisorID,@SessionDate,@Notes) VALUES (SessionID,LearnerID,AdvisorID,SessionDate,Notes)",cnMain);
             Build_INSERT_Parameters();
         }
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE AdvisorySession SET (@SessionID,@LearnerID,@AdvisorID,@SessionDate,@Notes) WHERE SessionID = @SessionID");
+            daMain.UpdateCommand = new OleDbCommand("UPDATE AdvisorySession SET (@SessionID,@LearnerID,@AdvisorID,@SessionDate,@Notes) WHERE SessionID = @SessionID",cnMain);
             Build_UPDATE_Parameters();
         }
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM AdvisorySession WHERE SessionID = @SessionID");
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM AdvisorySession WHERE SessionID = @SessionID",cnMain);
             Build_DELETE_Parameters();
         }
         internal override void Build_INSERT_Parameters()

@@ -4,11 +4,18 @@ using System.Text;
 
 namespace FuturePathGroup10.Interest
 {
-    internal class InterestCategory : ReferenceData
+    public class InterestCategory : ReferenceData
     {
-        private int interestCategoryID;
-        private string title;
-        private string description;
+        public int interestCategoryID { get; private set; }
+        public string title { get; private set; }
+        public string description { get; private set; }
+
+        public InterestCategory(int interestCategoryID,string title,string description)
+        {
+            this.interestCategoryID = interestCategoryID;
+            this.title = title;
+            this.description = description;
+        }
 
         public InterestCategory getCategory()
         {
