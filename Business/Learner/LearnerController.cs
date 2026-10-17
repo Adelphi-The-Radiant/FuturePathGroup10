@@ -1,10 +1,11 @@
-﻿using FuturePathGroup10.Business;
-using FuturePathGroup10.Data;
+﻿using FuturePathGroup10.Data;
+using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10.Reccomendation;
 using System;
-using System.Collections.Generic;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using static FuturePathGroup10.Data.DB;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FuturePathGroup10.Learner
@@ -14,28 +15,44 @@ namespace FuturePathGroup10.Learner
         #region Data Members
         public LearnerDB learnerDB;
 
+        public SubjectDB subjectDB;
+
         public Faculty SelectedFaculty { get; private set; }
 
-        public DegreeProgramme Programme { get; private set; }  
+        public DegreeProgramme Programme { get; private set; }
 
         public Learner activeLearner { get; private set; }
         #endregion
 
         #region Constructor
-        public LearnerController() { 
-            this.learnerDB =  new LearnerDB();
+        public LearnerController()
+        {
+            this.learnerDB = new LearnerDB();
+            this.subjectDB = new SubjectDB(learnerDB);
             this.activeLearner = null;
         }
         #endregion
 
         #region Methods 
+
         public bool createProfile(Learner learner, out string error)
         {
-            error = Validate(learner);                    //validates mandatory fields
-            if (error != "") return false;
-            learner.learnerID = learnerDB.Add(learner);
-            return true;
+            error = Validate(learner);
 
+            if (error != "")
+                return false;
+
+            try
+            {
+                learnerDB.DataSetChange(learner, DB.DBOperation.Add);
+                activeLearner = learner;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = "Could not create profile: " + ex.Message;
+                return false;
+            }
         }
 
         public bool updateProfile(Learner learner, out string error)
@@ -50,18 +67,14 @@ namespace FuturePathGroup10.Learner
                 return false;
             }
 
-            try { learnerDB.Update(learner); }
+            try { learnerDB.DataSetChange(learner, DB.DBOperation.Edit); }
             catch (Exception ex) { error = "Could not save: " + ex.Message; return false; }
             activeLearner = learner;
             return true;
         }
 
-        public Learner getLearner(int learnerId) 
-        {
-            return learnerDB.getLearner(learnerId);
-        }
-
         // Helper method to validate if the mandotory fileds have information profile creation and update
+        // Should add more if not all idk :(
         private string Validate(Learner l)
         {
             if (string.IsNullOrWhiteSpace(l.school)) return "School is required.";
@@ -71,47 +84,49 @@ namespace FuturePathGroup10.Learner
 
 
 
-        //public bool selectFaculty(int facultyId, out string error)
-        //{
-        //    error = "";
-            
-        //    Faculty faculty = facultyDB.GetById(facultyId);      // delegates to the data class
-        //    if (faculty == null )
-        //    {
-        //        error = "Please choose a valid faculty.";
-        //        return false;
-        //    }
-
-        //    //SelectedFaculty = faculty;                            
-        //    return true;
-        //}
-
-        //public bool selectDegreeProgramme(int degreeProgrammeId, out string error)
-        //{
-        //    error = "";
-        //    DegreeProgramme programme = degreeProgrammeDB.getById (degreeProgrammeId);
-            
-        //    if (programme == null )
-        //    {
-        //        error = "Please choose a valid degree programme.";
-        //        return false;
-        //    }
-
-        //    Programme = programme;
-        //    return true;
-        //}
-
-
-        public Collection<string> viewFundingOption(FundingOption options)
+        public bool selectFaculty(Reccomendation.Faculty faculty, out string error)
         {
-            return options.getFundingOptions();
+            error = "";
+
+            if (faculty == null)
+            {
+                error = "Please choose a valid faculty.";
+                return false;
+            }
+
+            SelectedFaculty = faculty;
+            return true;
         }
 
-        public bool checkEligibility(Learner learner) {
+        public bool selectDegreeProgramme(Reccomendation.DegreeProgramme programme, out string error)
+        {
+            error = "";
 
-            ProgrammeRequirement p = new ProgrammeRequirement(Programme);
-            return p.compareMarks();
+            if (programme == null)
+            {
+                error = "Please choose a valid degree programme.";
+                return false;
+            }
+
+            Programme = programme;
+            return true;
+        }
+
+        public void captureMarks(Dictionary <Subject, double> marks) 
+        {
+            foreach (KeyValuePair<Subject, double> entry in marks)
+            {
+                Subject subject = entry.Key;
+                double mark = entry.Value;
+
+                Prerequisites.LearnerSubject eachSubject = new LearnerSubject(activeLearner, subject, mark);
+                subjectDB.DataSetChange(eachSubject, DBOperation.Add);
+            }
+
+
+            }
+
+
         }
         #endregion
     }
-}

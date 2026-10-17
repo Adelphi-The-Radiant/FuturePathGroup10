@@ -1,4 +1,5 @@
 ﻿using FuturePathGroup10.Interest;
+using FuturePathGroup10.Learner;
 using FuturePathGroup10.Prerequisites;
 using System;
 using System.Collections.ObjectModel;
@@ -59,6 +60,18 @@ namespace FuturePathGroup10.Data
 		}
 
         #endregion
+
+        public InterestQuestion getQuestion(int questionID)
+        {
+            foreach (InterestQuestion question in questions)
+            {
+                if (question.questionID == questionID)
+                {
+                    return question;
+                }
+            }
+            return null;
+        }
 
         private void LoadQuestionnaires()
         {
