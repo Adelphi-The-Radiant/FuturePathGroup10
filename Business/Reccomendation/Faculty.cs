@@ -6,9 +6,9 @@ namespace FuturePathGroup10.Reccomendation
 {
     internal class Faculty : ReferenceData
     {
-        private int facultyID { get; private set };
-        private string title { get; private set };
-        private string description { get; private set };
+        public int facultyID { get; private set };
+        public string title { get; private set };
+        public string description { get; private set };
 
         // constructor
         public Faculty(int facultyID, string title, string description)
