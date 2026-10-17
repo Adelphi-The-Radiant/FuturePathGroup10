@@ -7,10 +7,27 @@ namespace FuturePathGroup10.Funding
 {
     internal class FundingOption : ReferenceData
     {
-        private int optionID;
-        private string description;
+        public int optionID { get; private set; }
+        public string description { get; private set; }
         /// This should be decimal
-        private float amount;
+        public float amount { get; private set; }
+
+        public FundingOption (int optionID,string description,float amount) : base()
+        {
+            this.optionID = optionID;
+            this.description = description;
+            this.amount = amount;
+        }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is FundingOption)
+            {
+                FundingOption other = (FundingOption)obj;
+                return optionID == other.optionID;
+            }
+            return false;
+        }
 
         public Collection<string> getFundingOptions()
         {
