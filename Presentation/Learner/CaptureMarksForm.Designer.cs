@@ -44,7 +44,7 @@
             s2Num = new NumericUpDown();
             s3Num = new NumericUpDown();
             s4Num = new NumericUpDown();
-            s5NUm = new NumericUpDown();
+            s5Num = new NumericUpDown();
             s6Num = new NumericUpDown();
             s7Num = new NumericUpDown();
             s8Num = new NumericUpDown();
@@ -53,7 +53,7 @@
             ((System.ComponentModel.ISupportInitialize)s2Num).BeginInit();
             ((System.ComponentModel.ISupportInitialize)s3Num).BeginInit();
             ((System.ComponentModel.ISupportInitialize)s4Num).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)s5NUm).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)s5Num).BeginInit();
             ((System.ComponentModel.ISupportInitialize)s6Num).BeginInit();
             ((System.ComponentModel.ISupportInitialize)s7Num).BeginInit();
             ((System.ComponentModel.ISupportInitialize)s8Num).BeginInit();
@@ -225,13 +225,13 @@
             s4Num.Size = new Size(475, 25);
             s4Num.TabIndex = 15;
             // 
-            // s5NUm
+            // s5Num
             // 
-            s5NUm.Font = new Font("Arial Narrow", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            s5NUm.Location = new Point(268, 214);
-            s5NUm.Name = "s5NUm";
-            s5NUm.Size = new Size(475, 25);
-            s5NUm.TabIndex = 16;
+            s5Num.Font = new Font("Arial Narrow", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            s5Num.Location = new Point(268, 214);
+            s5Num.Name = "s5NUm";
+            s5Num.Size = new Size(475, 25);
+            s5Num.TabIndex = 16;
             // 
             // s6Num
             // 
@@ -266,7 +266,7 @@
             Controls.Add(s8Num);
             Controls.Add(s7Num);
             Controls.Add(s6Num);
-            Controls.Add(s5NUm);
+            Controls.Add(s5Num);
             Controls.Add(s4Num);
             Controls.Add(s3Num);
             Controls.Add(s2Num);
@@ -290,7 +290,7 @@
             ((System.ComponentModel.ISupportInitialize)s2Num).EndInit();
             ((System.ComponentModel.ISupportInitialize)s3Num).EndInit();
             ((System.ComponentModel.ISupportInitialize)s4Num).EndInit();
-            ((System.ComponentModel.ISupportInitialize)s5NUm).EndInit();
+            ((System.ComponentModel.ISupportInitialize)s5Num).EndInit();
             ((System.ComponentModel.ISupportInitialize)s6Num).EndInit();
             ((System.ComponentModel.ISupportInitialize)s7Num).EndInit();
             ((System.ComponentModel.ISupportInitialize)s8Num).EndInit();
@@ -316,7 +316,7 @@
         private NumericUpDown s2Num;
         private NumericUpDown s3Num;
         private NumericUpDown s4Num;
-        private NumericUpDown s5NUm;
+        private NumericUpDown s5Num;
         private NumericUpDown s6Num;
         private NumericUpDown s7Num;
         private NumericUpDown s8Num;

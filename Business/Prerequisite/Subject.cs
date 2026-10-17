@@ -1,29 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FuturePathGroup10.Prerequisites
 {
-    public class Subject
+    public record Subject(string subjectName, string subjectDescription)
     {
-        public string subjectName { get; private set; }
-        public string subjectDescription { get; private set; }
-
-        public Subject(string subjectName, string subjectDescription)
+        public override string ToString()
         {
-            this.subjectName = subjectName;
-            this.subjectDescription = subjectDescription;
-        }
-
-        public string getSubject()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Equals(Object obj)
-        {
-            Subject other = (Subject)obj;
-            return subjectName.Equals(other.subjectName);
+            return subjectName;
         }
     }
 }
