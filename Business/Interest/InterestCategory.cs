@@ -17,16 +17,6 @@ namespace FuturePathGroup10.Interest
             this.description = description;
         }
 
-        public InterestCategory getCategory()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void addCategory(string title)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void add()
         {
             throw new NotImplementedException();

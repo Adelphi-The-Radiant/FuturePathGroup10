@@ -56,5 +56,10 @@ namespace FuturePathGroup10.Interest
                 return false;
             }
         }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

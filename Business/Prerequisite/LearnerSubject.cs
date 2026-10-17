@@ -18,16 +18,6 @@ namespace FuturePathGroup10.Prerequisites
             this.result = result;
         }
 
-        public void setMark(double result)
-        {
-            throw new NotImplementedException();
-        }
-
-        //Either the mark is between 0 and 1 or its between 0 and 100. Pick a standard and keep to it.
-        public void validateMark(double result)
-        {
-            throw new NotImplementedException();
-        }
 
         public bool equals(object obj)
         {
