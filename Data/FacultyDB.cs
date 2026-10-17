@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10.Reccomendation;
 using FuturePathGroup10.Learner;
 using System.Data;
 using System.Data.OleDb;
@@ -37,7 +37,7 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Constructor
-        public FacultyDB()
+        public FacultyDB(LearnerDB learnerDB) : base()
         {
             enrollments = new Collection<EnrollmentList>();
             faculties = new Collection<Faculty>();
@@ -142,7 +142,7 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
-        private int findSEnrollmentListIndex(EnrollmentList enrollment)
+        private int findEnrollmentListIndex(EnrollmentList enrollment)
         {
             for (int i = 0; i < enrollment.Count; i++)
             {
@@ -162,8 +162,8 @@ namespace FuturePathGroup10.Data
             {
                 case DBOperation.Add:
                     rowEnrollment = dsEnrollmentList.Tables[ENROLLMENTLIST_TABLE].NewRow();
-                    rowFaculty = dsSFaculty.Tables[FACULTY_TABLE].NewRow();
-                    FillLEnrollmentListRow(rowEnrollment, enrollment);
+                    rowFaculty = dsFaculty.Tables[FACULTY_TABLE].NewRow();
+                    FillEnrollmentListRow(rowEnrollment, enrollment);
                     FillFacultyRow(rowFaculty, enrollment.getFaculty());
 
                     dsEnrollmentList.Tables[ENROLLMENTLIST_TABLE].Rows.Add(rowEnrollment);
