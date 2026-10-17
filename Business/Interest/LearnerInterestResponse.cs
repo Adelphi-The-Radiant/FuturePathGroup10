@@ -9,7 +9,7 @@ namespace FuturePathGroup10.Interest
         public int responseID { get; private set; }
         public Learner.Learner learner { get; private set; }
         public string result { get; private set; }
-        public InterestQuestionnaire questionnaire { get; private set; }
+        public InterestQuestionnaire? questionnaire { get; private set; }
 
         public LearnerInterestResponse(int responseID,Learner.Learner learner, string result)
         {

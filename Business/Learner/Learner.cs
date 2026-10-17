@@ -8,7 +8,7 @@ namespace FuturePathGroup10.Learner
 {
     public class Learner : AccountHolder
     {
-        public int learnerID { get; private set; }
+        public int learnerID { get;  set; }
         public string phoneNumber { get; private set; }
         public string email { get; private set; }
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
@@ -19,7 +19,7 @@ namespace FuturePathGroup10.Learner
 
         private Collection<LearnerSubject> learnerSubjects;
         private Collection<LearnerInterestResponse> LIRs;
-        private Collection<InterestQuestionnaire> questionnaires;
+        private Collection<InterestQuestionnaire>? questionnaires;
 
         public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province) : base(username)
         {
@@ -66,10 +66,17 @@ namespace FuturePathGroup10.Learner
             throw new NotImplementedException();
         }
 
-        public bool Equals(Object obj)
+        public override bool Equals(Object obj)
         {
             Learner other = (Learner)obj;
             return learnerID.Equals(other.learnerID);
         }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+
+        }
+
     }
 }
