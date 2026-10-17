@@ -9,17 +9,17 @@ namespace FuturePathGroup10.Advisory
     public class AdvisorySession
     {
         public int sessionID;
-        public int learnerID;
-        public int advisorID;
+        public Learner.Learner learner;
+        public CareerAdvisor advisor;
         // Should be a more specialized type for dates
         public DateTime date;
         public string notes;
 
-        public AdvisorySession(int sessionID, int learnerID, int advisorID, DateTime date, string notes)
+        public AdvisorySession(int sessionID, Learner.Learner learner, CareerAdvisor advisor, DateTime date, string notes)
         {
             this.sessionID = sessionID;
-            this.learnerID = learnerID;
-            this.advisorID = advisorID;
+            this.learner = learner;
+            this.advisor = advisor;
             this.date = date;
             this.notes = notes;
         }

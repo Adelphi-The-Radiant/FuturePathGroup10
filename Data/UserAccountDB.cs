@@ -157,7 +157,7 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@Password", SqlDbType.NChar, 255, "Password");
             daMain.InsertCommand.Parameters.Add(param);
 
-            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "Password");
+            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "DateCreated");
             daMain.InsertCommand.Parameters.Add(param);
 
             param = new SqlParameter("@PermissionLevel", SqlDbType.Int, 2, "PermissionLevel");
@@ -172,7 +172,7 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@Password", SqlDbType.NChar, 255, "Password");
             daMain.UpdateCommand.Parameters.Add(param);
 
-            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "Password");
+            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "DateCreated");
             daMain.UpdateCommand.Parameters.Add(param);
 
             param = new SqlParameter("@PermissionLevel", SqlDbType.Int, 2, "PermissionLevel");

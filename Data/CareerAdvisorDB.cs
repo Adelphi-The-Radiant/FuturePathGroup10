@@ -19,7 +19,7 @@ namespace FuturePathGroup10.Data
         private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator";
 
 
-        public Collection<CareerAdvisor> advisors;
+        public Collection<CareerAdvisor> advisors { get; private set; }
 
         #endregion
         public CareerAdvisorDB()
@@ -41,6 +41,20 @@ namespace FuturePathGroup10.Data
                 CareerAdvisor advisor = new CareerAdvisor(advisorID, fullName, username);
                 advisors.Add(advisor);
             }
+        }
+
+        public CareerAdvisor getAdvisor(int advisorID)
+        {
+            foreach (CareerAdvisor advisor in advisors)
+            {
+                if (advisor.advisorID == advisorID)
+                {
+                    return advisor;
+                }
+            }
+
+            return null;
+
         }
 
         #region Database Updates
