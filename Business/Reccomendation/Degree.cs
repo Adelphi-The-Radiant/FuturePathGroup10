@@ -6,9 +6,22 @@ namespace FuturePathGroup10.Reccomendation
 {
     internal class Degree : ReferenceData
     {
-        private int degreeID;
-        private string title;
-        private string description;
+        private int degreeID { get; private set};
+        private string title { get; private set};
+        private string description { get; private set};
+
+        // constructor
+        public Degree(int degreeID, string title, string description)
+        { 
+            this.degreeID = degreeID;
+            this.title = title;
+            this.description = description;
+        }
+
+        public Degree GetDegree()
+        {
+            return (Degree)this;
+        }
 
         public override void add()
         {
