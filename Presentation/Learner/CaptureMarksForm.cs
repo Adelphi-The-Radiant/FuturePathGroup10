@@ -54,6 +54,11 @@ namespace FuturePathGroup10.Presentation.Learner
         {
             foreach (SubjectGradeInput inputs in _subjectGradeInputs)
             {
+                if (inputs.SubjectInput.SelectedItem == null)
+                {
+                    continue;
+                }
+
                 _learner.addSubjectMark((Subject)inputs.SubjectInput.SelectedItem, (int)inputs.GradeInput.Value);
             }
 
