@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FuturePathGroup10.Learner;
 
 namespace FuturePathGroup10.Advisory
 {
-    internal class ExportResult
+    public class ExportResult
     {
-        private int learnerID;
-        private string fullReport;
-        private string summary;
+        public Learner.Learner learner { get; private set; }
+        public string fullReport { get; private set; }
+        public string summary { get; private set; }
+
+        public ExportResult(Learner.Learner learner,string fullReport,string summary)
+        {
+            this.learner = learner;
+            this.fullReport = fullReport;
+            this.summary = summary;
+        }
 
         public string getReportSummary()
         {
