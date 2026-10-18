@@ -74,6 +74,7 @@ namespace FuturePathGroup10.Data {
 			daFFOnFO = daMain;
 
 			LoadFPOnFO();
+			LoadFFOnFO();
 		}
 
         #region Loadings

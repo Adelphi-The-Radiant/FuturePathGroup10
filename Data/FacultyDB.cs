@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using FuturePathGroup10.Reccomendation;
 using FuturePathGroup10.Learner;
+
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
@@ -58,6 +59,18 @@ namespace FuturePathGroup10.Data
         }
         #endregion
 
+        public Faculty getFaculty(int facultyID)
+        {
+            foreach(Faculty faculty in faculties)
+            {
+                if (faculty.facultyID == facultyID)
+                {
+                    return faculty;
+                }
+            }
+            return null;
+        }
+
         #region Load Faculties
         private void LoadFaculties()
         {
@@ -67,7 +80,7 @@ namespace FuturePathGroup10.Data
             string description;
             DateTime date;
 
-            Faculty.Faculty faculty = null;
+            Faculty faculty = null;
             EnrollmentList enrollmentList;
             Learner.Learner learner;
 
@@ -102,26 +115,26 @@ namespace FuturePathGroup10.Data
         #region Dataset Updates
         private void FillEnrollmentListRow(DataRow row, EnrollmentList enrollment)
         {
-            row["LearnerID"] = enrollment.getLearner().getLearnerID();
-            row["FacultyID"] = enrollment.getFaculty().getFacultyID();
-            row["Date"] = enrollment.getDate();
+            row["LearnerID"] = enrollment.learner.learnerID;
+            row["FacultyID"] = enrollment.faculty.facultyID;
+            row["Date"] = enrollment.date;
         }
 
-        private void FillFacultyRow(DataRow row, FacultyDB faculty)
+        private void FillFacultyRow(DataRow row, Faculty faculty)
         {
-            row["FacultyID"] = faculty.FacultyID;
-            row["Title"] = faculty.Title;
-            row["Description"] = faculty.Description;
+            row["FacultyID"] = faculty.facultyID;
+            row["Title"] = faculty.title;
+            row["Description"] = faculty.description;
 
         }
 
         private DataRow FindEnrollmentListRow(EnrollmentList enrollment)
         {
-            for (int i = 0; i < dsEnrollmentList.Tables[ENROLLMENTLIST_TABLE].Rows.Count; i++)
+            for (int i = 0; i < dsEnrollmentList.Tables[TABLE_ENROLLMENTLIST].Rows.Count; i++)
             {
-                DataRow row = dsEnrollmentList.Tables[ENROLLMENTLIST_TABLE].Rows[i];
+                DataRow row = dsEnrollmentList.Tables[TABLE_ENROLLMENTLIST].Rows[i];
                 //Two primary keys so we check both...
-                if (Convert.ToInt32(row["LearnerID"]) == enrollment.getLearner().getLearnerID() && Convert.ToInt32(row["FacultyID"]) == enrollment.getFaculty().getFacultyID())
+                if (Convert.ToInt32(row["LearnerID"]) == enrollment.learner.learnerID && Convert.ToInt32(row["FacultyID"]) == enrollment.faculty.facultyID)
                 {
                     return row;
                 }
@@ -131,10 +144,10 @@ namespace FuturePathGroup10.Data
 
         private DataRow FindFacultyRow(Faculty faculty)
         {
-            for (int i = 0; i < dsFaculty.Tables[FACULTY_TABLE].Rows.Count; i++)
+            for (int i = 0; i < dsFaculty.Tables[TABLE_FACULTY].Rows.Count; i++)
             {
-                DataRow row = dsFaculty.Tables[FACULTY_TABLE].Rows[i];
-                if (Convert.ToInt32(row["FacultyID"]) == faculty.FacultyID)
+                DataRow row = dsFaculty.Tables[TABLE_FACULTY].Rows[i];
+                if (Convert.ToInt32(row["FacultyID"]) == faculty.facultyID)
                 {
                     return row;
                 }
@@ -144,7 +157,7 @@ namespace FuturePathGroup10.Data
 
         private int findEnrollmentListIndex(EnrollmentList enrollment)
         {
-            for (int i = 0; i < enrollment.Count; i++)
+            for (int i = 0; i < enrollments.Count; i++)
             {
                 if (enrollments[i].Equals(enrollment))
                 {
@@ -161,19 +174,21 @@ namespace FuturePathGroup10.Data
             switch (operation)
             {
                 case DBOperation.Add:
-                    rowEnrollment = dsEnrollmentList.Tables[ENROLLMENTLIST_TABLE].NewRow();
-                    rowFaculty = dsFaculty.Tables[FACULTY_TABLE].NewRow();
+                    rowEnrollment = dsEnrollmentList.Tables[TABLE_ENROLLMENTLIST].NewRow();
+                    rowFaculty = dsFaculty.Tables[TABLE_FACULTY].NewRow();
                     FillEnrollmentListRow(rowEnrollment, enrollment);
-                    FillFacultyRow(rowFaculty, enrollment.getFaculty());
+                    FillFacultyRow(rowFaculty, enrollment.faculty);
 
-                    dsEnrollmentList.Tables[ENROLLMENTLIST_TABLE].Rows.Add(rowEnrollment);
-                    dsFaculty.Tables[FACULTY_TABLE].Rows.Add(rowFaculty);
+                    dsEnrollmentList.Tables[TABLE_ENROLLMENTLIST].Rows.Add(rowEnrollment);
+                    dsFaculty.Tables[TABLE_FACULTY].Rows.Add(rowFaculty);
                     break;
                 case DBOperation.Edit:
                     rowEnrollment = FindEnrollmentListRow(enrollment);
+                    rowFaculty = FindFacultyRow(enrollment.faculty);
                     if (rowEnrollment != null)
                     {
                         FillEnrollmentListRow(rowEnrollment, enrollment);
+                        FillFacultyRow(rowFaculty, enrollment.faculty);
                     }
                     else
                     {
@@ -182,7 +197,7 @@ namespace FuturePathGroup10.Data
                     break;
                 case DBOperation.Delete:
                     rowEnrollment = FindEnrollmentListRow(enrollment);
-                    rowFaculty = FindFacultyRow(enrollment.getFaculty());
+                    rowFaculty = FindFacultyRow(enrollment.faculty);
                     if (rowEnrollment != null && rowFaculty != null)
                     {
                         rowEnrollment.Delete();
@@ -202,10 +217,10 @@ namespace FuturePathGroup10.Data
         internal override bool UpdateAllSources()
         {
             dsMain = dsEnrollmentList;
-            bool check1 = UpdateDataSource(SQL_SELECT_ENROLLMENTLIST, ENROLLMENTLIST_TABLE, daEnrollmentList);
+            bool check1 = UpdateDataSource(SQL_SELECT_ENROLLMENTLIST, TABLE_ENROLLMENTLIST, daEnrollmentList);
             dsEnrollmentList = dsMain;
             dsMain = dsFaculty;
-            bool check2 = UpdateDataSource(SQL_SELECT_FACULTY, FACULTY_TABLE, dsFaculty);
+            bool check2 = UpdateDataSource(SQL_SELECT_FACULTY, TABLE_FACULTY, daFaculty);
             dsFaculty = dsMain;
             return check1 && check2;
         }
@@ -257,13 +272,16 @@ namespace FuturePathGroup10.Data
 
             param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
             daEnrollmentList.UpdateCommand.Parameters.Add(param);
-            daSubject.UpdateCommand.Parameters.Add(param);
+            daFaculty.UpdateCommand.Parameters.Add(param);
 
-            param = new SqlParameter("@Result", SqlDbType.Float, 4, "Result");
-            daLearnerSubject.UpdateCommand.Parameters.Add(param);
+            param = new SqlParameter("@Date", SqlDbType.Date, 8, "Date");
+            daFaculty.UpdateCommand.Parameters.Add(param);
 
-            param = new SqlParameter("@SubjectDescription", SqlDbType.NVarChar, 255, "SubjectDescription");
-            daSubject.UpdateCommand.Parameters.Add(param);
+            param = new SqlParameter("@Title", SqlDbType.NVarChar, 255, "Title");
+            daFaculty.UpdateCommand.Parameters.Add(param);
+
+            param = new SqlParameter("@Description", SqlDbType.NVarChar, -1, "Description");
+            daFaculty.UpdateCommand.Parameters.Add(param);
         }
 
         internal override void Build_DELETE_Parameters()

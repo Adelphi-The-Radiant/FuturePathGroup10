@@ -39,20 +39,20 @@ namespace FuturePathGroup10.Data
         #region Constructor
         public DegreeDB(FacultyDB facultyDB) :base()
         {
-            degrees = new Collection<Degrees>();
+            degrees = new Collection<Degree>();
             programmes = new Collection<DegreeProgramme>();
             this.facultyDB = facultyDB;
 
-            FillDataSet(SQL_SELECT_DEGREEPROGRAMME, DEGREEPROGRAMME_TABLE);
+            FillDataSet(SQL_SELECT_DEGREEPROGRAMME, TABLE_DEGREEPROGRAMME);
             dsDegreeProgramme = dsMain;
             daDegreeProgramme = daMain;
 
-            FillDataSet(SQL_SELECT_DEGREE, DEGREE_TABLE);
+            FillDataSet(SQL_SELECT_DEGREE, TABLE_DEGREE);
             dsDegree = dsMain;
-            dsDegreeProgramme = daMain;
+            daDegree = daMain;
 
             //dsMain and daMain remain for the joined table
-            FillDataSet(SQL_SELECT_EGREE_JOIN, JOINED_TABLE);
+            FillDataSet(SQL_SELECT_DEGREE_JOIN, JOINED_TABLE);
 
             LoadDegreeProgrammes();
         }
@@ -62,12 +62,13 @@ namespace FuturePathGroup10.Data
         private void LoadDegreeProgrammes()
         {
             int degreeID = -1;
+            int facultyID = -1;
             string title;
             string description;
 
             Degree degree = null;
             DegreeProgramme degreeProgramme;
-            Faculty faculty;
+            Faculty faculty = null;
 
             foreach (DataRow row in dsMain.Tables[JOINED_TABLE].Rows)
             {
@@ -89,7 +90,7 @@ namespace FuturePathGroup10.Data
                 }
 
                 degreeProgramme = new DegreeProgramme(faculty, degree);
-                degreeProgrammes.Add(degreeProgramme);
+                programmes.Add(degreeProgramme);
             }
         }
         #endregion
@@ -97,24 +98,24 @@ namespace FuturePathGroup10.Data
         #region Dataset Updates
         private void FillDegreeProgrammeRow(DataRow row, DegreeProgramme degreeProgramme)
         {
-            row["FacultyID"] = degreeProgramme.faculty.FacultyID;
-            row["DegreeID"] = degreeProgramme.degree.DegreeID;
+            row["FacultyID"] = degreeProgramme.faculty.facultyID;
+            row["DegreeID"] = degreeProgramme.degree.degreeID;
         }
 
         private void FillDegreeRow(DataRow row, DegreeProgramme degreeProgramme)
         {
-            row["DegreeID"] = degreeProgramme.degree.DegreeID;
-            row["Title"] = degreeProgramme.degree.Title;
-            row["Description"] = degreeProgramme.degree.Description;
+            row["DegreeID"] = degreeProgramme.degree.degreeID;
+            row["Title"] = degreeProgramme.degree.title;
+            row["Description"] = degreeProgramme.degree.description;
 
         }
 
         private DataRow FindDegreeProgrammeRow(DegreeProgramme degreeProgramme)
         {
-            for (int i = 0; i < dsDegreeProgramme.Tables[DEGREEPROGRAMME_TABLE].Rows.Count; i++)
+            for (int i = 0; i < dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows.Count; i++)
             {
-                DataRow row = dsDegreeProgramme.Tables[DEGREEPROGRAMME_TABLE].Rows[i];
-                if (Convert.ToInt32(row["FacultyID"]) == degreeProgramme.faculty.FacultyID && Convert.ToInt32(row["DegreeID"]) == degreeProgramme.degree.DegreeID)
+                DataRow row = dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows[i];
+                if (Convert.ToInt32(row["FacultyID"]) == degreeProgramme.faculty.facultyID && Convert.ToInt32(row["DegreeID"]) == degreeProgramme.degree.degreeID)
                 {
                     return row;
                 }
@@ -124,10 +125,10 @@ namespace FuturePathGroup10.Data
 
         private DataRow FindDegreeRow(Degree degree)
         {
-            for (int i = 0; i < dsDegree.Tables[DEGREE_TABLE].Rows.Count; i++)
+            for (int i = 0; i < dsDegree.Tables[TABLE_DEGREE].Rows.Count; i++)
             {
-                DataRow row = dsDegree.Tables[DEGREE_TABLE].Rows[i];
-                if (Convert.ToInt32(row["DegreeID"]) == degree.DegreeID)
+                DataRow row = dsDegree.Tables[TABLE_DEGREE].Rows[i];
+                if (Convert.ToInt32(row["DegreeID"]) == degree.degreeID)
                 {
                     return row;
                 }
@@ -142,19 +143,23 @@ namespace FuturePathGroup10.Data
             switch (operation)
             {
                 case DBOperation.Add:
-                    rowDegreeProgramme = dsDegreeProgramme.Tables[DEGREEPROGRAMME_TABLE].NewRow();
-                    rowDegree = dsDegree.Tables[DEGREE_TABLE].NewRow();
-                    FillDegreeProgrammeRow(rowDegreeProgramme, degreeProgramme);
-                    FillDegreeRow(rowDegree, degreeProgramme);
+                    rowDegreeProgramme = dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].NewRow();
+                    rowDegree = dsDegree.Tables[TABLE_DEGREE].NewRow();
+                    FillDegreeProgrammeRow(rowDegreeProgramme, degree);
+                    FillDegreeRow(rowDegree, degree);
 
-                    dsDegreeProgramme.Tables[DEGREEPROGRAMME_TABLE].Rows.Add(rowDegreeProgramme);
-                    dsDegree.Tables[DEGREE_TABLE].Rows.Add(rowDegree);
+                    dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows.Add(rowDegreeProgramme);
+                    dsDegree.Tables[TABLE_DEGREE].Rows.Add(rowDegree);
+
+                    programmes.Add(degree);
                     break;
                 case DBOperation.Edit:
-                    rowDegree = FindDegreeRow(degreeProgramme);
+                    rowDegreeProgramme = FindDegreeProgrammeRow(degree);
+                    rowDegree = FindDegreeRow(degree.degree);
                     if (rowDegree != null)
                     {
-                        FillEDegreeRow(rowDegree, degreeProgramme);
+                        FillDegreeRow(rowDegree, degree);
+                        FillDegreeProgrammeRow(rowDegreeProgramme, degree);
                     }
                     else
                     {
@@ -162,13 +167,13 @@ namespace FuturePathGroup10.Data
                     }
                     break;
                 case DBOperation.Delete:
-                    rowDegreeProgramme = FindDegreeProgrammeRow(degreeProgramme);
-                    rowDegree = FindDegreeRow(degreeProgramme);
+                    rowDegreeProgramme = FindDegreeProgrammeRow(degree);
+                    rowDegree = FindDegreeRow(degree.degree);
                     if (rowDegreeProgramme != null && rowDegree != null)
                     {
                         rowDegree.Delete();
                         rowDegreeProgramme.Delete();
-                        degreeProgrammes.Remove(degreeProgramme);
+                        programmes.Remove(degree);
                     }
                     else
                     {
@@ -183,10 +188,10 @@ namespace FuturePathGroup10.Data
         internal override bool UpdateAllSources()
         {
             dsMain = dsDegreeProgramme;
-            bool check1 = UpdateDataSource(SQL_SELECT_DEGREEPROGRAMME, DEGREEPROGRAMME_TABLE, daDegreeProgramme);
+            bool check1 = UpdateDataSource(SQL_SELECT_DEGREEPROGRAMME, TABLE_DEGREEPROGRAMME, daDegreeProgramme);
             dsDegreeProgramme = dsMain;
             dsMain = dsDegree;
-            bool check2 = UpdateDataSource(SQL_SELECT_DEGREE, DEGREE_TABLE, dsDegree);
+            bool check2 = UpdateDataSource(SQL_SELECT_DEGREE, TABLE_DEGREE, daDegree);
             dsDegree = dsMain;
             return check1 && check2;
         }
@@ -217,7 +222,7 @@ namespace FuturePathGroup10.Data
             SqlParameter param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
             daDegreeProgramme.InsertCommand.Parameters.Add(param);
 
-            SqlParameter param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
+            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
             daDegreeProgramme.InsertCommand.Parameters.Add(param);
             daDegree.InsertCommand.Parameters.Add(param);
 
@@ -230,9 +235,10 @@ namespace FuturePathGroup10.Data
 
         internal override void Build_UPDATE_Parameters()
         {
-            daDegreeProgramme.InsertCommand.Parameters.Add(param);
+            SqlParameter param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
+            daDegreeProgramme.UpdateCommand.Parameters.Add(param);
 
-            SqlParameter param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
+            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
             daDegreeProgramme.UpdateCommand.Parameters.Add(param);
             daDegree.UpdateCommand.Parameters.Add(param);
 
@@ -251,7 +257,7 @@ namespace FuturePathGroup10.Data
             param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
             daDegree.DeleteCommand.Parameters.Add(param);
             daDegreeProgramme.DeleteCommand.Parameters.Add(param);
-        }S
+        }
 
         #endregion
     }
