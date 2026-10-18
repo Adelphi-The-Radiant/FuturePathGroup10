@@ -9,7 +9,7 @@ namespace FuturePathGroup10.Prerequisites
     {
         public Learner.Learner learner { get; private set; }
         public Subject subject { get; private set; }
-        public double result { get; private set; }
+        public double result { get; set; }
 
         public LearnerSubject(Learner.Learner learner, Subject subject, double result)
         {
