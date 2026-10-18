@@ -66,6 +66,7 @@ namespace FuturePathGroup10.Data
                     if (count == learner.learnerID)
                     {
                         check = false;
+                        break;
                     }
 
                 }

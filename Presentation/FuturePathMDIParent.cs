@@ -5,51 +5,112 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using FuturePathGroup10.Data;
+using FuturePathGroup10.Learner;
 
 namespace FuturePathGroup10.Presentation
 {
     public partial class FuturePathMDIParent : Form
     {
-        private int childFormNumber = 0;
+        private readonly AdminDB _adminDb;
+        private readonly CareerAdvisorDB _careerAdvisorDb;
+        private readonly UserAccountDB _userAccountDb;
+        private readonly LearnerController _learnerController;
+        private UserAccount? _userAccount;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Form CurrentForm
+        {
+            get;
+            set
+            {
+                if (field == value) return;
+
+                Form oldForm = field;
+                field = value;
+
+                field.FormClosed += CurrentForm_FormClosed;
+                field.MdiParent = this;
+                field.Show();
+
+                if (oldForm is not null)
+                {
+                    oldForm.FormClosed -= CurrentForm_FormClosed;
+                    oldForm.Close();
+                }
+            }
+        }
 
         public FuturePathMDIParent()
         {
             InitializeComponent();
+            IsMdiContainer = true;
+
+            _learnerController = new();
+
+            // Initialize the databases
+            _adminDb = new();
+            _careerAdvisorDb = new();
+            _userAccountDb = new(_learnerController.learnerDB, _adminDb, _careerAdvisorDb);
+
+            // Open the startup window
+            CurrentForm = new LoginForm(_userAccountDb);
         }
 
-        private void ShowNewForm(object sender, EventArgs e)
+        public void ReturnHome() 
         {
-            Form childForm = new Form();
-            childForm.MdiParent = this;
-            childForm.Text = "Window " + childFormNumber++;
-            childForm.Show();
-        }
-
-        private void OpenFile(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            openFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+            if (_userAccount is null)
             {
-                string FileName = openFileDialog.FileName;
+                CurrentForm = new LoginForm(_userAccountDb);
+                return;
             }
+
+            CurrentForm = new HomeForm();
         }
 
-        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        public void Login(UserAccount authorizedAccount)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            saveFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*";
-            if (saveFileDialog.ShowDialog(this) == DialogResult.OK)
+            if (_userAccount is not null)
             {
-                string FileName = saveFileDialog.FileName;
+                throw new ArgumentException("Cannot log into an account while already logged in.");
             }
+
+            _userAccount = authorizedAccount;
+
+            CurrentForm = new HomeForm();
+        }
+
+        public void StartRegistration()
+        {
+            CurrentForm = new RegisterForm(_userAccountDb);
+        }
+
+        public void Register(string username, int grade, string school, string province, string phone, string email, string password)
+        {
+            UserAccount newAccount = new(username, password, DateTime.Now, UserAccount.Permission.user);
+            FuturePathGroup10.Learner.Learner newLearner = new(_learnerController.learnerDB.getNextID(), username, phone, username, school, null, null, email, province);
+            _learnerController.createProfile(newLearner, out string error);
+            CurrentForm = new HomeForm();
+        }
+
+        public void OpenMarksCapture()
+        {
+            CurrentForm = new Learner.CaptureMarksForm(_learnerController.subjectDB, _learnerController);
+        }
+
+        private void CurrentForm_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            ReturnHome();
+        }
+
+        private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CurrentForm = new LoginForm(_userAccountDb);
         }
 
         private void ExitToolsStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void CutToolStripMenuItem_Click(object sender, EventArgs e)

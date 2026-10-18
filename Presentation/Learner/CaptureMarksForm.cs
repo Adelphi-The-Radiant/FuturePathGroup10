@@ -46,9 +46,15 @@ namespace FuturePathGroup10.Presentation.Learner
             }
         }
 
+        private void Exit()
+        {
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.ReturnHome();
+        }
+
         private void backButton_Click(object sender, EventArgs e)
         {
-            Close();
+            Exit();
         }
 
         private void submitButton_Click(object sender, EventArgs e)
@@ -100,7 +106,7 @@ namespace FuturePathGroup10.Presentation.Learner
                     MessageBoxIcon.Information
                 );
 
-                Close();
+                Exit();
             }
             catch (ArgumentException)
             {

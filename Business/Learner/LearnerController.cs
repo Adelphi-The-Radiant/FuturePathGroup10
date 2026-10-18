@@ -16,13 +16,10 @@ namespace FuturePathGroup10.Learner
     public partial class LearnerController
     {
         #region Data Members
-        private LearnerDB learnerDB;
-
-        private SubjectDB subjectDB;
-
-        private FacultyDB facultyDB;
-
-        private DegreeDB degreeDB;
+        public readonly LearnerDB learnerDB;
+        public readonly SubjectDB subjectDB;
+        public readonly FacultyDB facultyDB;
+        public readonly DegreeDB degreeDB;
 
         public Faculty? SelectedFaculty { get; private set; }
 

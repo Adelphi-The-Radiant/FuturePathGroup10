@@ -15,9 +15,7 @@ namespace FuturePathGroup10.Data
     public class SubjectDB : DB
     {
         #region Attributes
-        private const string SQL_SELECT_SUBJECT_JOIN = "SELECT * FROM " +
-            "(SELECT * FROM Subject LEFT JOIN LearnerSubject ON Subject.SubjectName = LearnerSubject.SubjectName ORDER BY Subject.SubjectName) " +
-            "AS SubjectJoined";
+        private const string SQL_SELECT_SUBJECT_JOIN = "SELECT * FROM Subject LEFT JOIN LearnerSubject ON Subject.SubjectName = LearnerSubject.SubjectName ORDER BY Subject.SubjectName";
         private const string JOINED_TABLE = "SubjectJoined";
 
         private const string SQL_SELECT_SUBJECT = "SELECT * FROM Subject";

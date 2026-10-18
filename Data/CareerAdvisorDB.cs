@@ -14,9 +14,9 @@ namespace FuturePathGroup10.Data
 
         #region Attributes
 
-        private const string CAREER_ADVISOR_TABLE = "Administrator";
+        private const string CAREER_ADVISOR_TABLE = "CareerAdvisor";
 
-        private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM Administrator";
+        private const string SQL_SELECT_CAREER_ADVISOR = "SELECT * FROM CareerAdvisor";
 
 
         public Collection<CareerAdvisor> advisors { get; private set; }
