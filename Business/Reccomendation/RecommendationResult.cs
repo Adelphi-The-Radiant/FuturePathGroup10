@@ -4,13 +4,20 @@ using System.Text;
 
 namespace FuturePathGroup10.Reccomendation
 {
-    internal class RecommendationResult
+    public class RecommendationResult
     {
-        private int learnerID;
-        private int degreeID;
-        // Should be a specialized type for dates
-        private DateTime date;
-        private string results;
+        public Learner.Learner learner;
+        public Degree degree;
+        public DateTime date;
+        public string results;
+
+        public RecommendationResult(Learner.Learner learner,Degree degree,DateTime date,string results)
+        {
+            this.learner = learner;
+            this.degree = degree;
+            this.date = date;
+            this.results = results;
+        }
 
         public string getRecommendationResults()
         {

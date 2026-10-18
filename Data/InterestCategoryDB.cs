@@ -75,7 +75,7 @@ namespace FuturePathGroup10.Data
         }
 
         #endregion
-
+        #region Loading
         private void LoadCategories()
 		{
 			int interestCategoryID = -1;
@@ -118,14 +118,12 @@ namespace FuturePathGroup10.Data
                 Degree degree = degreeDB.getDegree(degreeID);
                 category.addDegree(degree);
             }
-
-            
-
         }
+        #endregion
 
         #region Update DataSet
 
-		private void FillDataRow(DataRow row, InterestCategory category)
+        private void FillDataRow(DataRow row, InterestCategory category)
 		{
 			row["InterestCategoryID"] = category.interestCategoryID;
 			row["Title"] = category.title;
