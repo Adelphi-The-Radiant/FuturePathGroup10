@@ -23,5 +23,6 @@ namespace FuturePathGroup10.Reccomendation
         {
             return (this.faculty==other.faculty && this.degree==other.degree);
         }
+
     }
 }
