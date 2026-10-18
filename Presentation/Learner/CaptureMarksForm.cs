@@ -48,7 +48,8 @@ namespace FuturePathGroup10.Presentation.Learner
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            Close();
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.ReturnHome();
         }
 
         private void submitButton_Click(object sender, EventArgs e)
@@ -100,7 +101,8 @@ namespace FuturePathGroup10.Presentation.Learner
                     MessageBoxIcon.Information
                 );
 
-                Close();
+                FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+                parent.StartInterestQuestionnaire();
             }
             catch (ArgumentException)
             {
@@ -111,7 +113,7 @@ namespace FuturePathGroup10.Presentation.Learner
                     MessageBoxIcon.Error
                 );
             }
-            
+
         }
 
         private Dictionary<Subject, double> GatherSubjectMarks()

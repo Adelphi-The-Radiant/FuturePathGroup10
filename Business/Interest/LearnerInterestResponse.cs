@@ -25,7 +25,13 @@ namespace FuturePathGroup10.Interest
 
         public void addResponse(string response)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(response))
+            {
+                MessageBox.Show("Response can not be empty.");
+                return;
+            }
+            this.result = response;
+            // not sure what else to do here
         }
 
         public string getResponse()

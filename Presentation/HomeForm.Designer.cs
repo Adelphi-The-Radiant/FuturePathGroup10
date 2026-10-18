@@ -47,20 +47,20 @@
             // pictureBox2
             // 
             pictureBox2.BackColor = Color.White;
-            pictureBox2.Location = new Point(-6, 64);
-            pictureBox2.Margin = new Padding(6, 6, 6, 6);
+            pictureBox2.Location = new Point(-4, 40);
+            pictureBox2.Margin = new Padding(4);
             pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new Size(1501, 341);
+            pictureBox2.Size = new Size(924, 213);
             pictureBox2.TabIndex = 1;
             pictureBox2.TabStop = false;
             // 
             // pictureBox3
             // 
             pictureBox3.Image = Properties.Resources.Screenshot_2026_10_14_145905;
-            pictureBox3.Location = new Point(22, 113);
-            pictureBox3.Margin = new Padding(6, 6, 6, 6);
+            pictureBox3.Location = new Point(14, 71);
+            pictureBox3.Margin = new Padding(4);
             pictureBox3.Name = "pictureBox3";
-            pictureBox3.Size = new Size(238, 237);
+            pictureBox3.Size = new Size(146, 148);
             pictureBox3.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox3.TabIndex = 2;
             pictureBox3.TabStop = false;
@@ -70,10 +70,10 @@
             explainLabel.AutoSize = true;
             explainLabel.BackColor = Color.White;
             explainLabel.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            explainLabel.Location = new Point(272, 77);
-            explainLabel.Margin = new Padding(6, 0, 6, 0);
+            explainLabel.Location = new Point(167, 48);
+            explainLabel.Margin = new Padding(4, 0, 4, 0);
             explainLabel.Name = "explainLabel";
-            explainLabel.Size = new Size(1184, 324);
+            explainLabel.Size = new Size(744, 216);
             explainLabel.TabIndex = 3;
             explainLabel.Text = resources.GetString("explainLabel.Text");
             explainLabel.Click += explainLabel_Click;
@@ -81,30 +81,31 @@
             // marksButton
             // 
             marksButton.Image = Properties.Resources.Screenshot_2026_10_14_145759;
-            marksButton.Location = new Point(26, 454);
-            marksButton.Margin = new Padding(6, 6, 6, 6);
+            marksButton.Location = new Point(16, 284);
+            marksButton.Margin = new Padding(4);
             marksButton.Name = "marksButton";
-            marksButton.Size = new Size(316, 363);
+            marksButton.Size = new Size(194, 227);
             marksButton.TabIndex = 7;
             marksButton.UseVisualStyleBackColor = true;
+            marksButton.Click += marksButton_Click;
             // 
             // tertiaryButton
             // 
             tertiaryButton.Image = Properties.Resources.Screenshot_2026_10_14_145804;
-            tertiaryButton.Location = new Point(392, 454);
-            tertiaryButton.Margin = new Padding(6, 6, 6, 6);
+            tertiaryButton.Location = new Point(241, 284);
+            tertiaryButton.Margin = new Padding(4);
             tertiaryButton.Name = "tertiaryButton";
-            tertiaryButton.Size = new Size(318, 363);
+            tertiaryButton.Size = new Size(196, 227);
             tertiaryButton.TabIndex = 8;
             tertiaryButton.UseVisualStyleBackColor = true;
             // 
             // fundsButton
             // 
             fundsButton.Image = Properties.Resources.Screenshot_2026_10_14_145815;
-            fundsButton.Location = new Point(812, 457);
-            fundsButton.Margin = new Padding(6, 6, 6, 6);
+            fundsButton.Location = new Point(500, 286);
+            fundsButton.Margin = new Padding(4);
             fundsButton.Name = "fundsButton";
-            fundsButton.Size = new Size(310, 363);
+            fundsButton.Size = new Size(191, 227);
             fundsButton.TabIndex = 9;
             fundsButton.UseVisualStyleBackColor = true;
             fundsButton.Click += fundsButton_Click;
@@ -112,59 +113,59 @@
             // studReportButton
             // 
             studReportButton.Image = Properties.Resources.Screenshot_2026_10_14_145823;
-            studReportButton.Location = new Point(1098, 454);
-            studReportButton.Margin = new Padding(6, 6, 6, 6);
+            studReportButton.Location = new Point(676, 284);
+            studReportButton.Margin = new Padding(4);
             studReportButton.Name = "studReportButton";
-            studReportButton.Size = new Size(331, 363);
+            studReportButton.Size = new Size(204, 227);
             studReportButton.TabIndex = 10;
             studReportButton.UseVisualStyleBackColor = true;
             // 
             // adminInfoButton
             // 
             adminInfoButton.Image = Properties.Resources.Screenshot_2026_10_14_152123;
-            adminInfoButton.Location = new Point(353, 457);
-            adminInfoButton.Margin = new Padding(6, 6, 6, 6);
+            adminInfoButton.Location = new Point(217, 286);
+            adminInfoButton.Margin = new Padding(4);
             adminInfoButton.Name = "adminInfoButton";
-            adminInfoButton.Size = new Size(319, 363);
+            adminInfoButton.Size = new Size(196, 227);
             adminInfoButton.TabIndex = 11;
             adminInfoButton.UseVisualStyleBackColor = true;
             // 
             // adminReportButton
             // 
             adminReportButton.Image = Properties.Resources.Screenshot_2026_10_14_145823;
-            adminReportButton.Location = new Point(849, 454);
-            adminReportButton.Margin = new Padding(6, 6, 6, 6);
+            adminReportButton.Location = new Point(522, 284);
+            adminReportButton.Margin = new Padding(4);
             adminReportButton.Name = "adminReportButton";
-            adminReportButton.Size = new Size(327, 363);
+            adminReportButton.Size = new Size(201, 227);
             adminReportButton.TabIndex = 12;
             adminReportButton.UseVisualStyleBackColor = true;
             // 
             // advisCreateRepButton
             // 
             advisCreateRepButton.Image = Properties.Resources.Screenshot_2026_10_14_152318;
-            advisCreateRepButton.Location = new Point(353, 454);
-            advisCreateRepButton.Margin = new Padding(6, 6, 6, 6);
+            advisCreateRepButton.Location = new Point(217, 284);
+            advisCreateRepButton.Margin = new Padding(4);
             advisCreateRepButton.Name = "advisCreateRepButton";
-            advisCreateRepButton.Size = new Size(319, 363);
+            advisCreateRepButton.Size = new Size(196, 227);
             advisCreateRepButton.TabIndex = 13;
             advisCreateRepButton.UseVisualStyleBackColor = true;
             // 
             // advisReportButton
             // 
             advisReportButton.Image = Properties.Resources.Screenshot_2026_10_14_145823;
-            advisReportButton.Location = new Point(812, 457);
-            advisReportButton.Margin = new Padding(6, 6, 6, 6);
+            advisReportButton.Location = new Point(500, 286);
+            advisReportButton.Margin = new Padding(4);
             advisReportButton.Name = "advisReportButton";
-            advisReportButton.Size = new Size(325, 361);
+            advisReportButton.Size = new Size(200, 226);
             advisReportButton.TabIndex = 14;
             advisReportButton.UseVisualStyleBackColor = true;
             // 
             // HomeForm
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 186, 158);
-            ClientSize = new Size(1486, 960);
+            ClientSize = new Size(914, 600);
             Controls.Add(advisReportButton);
             Controls.Add(advisCreateRepButton);
             Controls.Add(adminReportButton);
@@ -176,7 +177,7 @@
             Controls.Add(explainLabel);
             Controls.Add(pictureBox3);
             Controls.Add(pictureBox2);
-            Margin = new Padding(6, 6, 6, 6);
+            Margin = new Padding(4);
             Name = "HomeForm";
             Text = "HomeForm";
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();

@@ -14,5 +14,11 @@ namespace FuturePathGroup10.Presentation.Learner
         {
             InitializeComponent();
         }
+
+        private void backButton_Click(object sender, EventArgs e)
+        {
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.ReturnHome();
+        }
     }
 }
