@@ -4,14 +4,14 @@ using System.Text;
 
 namespace FuturePathGroup10.Reccomendation
 {
-    public class RecommendationResult
+    public class ReccommendationResult
     {
-        public Learner.Learner learner;
-        public Degree degree;
-        public DateTime date;
-        public string results;
+        public Learner.Learner learner { get; private set; }
+        public Degree degree { get; private set; }
+        public DateTime date { get; private set; }
+        public string results { get; private set; }
 
-        public RecommendationResult(Learner.Learner learner,Degree degree,DateTime date,string results)
+        public ReccommendationResult(Learner.Learner learner,Degree degree,DateTime date,string results)
         {
             this.learner = learner;
             this.degree = degree;
