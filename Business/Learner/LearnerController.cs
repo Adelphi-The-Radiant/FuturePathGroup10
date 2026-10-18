@@ -11,7 +11,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FuturePathGroup10.Learner
 {
-    internal partial class LearnerController
+    public partial class LearnerController
     {
         #region Data Members
         public LearnerDB learnerDB;
