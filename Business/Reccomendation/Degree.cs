@@ -18,7 +18,7 @@ namespace FuturePathGroup10.Reccomendation
         private Faculty faculty; // a degree must have a Faculty
 
         // constructor
-        public Degree(int degreeID, string title, string description, DegreeDB degreeDB, Faculty faculty)
+        public Degree(int degreeID, string title, string description)
         {
             this.degreeID = degreeID;
             this.title = title;

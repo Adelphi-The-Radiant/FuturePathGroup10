@@ -17,7 +17,7 @@ namespace FuturePathGroup10.Reccomendation
         private EnrollmentList enrollmentList;
 
         // constructor
-        public Faculty(int facultyID, string title, string description, FacultyDB facultyDB, EnrollmentList enrollmentList)
+        public Faculty(int facultyID, string title, string description)
         {
             this.facultyID = facultyID;
             this.description = description;
