@@ -11,30 +11,101 @@ namespace FuturePathGroup10.Advisory
     {
         private LearnerDB learnerDB;
         private AdvisorySessionDB advisorySessionDB;
+        private ReccommendationResultDB reccommendationResultDB;
 
-        public void viewAdvisoryOutcome(int learnerID)
+        // constructor
+        public AdvisorController(LearnerDB learnerDB, AdvisorySessionDB advisorySessionDB, ReccommendationResultDB reccommendationResultDB)
         {
-            throw new NotImplementedException();
+            this.learnerDB = learnerDB;
+            this.reccommendationResultDB = reccommendationResultDB;
+            this.advisorySessionDB = advisorySessionDB;
         }
 
-        public void viewLearnerInformation(int learnerID)
+        public string viewAdvisoryOutcome(int learnerID)
         {
-            throw new NotImplementedException();
+            // gets the learner
+            Learner.Learner learner = learnerDB.getLearner(learnerID);  
+            // checks if the learner exists
+            if (learner == null)
+            {
+                return "Learner with ID " + learnerID + " does not exist.";
+            }
+            string temp = ""
+            List<ReccommendationResult> reccomend = reccommendationResultDB.GetReccomendationResult(learnerID);
+            if (reccomend.Count > 0)
+            {
+                foreach (var result in reccomend)
+                {
+                    temp += result.ToString();
+                }
+                return temp;
+            }
+            return ("No advisory outcomes generated for " + learner.fullname + " yet.");
         }
 
-        public void viewExportSummary(int learnerID)
+        public string viewLearnerInformation(int learnerID)
         {
-            throw new NotImplementedException();
+            Learner.Learner learner = learnerDB.getLearner(learnerID);
+            // checks if the learner exists
+            if (learner == null)
+            {
+                MessageBox.Show("Learner with ID " + learnerID + " does not exist.");
+                return "";
+            }
+            return "Learner ID: " + learnerID + "\nName: " + learner.fullname + "\nEmail: " + learner.email + "\nPhone: " + learner.phoneNumber + "\nSchool: " + learner.school;
+        }
+
+        public string viewExportSummary(int learnerID)
+        {
+            Learner.Learner learner = learnerDB.getLearner(learnerID);
+            // checks if the learner exists
+            if (learner == null)
+            {
+                MessageBox.Show("Learner with ID " + learnerID + " does not exist.");
+                return "";
+            }
+            string summary = reccommendationResultDB.getSummary(learnerID);
+            if (string.IsNullOrEmpty(summary))
+            {
+                MessageBox.Show("No summary generated for " + learner.fullname + "yet.");
+                return "";
+            }
+            return summary;
         }
 
         public void exportSummary(string fullReport)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string file = "AdvisoryReport_" + DateTime.Now + ".txt";
+                System.IO.File.WriteAllText(file, fullReport);
+                MessageBox.Show("Report successfully exported: " + file);
+            } catch (Exception e)
+            {
+                MessageBox.Show("Error exporting report");
+            }
         }
 
-        public void viewAdvisorySession(int learnerID)
+        public string viewAdvisorySession(int learnerID)
         {
-            throw new NotImplementedException();
+            Learner.Learner learner = learnerDB.getLearner(learnerID);
+            // checks if the learner exists
+            if (learner == null)
+            {
+                MessageBox.Show("Learner with ID " + learnerID + " does not exist.");
+                return "";
+            }
+            string temp = "";
+            List <AdvisorySession> session = advisorySessionDB.getAdvisorySessions(learnerID);
+            if (session.Count > 0)
+            {
+                foreach (var result in session)
+                {
+                    temp += result.ToString();
+                }
+                return temp;
+            }
+            return ("No advisory outcomes generated for " + learner.fullname + " yet.");
         }
     }
 }
