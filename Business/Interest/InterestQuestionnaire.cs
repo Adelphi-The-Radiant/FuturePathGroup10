@@ -24,9 +24,14 @@ namespace FuturePathGroup10.Interest
             questions.Add(question);
         }
 
+        // not sure what to do here...
         public string mapToInterestAlignment()
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(response))
+            {
+                return "Undetermined";
+            }
+            return "Primary Interest Alignment: " + response;
         }
     }
 }
