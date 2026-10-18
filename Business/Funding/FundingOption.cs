@@ -38,7 +38,7 @@ namespace FuturePathGroup10.Funding
         }
 
         // This takes no parameters and returns a string? Weird for a setter
-        public string setFundingOptions()
+        public void setFundingOptions()
         {
             throw new NotImplementedException();
         }
