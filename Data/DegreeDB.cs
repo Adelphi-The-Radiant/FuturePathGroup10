@@ -58,22 +58,6 @@ namespace FuturePathGroup10.Data
         }
         #endregion
 
-        #region Getter
-
-        public Degree getDegree(int degreeID)
-        {
-            foreach(Degree degree in degrees)
-            {
-                if (degree.degreeID == degreeID)
-                {
-                    return degree;
-                }
-            }
-            return null;
-        }
-
-        #endregion
-
         #region Load Degree Programmes
         private void LoadDegreeProgrammes()
         {
@@ -109,6 +93,20 @@ namespace FuturePathGroup10.Data
                 programmes.Add(degreeProgramme);
             }
         }
+        #endregion
+        #region getters
+        public Degree getDegree(int degreeID)
+        {
+            foreach(Degree degree in degrees)
+            {
+                if (degree.degreeID == degreeID)
+                {
+                    return degree;
+                }
+            }
+            return null;
+        }
+
         #endregion
 
         #region Dataset Updates

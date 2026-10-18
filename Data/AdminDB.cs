@@ -47,7 +47,7 @@ namespace FuturePathGroup10.Data
         private void FillDataRow(DataRow row, Administrator admin)
 		{
 			row["AdminID"] = admin.adminID;
-			row["Username"] = admin.username;
+			row["Username"] = admin.Username;
 			row["FullName"] = admin.fullName;
 		}
 

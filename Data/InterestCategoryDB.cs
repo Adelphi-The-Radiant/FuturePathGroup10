@@ -1,4 +1,4 @@
-﻿using FuturePathGroup10.Advisory;
+﻿using FuturePathGroup10.Reccomendation;
 using FuturePathGroup10.Interest;
 using System;
 using System.Collections.ObjectModel;
@@ -17,12 +17,13 @@ namespace FuturePathGroup10.Data
 			"(SELECT * FROM InterestCategory LEFT JOIN QuestionCategoryMapping ON InterestCategory.InterestCategoryID = QuestionCategoryMapping.InterestCategoryID " +
 			"ORDER BY InterestCategory.InterestCategoryID) " +
 			"AS JoinedTable";
-
-		private const string TABLE_JOINED = "JoinedTable";
+        private const string TABLE_JOINED = "JoinedTable";
 		private const string TABLE_QCM = "QuestionCategoryMapping";
 		private const string TABLE_CATEGORY = "InterestCategory";
+        private const string TABLE_DIM = "DegreeInterestMapping";
 		private const string SQL_SELECT_QCM = "SELECT * FROM QuestionCategoryMapping";
 		private const string SQL_SELECT_CATEGORY = "SELECT * FROM InterestCategory";
+        private const string SQL_SELECT_DIM = "SELECT * FROM DegreeInterestMapping";
 
 		private DataSet dsQCM;
 		private DataSet dsCategory;
@@ -30,13 +31,15 @@ namespace FuturePathGroup10.Data
 		private OleDbDataAdapter daQCM;
 		private OleDbDataAdapter daCategory;
 		private InterestQuestionnaireDB IQDB;
+        private DegreeDB degreeDB;
 
 		public Collection<InterestCategory> categories { get; private set; }
 
         #endregion
-        public InterestCategoryDB(InterestQuestionnaireDB IQDB)
+        public InterestCategoryDB(InterestQuestionnaireDB IQDB,DegreeDB degreeDB)
 		{
 			this.IQDB = IQDB;
+            this.degreeDB = degreeDB;
 			categories = new Collection<InterestCategory>();
 
 			FillDataSet(SQL_SELECT_QCM, TABLE_QCM);
@@ -50,9 +53,26 @@ namespace FuturePathGroup10.Data
 			FillDataSet(SQL_SELECT_JOINED, TABLE_JOINED);
 
 			LoadCategories();
-		}
 
-		private void LoadCategories()
+            FillDataSet(SQL_SELECT_DIM, TABLE_DIM);
+            LoadDegrees();
+		}
+        #region getters
+        public InterestCategory getInterestCategory(int interestCategoryID)
+        {
+            foreach(InterestCategory category in categories)
+            {
+                if (category.interestCategoryID == interestCategoryID)
+                {
+                    return category;
+                }
+            }
+            return null;
+        }
+
+        #endregion
+
+        private void LoadCategories()
 		{
 			int interestCategoryID = -1;
 			InterestCategory category = null;
@@ -76,6 +96,28 @@ namespace FuturePathGroup10.Data
 
 			}
 		}
+
+        private void LoadDegrees()
+        {
+            int interestCategoryID = -1;
+            InterestCategory category = null;
+
+            foreach(DataRow row in dsMain.Tables[TABLE_DIM].Rows)
+            {
+                int candidateID = Convert.ToInt32(row["InterestCategoryID"]);
+                if (interestCategoryID != candidateID)
+                {
+                    interestCategoryID = candidateID;
+                    category = getInterestCategory(interestCategoryID);
+                }
+                int degreeID = Convert.ToInt32(row["DegreeID"]);
+                Degree degree = degreeDB.getDegree(degreeID);
+                category.addDegree(degree);
+            }
+
+            
+
+        }
 
         #region Update DataSet
 
@@ -207,6 +249,7 @@ namespace FuturePathGroup10.Data
             dsMain = dsQCM;
             bool check2 = UpdateDataSource(SQL_SELECT_QCM, TABLE_QCM, daQCM);
             dsQCM = dsMain;
+            return check1 && check2;
         }
 
         internal override void Create_INSERT_Command()
