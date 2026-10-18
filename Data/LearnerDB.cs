@@ -103,7 +103,7 @@ namespace FuturePathGroup10.Data
         private void FillLearnerRow(DataRow row, Learner.Learner learner)
         {
             row["LearnerID"] = learner.learnerID;
-            row["Username"] = learner.username;
+            row["Username"] = learner.Username;
             row["PhoneNumber"] = learner.phoneNumber;
             row["FullName"] = learner.fullname;
             row["School"] = learner.school;

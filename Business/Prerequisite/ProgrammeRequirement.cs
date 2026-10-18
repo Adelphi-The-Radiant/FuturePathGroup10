@@ -5,16 +5,17 @@ using FuturePathGroup10.Reccomendation;
 
 namespace FuturePathGroup10.Prerequisites
 {
-    internal class ProgrammeRequirement : ReferenceData
+    public class ProgrammeRequirement : ReferenceData
     {
-        private DegreeProgramme programme; 
-        private int programmeRequirementID;
-        private string subjectName;
-        private int minRequiredGrade;
+        public int programmeRequirementID { get; private set;}
+        public Subject subject { get; private set; }
+        public decimal minRequiredGrade { get; private set; }
 
-        public ProgrammeRequirement(DegreeProgramme programme) 
-        { 
-            this.programme = programme;
+        public ProgrammeRequirement(int programmeRequirementID, Subject subject, decimal minRequiredGrade) 
+        {
+            this.programmeRequirementID = programmeRequirementID;
+            this.subject = subject;
+            this.minRequiredGrade = minRequiredGrade;
         }
 
         public bool compareMarks()

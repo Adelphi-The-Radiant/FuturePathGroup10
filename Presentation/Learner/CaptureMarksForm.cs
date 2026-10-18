@@ -1,4 +1,5 @@
-﻿using FuturePathGroup10.Learner;
+﻿using FuturePathGroup10.Data;
+using FuturePathGroup10.Learner;
 using FuturePathGroup10.Prerequisites;
 using System;
 using System.Collections.Generic;
@@ -13,33 +14,33 @@ namespace FuturePathGroup10.Presentation.Learner
 {
     public partial class CaptureMarksForm : Form
     {
-        private record SubjectGradeInput(ComboBox SubjectInput, NumericUpDown GradeInput);
+        private record SubjectMarkInput(ComboBox SubjectInput, NumericUpDown GradeInput);
 
-        private readonly SubjectGradeInput[] _subjectGradeInputs;
-        private readonly Data.SubjectDB _subjectDb;
-        private readonly FuturePathGroup10.Learner.Learner _learner;
+        private readonly SubjectMarkInput[] _subjectMarkInputs;
+        private readonly SubjectDB _subjectDb;
+        private readonly LearnerController _learnerController;
 
-        public CaptureMarksForm(Data.SubjectDB subjectDB, FuturePathGroup10.Learner.Learner learner)
+        public CaptureMarksForm(SubjectDB subjectDB, LearnerController learnerController)
         {
             InitializeComponent();
             _subjectDb = subjectDB;
-            _learner = learner;
+            _learnerController = learnerController;
 
             // Initialize grade inputs
-            _subjectGradeInputs =
+            _subjectMarkInputs =
                 [
-                    new SubjectGradeInput(s1ComboBox, s1Num),
-                    new SubjectGradeInput(s2ComboBox, s2Num),
-                    new SubjectGradeInput(s3ComboBox, s3Num),
-                    new SubjectGradeInput(s4ComboBox, s4Num),
-                    new SubjectGradeInput(s5ComboBox, s5Num),
-                    new SubjectGradeInput(s6ComboBox, s6Num),
-                    new SubjectGradeInput(s7ComboBox, s7Num),
-                    new SubjectGradeInput(s8ComboBox, s8Num),
+                    new SubjectMarkInput(s1ComboBox, s1Num),
+                    new SubjectMarkInput(s2ComboBox, s2Num),
+                    new SubjectMarkInput(s3ComboBox, s3Num),
+                    new SubjectMarkInput(s4ComboBox, s4Num),
+                    new SubjectMarkInput(s5ComboBox, s5Num),
+                    new SubjectMarkInput(s6ComboBox, s6Num),
+                    new SubjectMarkInput(s7ComboBox, s7Num),
+                    new SubjectMarkInput(s8ComboBox, s8Num),
                 ];
 
             // Allow the user to select any subject from the database
-            foreach (SubjectGradeInput input in _subjectGradeInputs)
+            foreach (SubjectMarkInput input in _subjectMarkInputs)
             {
                 input.SubjectInput.DataSource = subjectDB.subjects;
             }
@@ -52,17 +53,78 @@ namespace FuturePathGroup10.Presentation.Learner
 
         private void submitButton_Click(object sender, EventArgs e)
         {
-            foreach (SubjectGradeInput inputs in _subjectGradeInputs)
+            try
             {
-                if (inputs.SubjectInput.SelectedItem == null)
+                // Fail if no subjects were entered
+                Dictionary<Subject, double> marks = GatherSubjectMarks();
+                if (marks.Count == 0)
                 {
-                    continue;
+                    MessageBox.Show(
+                        "Please enter at least one subject and a matching mark.",
+                        "No Subjects Entered",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+
+                    return;
                 }
 
-                _learner.addSubjectMark((Subject)inputs.SubjectInput.SelectedItem, (int)inputs.GradeInput.Value);
-            }
+                // Ask if the user wants to proceed
+                DialogResult proceedResult = MessageBox.Show(
+                    "Are you sure you want to submit the entered subjects and marks?",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+                if (proceedResult != DialogResult.Yes) { return; }
 
-            Close();
+                // Fail if something goes wrong in captureMarks()
+                bool success = _learnerController.captureMarks(marks, out string error);
+                if (!success)
+                {
+                    MessageBox.Show(
+                        error,
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+
+                    return;
+                }
+
+                // Successfully captured subjects and marks
+                MessageBox.Show(
+                    "Successfully captured subject marks. The form will now close.",
+                    "Successfully Captured Marks",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+
+                Close();
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(
+                    "Multiple marks were entered for the same subject. Please only enter one mark per subject.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
+            
+        }
+
+        private Dictionary<Subject, double> GatherSubjectMarks()
+        {
+            Dictionary<Subject, double> marks = [];
+            foreach (SubjectMarkInput inputs in _subjectMarkInputs)
+            {
+                // Skip lines where subject hasn't been selected
+                if (inputs.SubjectInput.SelectedItem == null) { continue; }
+
+                marks.Add((Subject)inputs.SubjectInput.SelectedItem, (double)inputs.GradeInput.Value);
+            }
+            return marks;
         }
     }
 }

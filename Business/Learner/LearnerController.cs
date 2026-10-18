@@ -1,4 +1,5 @@
 ﻿using FuturePathGroup10.Data;
+using FuturePathGroup10.Funding;
 using FuturePathGroup10.Interest;
 using FuturePathGroup10.Prerequisites;
 using FuturePathGroup10.Reccomendation;
@@ -14,9 +15,13 @@ namespace FuturePathGroup10.Learner
     public partial class LearnerController
     {
         #region Data Members
-        public LearnerDB learnerDB;
+        private LearnerDB learnerDB;
 
-        public SubjectDB subjectDB;
+        private SubjectDB subjectDB;
+
+        private FacultyDB facultyDB;
+
+        private DegreeDB degreeDB;
 
         public Faculty? SelectedFaculty { get; private set; }
 
@@ -37,6 +42,8 @@ namespace FuturePathGroup10.Learner
         {
             this.learnerDB = new LearnerDB();
             this.subjectDB = new SubjectDB(learnerDB);
+            this.facultyDB = new FacultyDB(learnerDB);
+            this.degreeDB = new DegreeDB(facultyDB);
             this.activeLearner = null;
         }
         #endregion
@@ -55,7 +62,7 @@ namespace FuturePathGroup10.Learner
         #endregion
 
         #region Methods 
-
+        //this should be called after register
         public bool createProfile(Learner learner, out string error)
         {
             error = Validate(learner);
@@ -357,6 +364,47 @@ namespace FuturePathGroup10.Learner
             }
 
             return answers;
+        }
+
+        public Collection<FundingOption> viewFundingOptions()
+        {
+            FundingOptionDB fundingDB = new FundingOptionDB(facultyDB, degreeDB);
+
+            return fundingDB.options;
+        }
+
+        // Interest Match (0 to 100) for the selected degree
+        // Needs: the learner has answered the questionnaire, and a degree is selected.
+        public double getInterestMatch(out string error)
+        {
+            error = "";
+
+            if (Programme == null)
+            {
+                error = "Select a degree first.";
+                return 0;
+            }
+
+            Dictionary<int, double> scores = calculateInterestScores();
+            if (scores.Count == 0)
+            {
+                error = "Answer the questionnaire first.";
+                return 0;
+            }
+
+            List<int> categoryIds = new List<int>();
+            foreach (InterestCategory c in Programme.categories)
+            {
+                categoryIds.Add(c.interestCategoryID);
+            }
+
+            if (categoryIds.Count == 0)
+            {
+                error = "This degree has no interest categories linked to it.";
+                return 0;
+            }
+
+            return new Interest.InterestScorer().CalculateDegreeMatch(scores, categoryIds);
         }
         #endregion
     }
