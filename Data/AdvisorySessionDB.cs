@@ -29,7 +29,7 @@ namespace FuturePathGroup10.Data
 
         #region getters
 
-        public List<AdvisorySession> getAllNotes(int learnerID)
+        public List<AdvisorySession> getAllSessions(int learnerID)
         {
             List<AdvisorySession> output = new List<AdvisorySession>();
 
