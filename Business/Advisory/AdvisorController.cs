@@ -31,7 +31,7 @@ namespace FuturePathGroup10.Advisory
                 return "Learner with ID " + learnerID + " does not exist.";
             }
             string temp = ""
-            List<ReccommendationResult> reccomend = reccommendationResultDB.GetReccomendationResult(learnerID);
+            List<ReccommendationResult> reccomend = reccommendationResultDB.GetReccommendationResult(learnerID);
             if (reccomend.Count > 0)
             {
                 foreach (var result in reccomend)
@@ -64,7 +64,7 @@ namespace FuturePathGroup10.Advisory
                 MessageBox.Show("Learner with ID " + learnerID + " does not exist.");
                 return "";
             }
-            string summary = reccommendationResultDB.getSummary(learnerID);
+            string summary = reccommendationResultDB.getAllReccommendations(learnerID);
             if (string.IsNullOrEmpty(summary))
             {
                 MessageBox.Show("No summary generated for " + learner.fullname + "yet.");
@@ -96,7 +96,7 @@ namespace FuturePathGroup10.Advisory
                 return "";
             }
             string temp = "";
-            List <AdvisorySession> session = advisorySessionDB.getAdvisorySessions(learnerID);
+            List <AdvisorySession> session = advisorySessionDB.getAllSessions(learnerID);
             if (session.Count > 0)
             {
                 foreach (var result in session)
