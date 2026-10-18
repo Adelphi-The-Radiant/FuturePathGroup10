@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FuturePathGroup10.Data;
+using FuturePathGroup10.Reccomendation;
 
 namespace FuturePathGroup10.Administration
 {
@@ -17,17 +19,40 @@ namespace FuturePathGroup10.Administration
 
         public void addReferenceData(ReferenceData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                data.add();
+                MessageBox.Show(fullName + " successfully added new reference data.");
+            } catch (Exception e)
+            {
+                MessageBox.Show("Error adding data: " + e.Message);
+            }
         }
 
         public void updateReferenceData(ReferenceData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                data.update();
+                MessageBox.Show(fullName + " successfully updated reference data.");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error updating data: " + e.Message);
+            }
         }
         
         public void removeReferenceData(ReferenceData data)
         {
-            throw new NotImplementedException();
+            try
+            {
+                data.deactivate();
+                MessageBox.Show(fullName + " successfully deleted reference data.");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Error removing data: " + e.Message);
+            }
         }
     }
 }
