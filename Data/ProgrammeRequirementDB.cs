@@ -71,7 +71,7 @@ namespace FuturePathGroup10.Data
 					string subjectName = row["SubjectName"].ToString();
 					Subject subject = subjectDB.getSubject(subjectName);
 					decimal requiredGrade = Convert.ToDecimal(row["MinRequiredGrade"]);
-					requirement = new ProgrammeRequirement(requirementID, subject, requiredGrade);
+					requirement = new ProgrammeRequirement(requirementID, subject, Convert.ToDouble(requiredGrade));
 					requirements.Add(requirement);
 				}
 				int degreeID = Convert.ToInt32(row["DegreeID"]);
