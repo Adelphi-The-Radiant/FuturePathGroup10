@@ -55,6 +55,28 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
+        public int getNextID()
+        {
+            int count = 0;
+            for (int i = 0; i < learners.Count; i++)
+            {
+                bool check = true;
+                foreach (Learner.Learner learner in learners)
+                {
+                    if (count == learner.learnerID)
+                    {
+                        check = false;
+                    }
+
+                }
+                if (check)
+                {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         #endregion
 
         #region Load Collection of Learners
