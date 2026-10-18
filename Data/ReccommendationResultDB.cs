@@ -33,6 +33,37 @@ namespace FuturePathGroup10.Data
 		}
         #endregion
 
+        #region getters
+
+		public ReccommendationResult GetReccommendationResult(int learnerID)
+		{
+			foreach(ReccommendationResult result in results)
+			{
+				if (result.learner.learnerID == learnerID)
+				{
+					return result;
+				}
+			}
+			return null;
+		}
+
+		public string getAllReccommendations(int learnerID)
+		{
+			string output = "";
+
+            foreach (ReccommendationResult result in results)
+            {
+                if (result.learner.learnerID == learnerID)
+                {
+					output += result.degree.title + "\n";
+                }
+            }
+			return output;
+
+        }
+
+        #endregion
+
         #region Loading
 
         private void LoadResults()

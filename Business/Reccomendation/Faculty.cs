@@ -13,6 +13,7 @@ namespace FuturePathGroup10.Reccomendation
         public string title { get; private set; }
         public string description { get; private set; }
         public Collection<FundingOption> options { get; private set; }
+        public Collection<Degree> degreesOffered { get; private set; }
 
         private FacultyDB facultyDB;
         private EnrollmentList enrollmentList;
@@ -31,6 +32,14 @@ namespace FuturePathGroup10.Reccomendation
             if (option != null)
             {
                 options.Add(option);
+            }
+        }
+
+        public void addDegree(Degree degree)
+        {
+            if (degree != null)
+            {
+                degreesOffered.Add(degree);
             }
         }
 
