@@ -47,6 +47,21 @@ namespace FuturePathGroup10.Data
 			return null;
 		}
 
+		public string getAllReccommendations(int learnerID)
+		{
+			string output = "";
+
+            foreach (ReccommendationResult result in results)
+            {
+                if (result.learner.learnerID == learnerID)
+                {
+					output += result.degree.title + "\n";
+                }
+            }
+			return output;
+
+        }
+
         #endregion
 
         #region Loading
