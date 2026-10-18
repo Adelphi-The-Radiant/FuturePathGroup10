@@ -6,12 +6,23 @@ namespace FuturePathGroup10.Reccomendation
 {
     public class DegreeProgramme
     {
-        private int facultyID;
-        private int degreeID;
+        // updated: DegreeProgramme no longer takes the ID's of the classes but rather an instance of the class itself
+        private Faculty faculty;
+        private Degree degree;
 
-        public DegreeProgramme getDegreeProgramme()
+        public DegreeProgramme getDegreeProgramme(Faculty faculty, DegreeProgramme degree)
         {
-            throw new NotImplementedException();
+            this.degree = degree;
+            this.faculty = faculty;
         }
+
+        // Equals method
+        public bool Equals(DegreeProgramme other)
+        {
+            if (other  == null) return false;
+
+            return (this.faculty.facultyID == other.faculty.facultyID && this.degree.degreeID == other.degree.degreeID);
+        }
+
     }
 }
