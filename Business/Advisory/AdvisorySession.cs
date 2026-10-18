@@ -133,12 +133,24 @@ namespace FuturePathGroup10.Advisory
             }
             total = total / subjects.Count;
 
-            if (total > programme.degree.requirements.minRequiredGrade)
+            bool elig = false;
+            foreach (var prg in programme.degree.requirements)
             {
-                return "Eligible";
-            } else
+                if (prg.minRequiredGrade <  total)
+                {
+                    elig = true;
+                } else
+                {
+                    elig = false;
+                }
+            }
+
+            if (!elig)
             {
                 return "Not Eligible";
+            } else
+            {
+                return "Eligible";
             }
         }
     }
