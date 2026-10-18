@@ -46,15 +46,10 @@ namespace FuturePathGroup10.Presentation.Learner
             }
         }
 
-        private void Exit()
+        private void backButton_Click(object sender, EventArgs e)
         {
             FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
             parent.ReturnHome();
-        }
-
-        private void backButton_Click(object sender, EventArgs e)
-        {
-            Exit();
         }
 
         private void submitButton_Click(object sender, EventArgs e)
@@ -106,7 +101,8 @@ namespace FuturePathGroup10.Presentation.Learner
                     MessageBoxIcon.Information
                 );
 
-                Exit();
+                FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+                parent.StartInterestQuestionnaire();
             }
             catch (ArgumentException)
             {
@@ -117,7 +113,7 @@ namespace FuturePathGroup10.Presentation.Learner
                     MessageBoxIcon.Error
                 );
             }
-            
+
         }
 
         private Dictionary<Subject, double> GatherSubjectMarks()

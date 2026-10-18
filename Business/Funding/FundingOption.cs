@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FuturePathGroup10.Data;
+using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10.Reccomendation;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
@@ -11,11 +14,14 @@ namespace FuturePathGroup10.Funding
         public string description { get; private set; }
         public double amount { get; private set; }
 
-        public FundingOption (int optionID,string description,double amount) : base()
+        private FundingOptionDB fundingOptionDB;
+
+        public FundingOption (int optionID,string description,double amount, FundingOptionDB fundingOptionDB) : base()
         {
             this.optionID = optionID;
             this.description = description;
             this.amount = amount;
+            this.fundingOptionDB = fundingOptionDB;
         }
 
         public override bool Equals(object? obj)
@@ -38,24 +44,45 @@ namespace FuturePathGroup10.Funding
         }
 
         // This takes no parameters and returns a string? Weird for a setter
-        public string setFundingOptions()
+        public void setFundingOptions()
         {
             throw new NotImplementedException();
         }
 
         public override void add()
         {
-            throw new NotImplementedException();
+            try
+            {
+                fundingOptionDB.DataSetChange(this, DB.DBOperation.Add);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error adding Funding option: " + ex.Message);
+            }
         }
 
         public override void deactivate()
         {
-            throw new NotImplementedException();
+            try
+            {
+                fundingOptionDB.DataSetChange(this, DB.DBOperation.Delete);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting Funding option: " + ex.Message);
+            }
         }
 
         public override void update()
         {
-            throw new NotImplementedException();
+            try
+            {
+                fundingOptionDB.DataSetChange(this, DB.DBOperation.Edit);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating Funding Option: " + ex.Message);
+            }
         }
     }
 }
