@@ -85,5 +85,15 @@ namespace FuturePathGroup10.Learner
 
         }
 
+        public bool isProfileComplete()
+        {
+            return !string.IsNullOrWhiteSpace(fullname) &&
+                 !string.IsNullOrWhiteSpace(phoneNumber) &&
+                 !string.IsNullOrWhiteSpace(email) &&
+                 !string.IsNullOrWhiteSpace(school) &&
+                 !string.IsNullOrWhiteSpace(province) &&
+                 overallGrade11 > 0;
+        }
+
     }
 }
