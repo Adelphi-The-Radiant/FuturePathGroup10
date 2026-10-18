@@ -24,9 +24,30 @@ namespace FuturePathGroup10.Presentation.Learner
             FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
             parent.OpenMarksCapture();
         }
+
         private void nextButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            List<NumericUpDown> inputs = [
+                q1Num,
+                q2Num,
+                q3Num,
+                q4Num,
+                q5Num,
+                q6Num,
+                q7Num,
+                q8Num
+             ];
+
+            foreach (NumericUpDown input in inputs)
+            {
+                _learnerController.saveAnswer(0, (int)q1Num.Value, out string error);
+
+                if (!string.IsNullOrEmpty(error))
+                {
+                    MessageBox.Show(error);
+                    return;
+                }
+            }
         }
     }
 }
