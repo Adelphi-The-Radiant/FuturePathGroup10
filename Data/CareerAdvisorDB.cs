@@ -62,7 +62,7 @@ namespace FuturePathGroup10.Data
         private void FillDataRow(DataRow row, CareerAdvisor advisor)
         {
             row["AdvisorID"] = advisor.advisorID;
-            row["Username"] = advisor.username;
+            row["Username"] = advisor.Username;
             row["FullName"] = advisor.fullName;
         }
 
