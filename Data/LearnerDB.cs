@@ -120,7 +120,7 @@ namespace FuturePathGroup10.Data
         //overloaded of previous
         private void FillGradeRow(DataRow row, Learner.Learner learner)
         {
-            FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.overallGrade.grade11Result), Convert.ToSingle(learner.overallGrade.grade12Result));
+            FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.overallGrade11), Convert.ToSingle(learner.overallGrade12));
         }
         //Helper method that finds the row in the dataset for a given learner. Returns null if not found.
         private DataRow FindLearnerRow(Learner.Learner learner)
