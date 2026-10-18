@@ -14,7 +14,7 @@ namespace FuturePathGroup10.Data
     {
         #region Attributes
         // joins Faculty with Enrollment table
-        private const string SQL_SELECT_FACULTY_JOIN = "SELECT Faculty.FacultyID AS FacultyID, Faculty.Title AS Title, Faculty.Description AS Description, EnrollmentList.LearnerID AS LearnerID, EnrollmentList.EnrollmentDate AS Date " +
+        private const string SQL_SELECT_FACULTY_JOIN = "SELECT Faculty.FacultyID AS FacultyID, Faculty.Title AS Title, Faculty.Description AS Description, EnrollmentList.LearnerID AS LearnerID, EnrollmentList.EnrollmentDate AS [Date] " +
             "FROM Faculty LEFT JOIN EnrollmentList ON Faculty.FacultyID = EnrollmentList.FacultyID " +
             "ORDER BY Faculty.Title";
         private const string JOINED_TABLE = "FacultyJoined";
