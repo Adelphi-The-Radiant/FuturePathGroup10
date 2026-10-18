@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FuturePathGroup10.Funding;
 using System.Collections.ObjectModel;
+using FuturePathGroup10.Prerequisites;
 
 namespace FuturePathGroup10.Reccomendation
 {
@@ -12,6 +13,8 @@ namespace FuturePathGroup10.Reccomendation
         public string title { get; private set; }
         public string description { get; private set; }
         public Collection<FundingOption> options { get; private set; }
+
+        public Collection<ProgrammeRequirement> requirements { get; private set; }
 
         // references to DegreeDB and Faculty
         private Data.DegreeDB degreeDB;
@@ -24,6 +27,7 @@ namespace FuturePathGroup10.Reccomendation
             this.title = title;
             this.description = description;
             options = new Collection<FundingOption>();
+            requirements = new Collection<ProgrammeRequirement>();
         }
 
         public void addFundingOption(FundingOption option)
@@ -31,6 +35,14 @@ namespace FuturePathGroup10.Reccomendation
             if (option != null)
             {
                 options.Add(option);
+            }
+        }
+
+        public void addRequirement(ProgrammeRequirement requirement)
+        {
+            if (requirement != null)
+            {
+                requirements.Add(requirement);
             }
         }
 

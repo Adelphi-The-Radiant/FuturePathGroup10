@@ -207,6 +207,7 @@ namespace FuturePathGroup10.Data
             dsMain = dsQCM;
             bool check2 = UpdateDataSource(SQL_SELECT_QCM, TABLE_QCM, daQCM);
             dsQCM = dsMain;
+            return check1 && check2;
         }
 
         internal override void Create_INSERT_Command()

@@ -58,6 +58,19 @@ namespace FuturePathGroup10.Data
             LoadLearnerSubjects();
         }
         #endregion
+        #region getters
+        public Subject getSubject(string subjectName)
+        {
+            foreach(Subject subject in subjects)
+            {
+                if (subject.subjectName.Equals(subjectName)){
+                    return subject;
+                }
+            }
+            return null;
+        }
+
+        #endregion
         #region Load Learner Subjects
         //This also fills up our learner object with all their subjects.
         //Also this has O(n^2) complexity because of how it finds learners LOL
