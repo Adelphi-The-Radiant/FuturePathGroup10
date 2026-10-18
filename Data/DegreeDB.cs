@@ -12,9 +12,9 @@ namespace FuturePathGroup10.Data
     public class DegreeDB : DB
     {
         #region Attributes
-        private const string SQL_SELECT_DEGREE_JOIN = "SELECT * FROM " +
-            "(SELECT * FROM DegreeProgramme LEFT JOIN Degree ON DegreeProgramme.DegreeID = Degree.DegreeID ORDER BY DegreeProgramme.DegreeID) " +
-            "AS DegreeJoined";
+        private const string SQL_SELECT_DEGREE_JOIN = "SELECT Degree.DegreeID AS DegreeID, Degree.Title AS Title, Degree.Description AS Description, DegreeProgramme.FacultyID AS FacultyID " +
+            "FROM DegreeProgramme LEFT JOIN Degree ON DegreeProgramme.DegreeID = Degree.DegreeID " +
+            "ORDER BY DegreeProgramme.DegreeID";
         private const string JOINED_TABLE = "DegreeJoined";
 
         private const string TABLE_DEGREE = "Degree";

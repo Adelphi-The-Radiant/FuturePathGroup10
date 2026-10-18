@@ -15,12 +15,11 @@ namespace FuturePathGroup10.Data
     public class SubjectDB : DB
     {
         #region Attributes
-        private const string SQL_SELECT_SUBJECT_JOIN = "SELECT * FROM Subject LEFT JOIN LearnerSubject ON Subject.SubjectName = LearnerSubject.SubjectName ORDER BY Subject.SubjectName";
+        private const string SQL_SELECT_SUBJECT_JOIN = "SELECT Subject.SubjectName AS SubjectName, Subject.SubjectDescription AS SubjectDescription, LearnerSubject.LearnerID AS LearnerID, LearnerSubject.Result AS Result FROM Subject LEFT JOIN LearnerSubject ON Subject.SubjectName = LearnerSubject.SubjectName ORDER BY Subject.SubjectName";
         private const string JOINED_TABLE = "SubjectJoined";
 
         private const string SQL_SELECT_SUBJECT = "SELECT * FROM Subject";
-        private const string SQL_SELECT_LEARNERSUBJECT = "SELECT * FROM LearnerSubject";
-
+        private const string SQL_SELECT_LEARNERSUBJECT = "SELECT * FROM LearnerSubject";    
         private const string SUBJECT_TABLE = "Subject";
         private const string LEARNERSUBJECT_TABLE = "LearnerSubject";
 
@@ -104,7 +103,10 @@ namespace FuturePathGroup10.Data
                 learnerSubject = new LearnerSubject(learner, subject, result);
 
                 learnerSubjects.Add(learnerSubject);
-                learner.addLearnerSubject(learnerSubject);
+                if (learner != null)
+                {
+                    learner.addLearnerSubject(learnerSubject);
+                }
             }
             
         }

@@ -13,10 +13,9 @@ namespace FuturePathGroup10.Data
 	{
 		#region Attributes
 
-		private const string SQL_SELECT_JOINED = "SELECT * FROM " +
-			"(SELECT * FROM InterestCategory LEFT JOIN QuestionCategoryMapping ON InterestCategory.InterestCategoryID = QuestionCategoryMapping.InterestCategoryID " +
-			"ORDER BY InterestCategory.InterestCategoryID) " +
-			"AS JoinedTable";
+        private const string SQL_SELECT_JOINED = "SELECT InterestCategory.InterestCategoryID AS InterestCategoryID, InterestCategory.Title AS Title, InterestCategory.Description AS Description, QuestionCategoryMapping.QuestionID AS QuestionID " +
+            "FROM InterestCategory LEFT JOIN QuestionCategoryMapping ON InterestCategory.InterestCategoryID = QuestionCategoryMapping.InterestCategoryID " +
+            "ORDER BY InterestCategory.InterestCategoryID";
         private const string TABLE_JOINED = "JoinedTable";
 		private const string TABLE_QCM = "QuestionCategoryMapping";
 		private const string TABLE_CATEGORY = "InterestCategory";
