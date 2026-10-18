@@ -11,6 +11,8 @@ namespace FuturePathGroup10.Reccomendation
         #region Attributes
         public Faculty faculty { get; private set; }
         public Degree degree { get; private set; }
+
+        public Collection<InterestCategory> categories { get;  set; } = new Collection<InterestCategory>();
         #endregion
 
         // constructor
@@ -19,6 +21,7 @@ namespace FuturePathGroup10.Reccomendation
             this.faculty = faculty;
             this.degree = degree;
         }
+
 
         //equals method
         public bool Equals(DegreeProgramme other)
