@@ -1,4 +1,5 @@
 ﻿using FuturePathGroup10.Data;
+using FuturePathGroup10.Funding;
 using FuturePathGroup10.Interest;
 using FuturePathGroup10.Prerequisites;
 using FuturePathGroup10.Reccomendation;
@@ -357,6 +358,47 @@ namespace FuturePathGroup10.Learner
             }
 
             return answers;
+        }
+
+        public Collection<FundingOption> viewFundingOptions()
+        {
+            FundingOptionDB fundingDB = new FundingOptionDB();
+
+            return fundingDB.options;
+        }
+
+        // Interest Match (0 to 100) for the selected degree
+        // Needs: the learner has answered the questionnaire, and a degree is selected.
+        public double getInterestMatch(out string error)
+        {
+            error = "";
+
+            if (Programme == null)
+            {
+                error = "Select a degree first.";
+                return 0;
+            }
+
+            Dictionary<int, double> scores = calculateInterestScores();
+            if (scores.Count == 0)
+            {
+                error = "Answer the questionnaire first.";
+                return 0;
+            }
+
+            List<int> categoryIds = new List<int>();
+            foreach (InterestCategory c in Programme.categories)
+            {
+                categoryIds.Add(c.interestCategoryID);
+            }
+
+            if (categoryIds.Count == 0)
+            {
+                error = "This degree has no interest categories linked to it.";
+                return 0;
+            }
+
+            return new Interest.InterestScorer().CalculateDegreeMatch(scores, categoryIds);
         }
         #endregion
     }

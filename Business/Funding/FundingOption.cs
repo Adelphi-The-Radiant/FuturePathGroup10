@@ -28,6 +28,10 @@ namespace FuturePathGroup10.Funding
             }
             return false;
         }
+        public string  optionToString()
+        {
+            return description +": R"+ amount;
+        }
 
         public Collection<string> getFundingOptions()
         {
