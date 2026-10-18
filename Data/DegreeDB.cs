@@ -12,9 +12,8 @@ namespace FuturePathGroup10.Data
     public class DegreeDB : DB
     {
         #region Attributes
-        // join faculty and degreeprogramme
         private const string SQL_SELECT_DEGREE_JOIN = "SELECT * FROM " +
-            "(SELECT * FROM DegreeProgramme LEFT JOIN Faculty ON DegreeProgramme.FacultyID = Faculty.FacultyID ORDER BY DegreeProgramme.FacultyID) " +
+            "(SELECT * FROM DegreeProgramme LEFT JOIN Degree ON DegreeProgramme.DegreeID = Degree.DegreeID ORDER BY DegreeProgramme.DegreeID) " +
             "AS DegreeJoined";
         private const string JOINED_TABLE = "DegreeJoined";
 
@@ -25,7 +24,6 @@ namespace FuturePathGroup10.Data
         private const string SQL_SELECT_DEGREEPROGRAMME = "SELECT * FROM DegreeProgramme";
 
         public Collection<Degree> degrees { get; private set; }
-        public Collection<DegreeProgramme> programmes { get; private set; }
 
         public DataSet dsDegree;
         public DataSet dsDegreeProgramme;
@@ -40,7 +38,6 @@ namespace FuturePathGroup10.Data
         public DegreeDB(FacultyDB facultyDB) :base()
         {
             degrees = new Collection<Degree>();
-            programmes = new Collection<DegreeProgramme>();
             this.facultyDB = facultyDB;
 
             FillDataSet(SQL_SELECT_DEGREEPROGRAMME, TABLE_DEGREEPROGRAMME);
@@ -72,16 +69,12 @@ namespace FuturePathGroup10.Data
 
             foreach (DataRow row in dsMain.Tables[JOINED_TABLE].Rows)
             {
-                int candidateID = Convert.ToInt32(row["FacultyID"]);
+                int candidateID = Convert.ToInt32(row["DegreeID"]);
 
                 //Should ALWAYS activate on the first loop unless the subjects name is Not A String
-                if (candidateID != facultyID)
+                if (candidateID != degreeID)
                 {
-                    facultyID = candidateID;
-                    faculty = facultyDB.getFaculty(candidateID);
-                    title = (string)row["Title"];
-                    int dID = Convert.ToInt32(row["DegreeID"]);
-                    degreeID = dID;
+                    degreeID = candidateID;
                     title = (string)row["Title"];
                     description = (string)row["Description"];
 
@@ -89,8 +82,10 @@ namespace FuturePathGroup10.Data
                     degrees.Add(degree);
                 }
 
-                degreeProgramme = new DegreeProgramme(faculty, degree);
-                programmes.Add(degreeProgramme);
+                facultyID = Convert.ToInt32(row["FacultyID"]);
+                faculty = facultyDB.getFaculty(facultyID);
+                faculty.addDegree(degree);
+                
             }
         }
         #endregion
@@ -110,26 +105,26 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Dataset Updates
-        private void FillDegreeProgrammeRow(DataRow row, DegreeProgramme degreeProgramme)
+        private void FillDegreeProgrammeRow(DataRow row, Degree degree, Faculty faculty)
         {
-            row["FacultyID"] = degreeProgramme.faculty.facultyID;
-            row["DegreeID"] = degreeProgramme.degree.degreeID;
+            row["FacultyID"] = faculty.facultyID;
+            row["DegreeID"] = degree.degreeID;
         }
 
-        private void FillDegreeRow(DataRow row, DegreeProgramme degreeProgramme)
+        private void FillDegreeRow(DataRow row, Degree degree)
         {
-            row["DegreeID"] = degreeProgramme.degree.degreeID;
-            row["Title"] = degreeProgramme.degree.title;
-            row["Description"] = degreeProgramme.degree.description;
+            row["DegreeID"] = degree.degreeID;
+            row["Title"] = degree.title;
+            row["Description"] = degree.description;
 
         }
 
-        private DataRow FindDegreeProgrammeRow(DegreeProgramme degreeProgramme)
+        private DataRow FindDegreeProgrammeRow(Degree degree, Faculty faculty)
         {
             for (int i = 0; i < dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows.Count; i++)
             {
                 DataRow row = dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows[i];
-                if (Convert.ToInt32(row["FacultyID"]) == degreeProgramme.faculty.facultyID && Convert.ToInt32(row["DegreeID"]) == degreeProgramme.degree.degreeID)
+                if (Convert.ToInt32(row["FacultyID"]) == faculty.facultyID && Convert.ToInt32(row["DegreeID"]) == degree.degreeID)
                 {
                     return row;
                 }
@@ -150,30 +145,23 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
-        public void DataSetChange(DegreeProgramme degree, DBOperation operation)
+        public void DataSetChange(Degree degree, DBOperation operation)
         {
-            DataRow rowDegreeProgramme;
             DataRow rowDegree;
             switch (operation)
             {
                 case DBOperation.Add:
-                    rowDegreeProgramme = dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].NewRow();
                     rowDegree = dsDegree.Tables[TABLE_DEGREE].NewRow();
-                    FillDegreeProgrammeRow(rowDegreeProgramme, degree);
                     FillDegreeRow(rowDegree, degree);
-
-                    dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows.Add(rowDegreeProgramme);
                     dsDegree.Tables[TABLE_DEGREE].Rows.Add(rowDegree);
 
-                    programmes.Add(degree);
+                    degrees.Add(degree);
                     break;
                 case DBOperation.Edit:
-                    rowDegreeProgramme = FindDegreeProgrammeRow(degree);
-                    rowDegree = FindDegreeRow(degree.degree);
-                    if (rowDegree != null && rowDegreeProgramme != null)
+                    rowDegree = FindDegreeRow(degree);
+                    if (rowDegree != null)
                     {
                         FillDegreeRow(rowDegree, degree);
-                        FillDegreeProgrammeRow(rowDegreeProgramme, degree);
                     }
                     else
                     {
@@ -181,13 +169,11 @@ namespace FuturePathGroup10.Data
                     }
                     break;
                 case DBOperation.Delete:
-                    rowDegreeProgramme = FindDegreeProgrammeRow(degree);
-                    rowDegree = FindDegreeRow(degree.degree);
-                    if (rowDegreeProgramme != null && rowDegree != null)
+                    rowDegree = FindDegreeRow(degree);
+                    if (rowDegree != null)
                     {
                         rowDegree.Delete();
-                        rowDegreeProgramme.Delete();
-                        programmes.Remove(degree);
+                        degrees.Remove(degree);
                     }
                     else
                     {
@@ -195,6 +181,42 @@ namespace FuturePathGroup10.Data
                     }
                     break;
             }
+        }
+
+        public void DataSetChange(Degree degree, Faculty faculty, DBOperation operation)
+        {
+            DataRow row;
+            switch (operation)
+            {
+                case DBOperation.Add:
+                    row= dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].NewRow();
+                    FillDegreeProgrammeRow(row, degree,faculty);
+                    dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows.Add(row);
+                    break;
+                case DBOperation.Edit:
+                    row = FindDegreeProgrammeRow(degree,faculty);
+                    if (row != null)
+                    {
+                        FillDegreeProgrammeRow(row, degree, faculty);
+                    }
+                    else
+                    {
+                        throw new Exception("Degree not found in table");
+                    }
+                    break;
+                case DBOperation.Delete:
+                    row = FindDegreeProgrammeRow(degree, faculty);
+                    if (row != null)
+                    {
+                        row.Delete();
+                    }
+                    else
+                    {
+                        throw new Exception("Degree not found in table");
+                    }
+                    break;
+            }
+
         }
         #endregion
 
