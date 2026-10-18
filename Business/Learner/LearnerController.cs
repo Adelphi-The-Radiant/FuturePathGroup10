@@ -27,9 +27,9 @@ namespace FuturePathGroup10.Learner
 
         public Learner? activeLearner { get; private set; }
 
-        public readonly LearnerInterestResponseDB lirDB;
-        public readonly InterestQuestionnaireDB questionnaireDB;
-        public readonly InterestCategoryDB categoryDB;
+        public LearnerInterestResponseDB lirDB;
+        public InterestQuestionnaireDB questionnaireDB;
+        public InterestCategoryDB categoryDB;
 
 
         // The learner's current sitting of the questionnaire (null until started)
