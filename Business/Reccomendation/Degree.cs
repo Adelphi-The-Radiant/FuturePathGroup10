@@ -65,7 +65,7 @@ namespace FuturePathGroup10.Reccomendation
         {
             try
             {
-                degreeDB.DataSetChange(this, DB.DBOperation.Add);
+                degreeDB.DataSetChange(this,faculty, DB.DBOperation.Add);
             }
             catch (Exception ex)
             {
@@ -77,7 +77,7 @@ namespace FuturePathGroup10.Reccomendation
         {
             try
             {
-                degreeDB.DataSetChange(this, DB.DBOperation.Delete);
+                degreeDB.DataSetChange(this,faculty, DB.DBOperation.Delete);
             }
             catch (Exception ex)
             {
@@ -89,7 +89,7 @@ namespace FuturePathGroup10.Reccomendation
         {
             try
             {
-                degreeDB.DataSetChange(this, DB.DBOperation.Edit);
+                degreeDB.DataSetChange(this, faculty, DB.DBOperation.Edit);
             }
             catch (Exception ex)
             {
