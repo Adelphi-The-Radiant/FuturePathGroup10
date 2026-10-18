@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FuturePathGroup10.Data;
 using FuturePathGroup10.Reccomendation;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace FuturePathGroup10.Interest
 {
@@ -12,6 +13,8 @@ namespace FuturePathGroup10.Interest
         public string title { get; private set; }
         public string description { get; private set; }
         public Collection<Degree> degrees { get; private set; }
+
+        private InterestCategoryDB interestCategoryDB;
 
         public InterestCategory(int interestCategoryID,string title,string description)
         {
@@ -31,17 +34,38 @@ namespace FuturePathGroup10.Interest
 
         public override void add()
         {
-            throw new NotImplementedException();
+            try
+            {
+                interestCategoryDB.DataSetChange(this, DB.DBOperation.Add);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating Interest Category: " + ex.Message);
+            }
         }
 
         public override void deactivate()
         {
-            throw new NotImplementedException();
+            try
+            {
+                interestCategoryDB.DataSetChange(this, DB.DBOperation.Delete);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating Interest Category: " + ex.Message);
+            }
         }
 
         public override void update()
         {
-            throw new NotImplementedException();
+            try
+            {
+                interestCategoryDB.DataSetChange(this, DB.DBOperation.Edit);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating Interest Category: " + ex.Message);
+            }
         }
     }
 }
