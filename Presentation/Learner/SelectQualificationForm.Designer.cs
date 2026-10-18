@@ -155,6 +155,7 @@
             backButton.TabIndex = 9;
             backButton.Text = "Back";
             backButton.UseVisualStyleBackColor = false;
+            backButton.Click += backButton_Click;
             // 
             // beginButton
             // 

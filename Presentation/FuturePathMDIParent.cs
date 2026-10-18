@@ -93,6 +93,10 @@ namespace FuturePathGroup10.Presentation
             CurrentForm = new HomeForm();
         }
 
+        public void StartInterestQuestionnaire()
+        {
+            CurrentForm = new Learner.QuestionnaireForm(_learnerController);
+        }
         public void OpenMarksCapture()
         {
             CurrentForm = new Learner.CaptureMarksForm(_learnerController.subjectDB, _learnerController);
