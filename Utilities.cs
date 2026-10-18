@@ -5,14 +5,14 @@ namespace FuturePathGroup10
 {
     public class Utilities
     {
-        //Finds an account holder with the same username as a certain account and assigns that account to that account holder.
+        //Finds an Account holder with the same Username as a certain Account and assigns that Account to that Account holder.
         public static bool FindAndSetAccountHolder(IEnumerable<AccountHolder> accountHolders, UserAccount account)
         {
             foreach (AccountHolder holder in accountHolders)
             {
-                if (holder.username.Equals(account.username))
+                if (holder.Username.Equals(account.username))
                 {
-                    holder.setAccount(account);
+                    holder.Account = account;
                     return true;
                 }
             }
