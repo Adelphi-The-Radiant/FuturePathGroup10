@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FuturePathGroup10.Presentation.Learner;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -28,6 +29,12 @@ namespace FuturePathGroup10.Presentation
         private void explainLabel_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void marksButton_Click(object sender, EventArgs e)
+        {
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.OpenMarksCapture();
         }
     }
 }
