@@ -20,11 +20,11 @@ namespace FuturePathGroup10.Data
 
         private OleDbDataAdapter learnerDA;
         private OleDbDataAdapter gradeDA;
-        private const string SQL_SELECT_GRADE_MEET = "SELECT * FROM Grade_Level WHERE LearnerID = ";
-        private const string SQL_SELECT_GRADE = "SELECT * FROM Grade_Level";
+        private const string SQL_SELECT_GRADE_MEET = "SELECT * FROM GradeLevel WHERE LearnerID = ";
+        private const string SQL_SELECT_GRADE = "SELECT * FROM GradeLevel";
         private const string SQL_SELECT_LEARNERS = "SELECT * FROM Learner";
         private const string TABLE_LEARNERS = "Learner";
-        private const string TABLE_GRADE = "Grade_Level";
+        private const string TABLE_GRADE = "GradeLevel";
         #endregion
 
         #region Constructor
