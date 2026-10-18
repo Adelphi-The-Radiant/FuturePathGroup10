@@ -57,7 +57,7 @@ namespace FuturePathGroup10.Administration
                     MessageBox.Show("Successfully updated the database!");
                 } else
                 {
-                    MessageBox.Show("Some updates failed.")
+                    MessageBox.Show("Some updates failed.");
                 }
             } catch (Exception ex)
             {
