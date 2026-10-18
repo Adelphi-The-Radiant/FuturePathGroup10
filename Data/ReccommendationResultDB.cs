@@ -35,16 +35,17 @@ namespace FuturePathGroup10.Data
 
         #region getters
 
-		public ReccommendationResult GetReccommendationResult(int learnerID)
+		public List<ReccommendationResult> GetReccommendationResult(int learnerID)
 		{
+			List<ReccommendationResult> output = new List<ReccommendationResult>();
 			foreach(ReccommendationResult result in results)
 			{
 				if (result.learner.learnerID == learnerID)
 				{
-					return result;
+					output.Add(result);
 				}
 			}
-			return null;
+			return output;
 		}
 
 		public string getAllReccommendations(int learnerID)
