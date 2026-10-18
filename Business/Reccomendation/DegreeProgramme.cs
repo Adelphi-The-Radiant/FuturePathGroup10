@@ -6,22 +6,22 @@ namespace FuturePathGroup10.Reccomendation
 {
     public class DegreeProgramme
     {
-        // updated: DegreeProgramme no longer takes the ID's of the classes but rather an instance of the class itself
-        private Faculty faculty;
-        private Degree degree;
+        #region Attributes
+        public Faculty faculty { get; private set; }
+        public Degree degree { get; private set; }
+        #endregion
 
-        public DegreeProgramme getDegreeProgramme(Faculty faculty, DegreeProgramme degree)
+        // constructor
+        public DegreeProgramme(Faculty faculty, Degree degree)
         {
-            this.degree = degree;
             this.faculty = faculty;
+            this.degree = degree;
         }
 
-        // Equals method
+        //equals method
         public bool Equals(DegreeProgramme other)
         {
-            if (other  == null) return false;
-
-            return (this.faculty.facultyID == other.faculty.facultyID && this.degree.degreeID == other.degree.degreeID);
+            return (this.faculty==other.faculty && this.degree==other.degree);
         }
 
     }

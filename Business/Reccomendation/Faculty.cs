@@ -1,5 +1,7 @@
-﻿using System;
+﻿using FuturePathGroup10.Funding;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace FuturePathGroup10.Reccomendation
@@ -9,21 +11,26 @@ namespace FuturePathGroup10.Reccomendation
         public int facultyID { get; private set; }
         public string title { get; private set; }
         public string description { get; private set; }
+        public Collection<FundingOption> options { get; private set; }
 
         private Data.FacultyDB facultyDB;
         private EnrollmentList enrollmentList;
 
         // constructor
-        public Faculty(int facultyID, string title, string description, FacultyDB facultyDB, EnrollmentList enrollmentList)
+        public Faculty(int facultyID, string title, string description)
         {
             this.facultyID = facultyID;
             this.description = description;
             this.title = title;
+            options = new Collection<FundingOption>();
+        }
 
-            this.facultyDB = facultyDB;
-            this.enrollmentList = enrollmentList; // PLEASE CHECK!!!!
-            // shouldthis.enrollmentList = new EnrollmentList(learner???, this, DateTime.Now)
-            // please check if this should be implemnented instead??? im not sure how an EnrollmentList will be created elsewhere
+        public void addFundingOption(FundingOption option)
+        {
+            if (option != null)
+            {
+                options.Add(option);
+            }
         }
 
         public Faculty getFaculty()
