@@ -57,6 +57,17 @@ namespace FuturePathGroup10.Presentation
             CurrentForm = new LoginForm(_userAccountDb);
         }
 
+        public void ReturnHome() 
+        {
+            if (_userAccount is null)
+            {
+                CurrentForm = new LoginForm(_userAccountDb);
+                return;
+            }
+
+            CurrentForm = new HomeForm();
+        }
+
         public void Login(UserAccount authorizedAccount)
         {
             if (_userAccount is not null)
@@ -89,13 +100,7 @@ namespace FuturePathGroup10.Presentation
 
         private void CurrentForm_FormClosed(object? sender, FormClosedEventArgs e)
         {
-            if (_userAccount is null)
-            {
-                CurrentForm = new LoginForm(_userAccountDb);
-                return;
-            }
-
-            CurrentForm = new HomeForm();
+            ReturnHome();
         }
 
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
