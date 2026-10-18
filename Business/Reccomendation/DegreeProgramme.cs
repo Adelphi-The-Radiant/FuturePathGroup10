@@ -26,13 +26,5 @@ namespace FuturePathGroup10.Reccomendation
             return (this.faculty==other.faculty && this.degree==other.degree);
         }
 
-
-        public void addCategory(InterestCategory category)
-        {
-            if (!categories.Contains(category))
-            {
-                categories.Add(category);
-            }
-        }
     }
 }
