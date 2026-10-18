@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using FuturePathGroup10.Data;
 
 namespace FuturePathGroup10.Reccomendation
 {
@@ -13,7 +14,7 @@ namespace FuturePathGroup10.Reccomendation
         public string description { get; private set; }
         public Collection<FundingOption> options { get; private set; }
 
-        private Data.FacultyDB facultyDB;
+        private FacultyDB facultyDB;
         private EnrollmentList enrollmentList;
 
         // constructor
@@ -43,7 +44,7 @@ namespace FuturePathGroup10.Reccomendation
             try
             {
                 EnrollmentList el = new EnrollmentList(null, this, DateTime.Now);
-                facultyDB.DataSetChange(el, DBOperation.Add);
+                facultyDB.DataSetChange(el, DB.DBOperation.Add);
             }
             catch (Exception ex)
             {
@@ -56,7 +57,7 @@ namespace FuturePathGroup10.Reccomendation
             try
             {
                 EnrollmentList el = new EnrollmentList(null, this, DateTime.Now);
-                facultyDB.DataSetChange(el, DBOperation.Delete);
+                facultyDB.DataSetChange(el, DB.DBOperation.Delete);
             }
             catch (Exception ex)
             {
@@ -69,7 +70,7 @@ namespace FuturePathGroup10.Reccomendation
             try
             {
                 EnrollmentList el = new EnrollmentList(null, this, DateTime.Now);
-                facultyDB.DataSetChange(el, DBOperation.Update);
+                facultyDB.DataSetChange(el, DB.DBOperation.Edit);
             }
             catch (Exception ex)
             {

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using FuturePathGroup10.Prerequisites;
+using FuturePathGroup10.Data;
 
 namespace FuturePathGroup10.Reccomendation
 {
@@ -66,7 +67,7 @@ namespace FuturePathGroup10.Reccomendation
             {
                 // creating a DegreeProgramme object (DegreeDB uses DegreeProgramme)
                 DegreeProgramme dp = new DegreeProgramme(faculty, this);
-                degreeDB.DataSetChange(dp, DBOperation.Add);
+                degreeDB.DataSetChange(dp, DB.DBOperation.Add);
             }
             catch (Exception ex)
             {
@@ -80,7 +81,7 @@ namespace FuturePathGroup10.Reccomendation
             {
                 // creating a DegreeProgramme object (DegreeDB uses DegreeProgramme)
                 DegreeProgramme dp = new DegreeProgramme(faculty, this);
-                degreeDB.DataSetChange(dp, DBOperation.Delete);
+                degreeDB.DataSetChange(dp, DB.DBOperation.Delete);
             }
             catch (Exception ex)
             {
@@ -94,7 +95,7 @@ namespace FuturePathGroup10.Reccomendation
             {
                 // creating a DegreeProgramme object (DegreeDB uses DegreeProgramme)
                 DegreeProgramme dp = new DegreeProgramme(faculty, this);
-                degreeDB.DataSetChange(dp, DBOperation.Update);
+                degreeDB.DataSetChange(dp, DB.DBOperation.Update);
             }
             catch (Exception ex)
             {
