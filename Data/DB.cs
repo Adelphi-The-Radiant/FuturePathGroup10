@@ -9,7 +9,7 @@ namespace FuturePathGroup10.Data
     public abstract class DB
     {
         #region Variable declaration
-        private static string dbPath = Path.Combine(AppContext.TargetFrameworkName, "Data", "FuturePath.accdb");
+        private static string dbPath = Path.Combine(AppContext.BaseDirectory,@"..", @"..", @"..","Data", "FuturePath.accdb");
         private static string strConn = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + dbPath + ";";
         protected OleDbConnection cnMain;
         protected DataSet dsMain;
