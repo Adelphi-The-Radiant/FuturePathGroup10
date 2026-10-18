@@ -20,12 +20,12 @@ namespace FuturePathGroup10.Advisory
 
         public string getReportSummary()
         {
-            throw new NotImplementedException();
+            return summary;
         }
 
         public string getFullReport()
         {
-            throw new NotImplementedException();
+            return fullReport;
         }
     }
 }
