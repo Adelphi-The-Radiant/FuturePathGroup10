@@ -1,7 +1,7 @@
-﻿using System;
+﻿using FuturePathGroup10.Funding;
+using FuturePathGroup10.Interest;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using FuturePathGroup10.Funding;
 using System.Collections.ObjectModel;
 using FuturePathGroup10.Prerequisites;
 
@@ -13,6 +13,8 @@ namespace FuturePathGroup10.Reccomendation
         public string title { get; private set; }
         public string description { get; private set; }
         public Collection<FundingOption> options { get; private set; }
+
+        public Collection<InterestCategory> categories { get; private set; } //a list of category this degree maps to
 
         public Collection<ProgrammeRequirement> requirements { get; private set; }
 
@@ -49,6 +51,13 @@ namespace FuturePathGroup10.Reccomendation
         public Degree GetDegree()
         {
             return (Degree)this;
+        }
+        public void addCategory(InterestCategory category)
+        {
+            if (!categories.Contains(category))
+            {
+                categories.Add(category);
+            }
         }
 
         public override void add()

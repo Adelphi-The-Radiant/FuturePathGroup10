@@ -15,9 +15,13 @@ namespace FuturePathGroup10.Learner
     public partial class LearnerController
     {
         #region Data Members
-        public LearnerDB learnerDB;
+        private LearnerDB learnerDB;
 
-        public SubjectDB subjectDB;
+        private SubjectDB subjectDB;
+
+        private FacultyDB facultyDB;
+
+        private DegreeDB degreeDB;
 
         public Faculty? SelectedFaculty { get; private set; }
 
@@ -38,6 +42,8 @@ namespace FuturePathGroup10.Learner
         {
             this.learnerDB = new LearnerDB();
             this.subjectDB = new SubjectDB(learnerDB);
+            this.facultyDB = new FacultyDB(learnerDB);
+            this.degreeDB = new DegreeDB(facultyDB);
             this.activeLearner = null;
         }
         #endregion
@@ -56,7 +62,7 @@ namespace FuturePathGroup10.Learner
         #endregion
 
         #region Methods 
-
+        //this should be called after register
         public bool createProfile(Learner learner, out string error)
         {
             error = Validate(learner);
@@ -362,7 +368,7 @@ namespace FuturePathGroup10.Learner
 
         public Collection<FundingOption> viewFundingOptions()
         {
-            FundingOptionDB fundingDB = new FundingOptionDB();
+            FundingOptionDB fundingDB = new FundingOptionDB(facultyDB, degreeDB);
 
             return fundingDB.options;
         }
