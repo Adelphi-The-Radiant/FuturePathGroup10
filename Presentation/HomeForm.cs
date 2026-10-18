@@ -24,5 +24,10 @@ namespace FuturePathGroup10.Presentation
         {
 
         }
+
+        private void explainLabel_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

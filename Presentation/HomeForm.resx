@@ -118,13 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="explainLabel.Text" xml:space="preserve">
-    <value>Future Path is a student pathway advising system designed to help Grade 11 and Grade 12 learners explore 
-possible study options, check whether they appear to meet the minimum criteria for selected degrees, 
-identify gaps in their current academic profile, view relevant funding information, and export an advisory 
-summary that can be shared with a parent, teacher or career advisor.
+    <value>Future Path is a student pathway advising system designed to help Grade 11 and Grade 
+12 learners explore possible study options, check whether they appear to meet the
+ minimum criteria for selected degrees, identify gaps in their current academic profile, 
+view relevant funding information, and export an advisory summary that can be shared 
+with a parent, teacher or career advisor.
 
-The system is not intended to make official admission decisions. Instead, it provides preliminary guidance
- based on locally stored degree information, subject requirements, interest categories, funding options
-and rule-based recommendation logic.</value>
+The system is not intended to make official admission decisions. Instead, it provides 
+preliminary guidance based on locally stored degree information, subject requirements, 
+interest categories, funding options and rule-based recommendation logic.</value>
   </data>
 </root>
