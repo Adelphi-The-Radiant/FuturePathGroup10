@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using FuturePathGroup10.Learner;
+using FuturePathGroup10.Data;
 
 namespace FuturePathGroup10.Reccomendation
 {

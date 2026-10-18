@@ -14,16 +14,17 @@ namespace FuturePathGroup10.Reccomendation
         public RecommendationResult(Learner.Learner learner,Degree degree,DateTime date,string results)
         {
             this.learner = learner;
-            this.degree = degree;
+            this.degree = degree; // reccomended degree
             this.date = date;
-            this.results = results;
+            this.results = results; // explanation of why that degree was recommended
         }
 
-        public string getRecommendationResults()
+        public Degree getRecommendationResults()
         {
-            throw new NotImplementedException();
+            return degree;
         }
 
+        // how are we supposed to get this????
         public double calculateOverallScore()
         {
             throw new NotImplementedException();
@@ -31,7 +32,12 @@ namespace FuturePathGroup10.Reccomendation
 
         public string explainOutcome()
         {
-            throw new NotImplementedException();
+            // if no results are given
+            if (string.IsNullOrEmpty(results))
+            {
+                return "No results given.";
+            }
+            return results;
         }
     }
 }
