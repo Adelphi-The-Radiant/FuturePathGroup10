@@ -20,11 +20,11 @@ namespace FuturePathGroup10.Data
 
         private OleDbDataAdapter learnerDA;
         private OleDbDataAdapter gradeDA;
-        private const string SQL_SELECT_GRADE_MEET = "SELECT * FROM Grade_Level WHERE LearnerID = ";
-        private const string SQL_SELECT_GRADE = "SELECT * FROM Grade_Level";
-        private const string SQL_SELECT_LEARNERS = "SELECT * FROM Learners";
-        private const string TABLE_LEARNERS = "Learners";
-        private const string TABLE_GRADE = "Grade_Level";
+        private const string SQL_SELECT_GRADE_MEET = "SELECT * FROM GradeLevel WHERE LearnerID = ";
+        private const string SQL_SELECT_GRADE = "SELECT * FROM GradeLevel";
+        private const string SQL_SELECT_LEARNERS = "SELECT * FROM Learner";
+        private const string TABLE_LEARNERS = "Learner";
+        private const string TABLE_GRADE = "GradeLevel";
         #endregion
 
         #region Constructor
@@ -120,7 +120,7 @@ namespace FuturePathGroup10.Data
         //overloaded of previous
         private void FillGradeRow(DataRow row, Learner.Learner learner)
         {
-            FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.overallGrade.grade11Result), Convert.ToSingle(learner.overallGrade.grade12Result));
+            FillGradeRow(row, learner.learnerID, Convert.ToSingle(learner.overallGrade11), Convert.ToSingle(learner.overallGrade12));
         }
         //Helper method that finds the row in the dataset for a given learner. Returns null if not found.
         private DataRow FindLearnerRow(Learner.Learner learner)
