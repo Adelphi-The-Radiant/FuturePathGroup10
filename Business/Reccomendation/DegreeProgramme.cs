@@ -6,12 +6,22 @@ namespace FuturePathGroup10.Reccomendation
 {
     public class DegreeProgramme
     {
-        private int facultyID;
-        private int degreeID;
+        #region Attributes
+        public Faculty faculty { get; private set; }
+        public Degree degree { get; private set; }
+        #endregion
 
-        public DegreeProgramme getDegreeProgramme()
+        // constructor
+        public DegreeProgramme(Faculty faculty, Degree degree)
         {
-            throw new NotImplementedException();
+            this.faculty = faculty;
+            this.degree = degree;
+        }
+
+        //equals method
+        public bool Equals(DegreeProgramme other)
+        {
+            return (this.faculty==other.faculty && this.degree==other.degree);
         }
     }
 }

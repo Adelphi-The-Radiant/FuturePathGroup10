@@ -58,6 +58,22 @@ namespace FuturePathGroup10.Data
         }
         #endregion
 
+        #region Getter
+
+        public Degree getDegree(int degreeID)
+        {
+            foreach(Degree degree in degrees)
+            {
+                if (degree.degreeID == degreeID)
+                {
+                    return degree;
+                }
+            }
+            return null;
+        }
+
+        #endregion
+
         #region Load Degree Programmes
         private void LoadDegreeProgrammes()
         {
@@ -156,7 +172,7 @@ namespace FuturePathGroup10.Data
                 case DBOperation.Edit:
                     rowDegreeProgramme = FindDegreeProgrammeRow(degree);
                     rowDegree = FindDegreeRow(degree.degree);
-                    if (rowDegree != null)
+                    if (rowDegree != null && rowDegreeProgramme != null)
                     {
                         FillDegreeRow(rowDegree, degree);
                         FillDegreeProgrammeRow(rowDegreeProgramme, degree);

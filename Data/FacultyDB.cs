@@ -44,11 +44,11 @@ namespace FuturePathGroup10.Data
             faculties = new Collection<Faculty>();
             this.learnerDB = learnerDB;
 
-            FillDataSet(SQL_SELECT_FACULTY, ENROLLMENTLIST_TABLE);
+            FillDataSet(SQL_SELECT_FACULTY, TABLE_ENROLLMENTLIST);
             dsEnrollmentList = dsMain;
             daEnrollmentList = daMain;
 
-            FillDataSet(SQL_SELECT_FACULTY, FACULTY_TABLE);
+            FillDataSet(SQL_SELECT_FACULTY, TABLE_FACULTY);
             dsFaculty = dsMain;
             daFaculty = daMain;
 
@@ -185,7 +185,7 @@ namespace FuturePathGroup10.Data
                 case DBOperation.Edit:
                     rowEnrollment = FindEnrollmentListRow(enrollment);
                     rowFaculty = FindFacultyRow(enrollment.faculty);
-                    if (rowEnrollment != null)
+                    if (rowEnrollment != null && rowFaculty != null)
                     {
                         FillEnrollmentListRow(rowEnrollment, enrollment);
                         FillFacultyRow(rowFaculty, enrollment.faculty);

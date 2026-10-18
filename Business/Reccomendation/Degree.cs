@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FuturePathGroup10.Funding;
+using System.Collections.ObjectModel;
 
 namespace FuturePathGroup10.Reccomendation
 {
@@ -9,6 +11,7 @@ namespace FuturePathGroup10.Reccomendation
         public int degreeID { get; private set; }
         public string title { get; private set; }
         public string description { get; private set; }
+        public Collection<FundingOption> options { get; private set; }
 
         // constructor
         public Degree(int degreeID, string title, string description)
@@ -16,6 +19,15 @@ namespace FuturePathGroup10.Reccomendation
             this.degreeID = degreeID;
             this.title = title;
             this.description = description;
+            options = new Collection<FundingOption>();
+        }
+
+        public void addFundingOption(FundingOption option)
+        {
+            if (option != null)
+            {
+                options.Add(option);
+            }
         }
 
         public Degree GetDegree()

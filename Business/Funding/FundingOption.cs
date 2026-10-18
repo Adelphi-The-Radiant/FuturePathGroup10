@@ -5,14 +5,13 @@ using System.Text;
 
 namespace FuturePathGroup10.Funding
 {
-    internal class FundingOption : ReferenceData
+    public class FundingOption : ReferenceData
     {
         public int optionID { get; private set; }
         public string description { get; private set; }
-        /// This should be decimal
-        public float amount { get; private set; }
+        public double amount { get; private set; }
 
-        public FundingOption (int optionID,string description,float amount) : base()
+        public FundingOption (int optionID,string description,double amount) : base()
         {
             this.optionID = optionID;
             this.description = description;
