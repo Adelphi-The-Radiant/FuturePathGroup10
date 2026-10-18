@@ -30,7 +30,7 @@ namespace FuturePathGroup10.Advisory
             {
                 return "Learner with ID " + learnerID + " does not exist.";
             }
-            string temp = ""
+            string temp = "";
             List<ReccommendationResult> reccomend = reccommendationResultDB.GetReccommendationResult(learnerID);
             if (reccomend.Count > 0)
             {

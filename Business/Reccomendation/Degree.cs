@@ -65,9 +65,7 @@ namespace FuturePathGroup10.Reccomendation
         {
             try
             {
-                // creating a DegreeProgramme object (DegreeDB uses DegreeProgramme)
-                DegreeProgramme dp = new DegreeProgramme(faculty, this);
-                degreeDB.DataSetChange(dp, DB.DBOperation.Add);
+                degreeDB.DataSetChange(this, DB.DBOperation.Add);
             }
             catch (Exception ex)
             {
@@ -79,9 +77,7 @@ namespace FuturePathGroup10.Reccomendation
         {
             try
             {
-                // creating a DegreeProgramme object (DegreeDB uses DegreeProgramme)
-                DegreeProgramme dp = new DegreeProgramme(faculty, this);
-                degreeDB.DataSetChange(dp, DB.DBOperation.Delete);
+                degreeDB.DataSetChange(this, DB.DBOperation.Delete);
             }
             catch (Exception ex)
             {
@@ -93,9 +89,7 @@ namespace FuturePathGroup10.Reccomendation
         {
             try
             {
-                // creating a DegreeProgramme object (DegreeDB uses DegreeProgramme)
-                DegreeProgramme dp = new DegreeProgramme(faculty, this);
-                degreeDB.DataSetChange(dp, DB.DBOperation.Update);
+                degreeDB.DataSetChange(this, DB.DBOperation.Edit);
             }
             catch (Exception ex)
             {
