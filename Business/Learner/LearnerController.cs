@@ -1,4 +1,5 @@
-﻿using FuturePathGroup10.Data;
+﻿using FuturePathGroup10.Business.Prerequisite;
+using FuturePathGroup10.Data;
 using FuturePathGroup10.Funding;
 using FuturePathGroup10.Interest;
 using FuturePathGroup10.Prerequisites;
@@ -33,6 +34,7 @@ namespace FuturePathGroup10.Learner
         private InterestQuestionnaireDB questionnaireDB;
         private InterestCategoryDB categoryDB;
 
+
         // The learner's current sitting of the questionnaire (null until started)
         public LearnerInterestResponse? activeResponse { get; private set; }
         #endregion
@@ -57,11 +59,17 @@ namespace FuturePathGroup10.Learner
             if (categoryDB != null) return;
             lirDB = new LearnerInterestResponseDB(learnerDB);
             questionnaireDB = new InterestQuestionnaireDB(lirDB);
-            categoryDB = new InterestCategoryDB(questionnaireDB);
+            categoryDB = new InterestCategoryDB(questionnaireDB, degreeDB);
         }
         #endregion
 
-        #region Methods 
+        #region Eligibility data members
+        private Dictionary<string, double> currentMarks =
+            new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        public EligibilityResult lastResult { get; private set; }
+        #endregion
+
+        #region Create and Update learner profile
         //this should be called after register
         public bool createProfile(Learner learner, out string error)
         {
@@ -140,7 +148,9 @@ namespace FuturePathGroup10.Learner
         }
 
 
+        #endregion
 
+        #region Selection
         public bool selectFaculty(Reccomendation.Faculty faculty, out string error)
         {
             error = "";
@@ -168,9 +178,9 @@ namespace FuturePathGroup10.Learner
             Programme = programme;
             return true;
         }
+        #endregion
 
-
-
+        #region Marks
         public bool captureMarks(Dictionary<Subject, double> marks, out string error)
         {
             error = "";
@@ -186,20 +196,9 @@ namespace FuturePathGroup10.Learner
                 error = "Enter at least one subject and mark.";
                 return false;
             }
-
-            // 1. validate everything before changing anything
-            foreach (KeyValuePair<Subject, double> entry in marks)
-            {
-                if (entry.Value < 0 || entry.Value > 100)
-                {
-                    error = "Marks must be between 0 and 100.";
-                    return false;
-                }
-            }
-
             // add them all, then write once
             try
-            {
+            {   
                 foreach (KeyValuePair<Subject, double> entry in marks)
                 {
                     LearnerSubject eachSubject = new LearnerSubject(activeLearner, entry.Key, entry.Value);
@@ -220,8 +219,9 @@ namespace FuturePathGroup10.Learner
 
             return true;
         }
+        #endregion
 
-
+        #region Questionnare
         public Collection<InterestQuestion> getQuestions()
         {
             loadInterestData();
@@ -366,13 +366,6 @@ namespace FuturePathGroup10.Learner
             return answers;
         }
 
-        public Collection<FundingOption> viewFundingOptions()
-        {
-            FundingOptionDB fundingDB = new FundingOptionDB(facultyDB, degreeDB);
-
-            return fundingDB.options;
-        }
-
         // Interest Match (0 to 100) for the selected degree
         // Needs: the learner has answered the questionnaire, and a degree is selected.
         public double getInterestMatch(out string error)
@@ -406,9 +399,145 @@ namespace FuturePathGroup10.Learner
 
             return new Interest.InterestScorer().CalculateDegreeMatch(scores, categoryIds);
         }
+
+        #endregion
+
+        #region Funding
+        public Collection<FundingOption> viewFundingOptions()
+        {
+            FundingOptionDB fundingDB = new FundingOptionDB(facultyDB, degreeDB);
+
+            return fundingDB.options;
+        }
+        #endregion
+
+        #region Eligibility
+        public EligibilityResult checkEligibility(Dictionary<string, double> marks, double? interestMatch)
+        {
+            if (Programme == null)
+            {
+                return new EligibilityChecker().Check("", marks, null, interestMatch);   // gives More Information Needed
+            }
+            return new EligibilityChecker().Check(Programme.degree.title, marks,
+                                                  Programme.degree.requirements, interestMatch);
+        }
+        public bool setMarks(Dictionary<Subject, double> marks, out string error)
+        {
+            error = "";
+
+            if (marks == null || marks.Count == 0)
+            {
+                error = "Enter at least one subject and mark.";
+                return false;
+            }
+
+            
+            foreach (KeyValuePair<Subject, double> entry in marks)
+            {
+                if (entry.Value < 0 || entry.Value > 100)
+                {
+                    error = "Marks must be between 0 and 100.";
+                    return false;
+                }
+            }
+
+            currentMarks.Clear();
+            foreach (KeyValuePair<Subject, double> entry in marks)
+            {
+                currentMarks[entry.Key.subjectName] = entry.Value;
+            }
+
+            return true;
+        }
+        
+
+        
+        // Check the learner against the selected degree.
+        // ALWAYS returns a result: when something is missing the outcome is "More Information Needed",
+        // with the reason
+        public EligibilityResult checkEligibility()
+        {
+            EligibilityChecker checker = new EligibilityChecker();
+
+            if (Programme == null || Programme.degree == null)
+            {
+                EligibilityResult missing = new EligibilityResult();
+                missing.Outcome = AdvisoryOutcome.MoreInformationNeeded;
+                missing.Reasons.Add("No qualification has been selected yet.");
+                missing.Summary = "More information is needed. Please select a qualification first.";
+                lastResult = missing;
+                return missing;
+            }
+
+            double? interest = getInterestMatchOrNull();
+
+            lastResult = checker.Check(Programme.degree.title,
+                                       currentMarks,
+                                       Programme.degree.requirements,
+                                       interest);
+            return lastResult;
+        }
+
+        // Other qualifications the learner could consider, best first.
+        // Pass in all the loaded programmes (later: degreeDB.programmes).
+        public List<EligibilityResult> getAlternatives(IEnumerable<DegreeProgramme> allProgrammes)
+        {
+            Dictionary<string, List<ProgrammeRequirement>> byDegree = new Dictionary<string, List<ProgrammeRequirement>>();
+
+            foreach (DegreeProgramme p in allProgrammes)
+            {
+                if (p == null || p.degree == null)
+                {
+                    continue;
+                }
+
+                string title = p.degree.title;
+                if (!byDegree.ContainsKey(title))          // a degree may appear under more than one faculty
+                {
+                    byDegree[title] = new List<ProgrammeRequirement>(p.degree.requirements);
+                }
+            }
+
+            string selected = "";
+            if (Programme != null && Programme.degree != null)
+            {
+                selected = Programme.degree.title;
+            }
+
+            return new EligibilityChecker().FindAlternatives(currentMarks, byDegree, selected);
+        }
+
+        // Interest match for the selected degree, or null if it can't be worked out yet
+        // (no questionnaire answers, or the degree has no interest categories).
+        // Null just means "not assessed": the checker then decides on subjects and marks alone.
+        private double? getInterestMatchOrNull()
+        {
+            if (Programme == null || Programme.degree == null || Programme.degree.categories == null)
+            {
+                return null;
+            }
+
+            if (Programme.degree.categories.Count == 0)
+            {
+                return null;
+            }
+
+            Dictionary<int, double> scores = calculateInterestScores();      // empty if nothing answered
+            if (scores.Count == 0)
+            {
+                return null;
+            }
+
+            List<int> categoryIds = new List<int>();
+            foreach (FuturePathGroup10.Interest.InterestCategory c in Programme.degree.categories)
+            {
+                categoryIds.Add(c.interestCategoryID);
+            }
+
+            return new FuturePathGroup10.Interest.InterestScorer().CalculateDegreeMatch(scores, categoryIds);
+        }
+
         #endregion
     }
-
-
 
 }
