@@ -27,7 +27,25 @@ namespace FuturePathGroup10.Data
 			LoadSessions();
 		}
 
-		private void LoadSessions()
+        #region getters
+
+        public List<AdvisorySession> getAllSessions(int learnerID)
+        {
+            List<AdvisorySession> output = new List<AdvisorySession>();
+
+            foreach(AdvisorySession session in sessions)
+            {
+                if (session.learner.learnerID == learnerID)
+                {
+                    output.Add(session);
+                }
+            }
+            return output;
+        }
+
+        #endregion
+
+        private void LoadSessions()
 		{
 			foreach(DataRow row in dsMain.Tables[TABLE_SESSION].Rows)
 			{
