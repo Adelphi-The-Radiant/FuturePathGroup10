@@ -9,57 +9,57 @@ using System.Data.SqlClient;
 namespace FuturePathGroup10.Data
 {
 
-	public class ExportReportDB : DB
-	{
-		#region Attributes
-		private const string TABLE_REPORT = "ExportReport";
-		private const string SQL_SELECT_REPORT = "Select * FROM ExportReport";
+    public class ExportReportDB : DB
+    {
+        #region Attributes
+        private const string TABLE_REPORT = "ExportReport";
+        private const string SQL_SELECT_REPORT = "Select * FROM ExportReport";
 
-		public Collection<ExportResult> results { get; private set; }
-		private LearnerDB learnerDB;
+        public Collection<ExportResult> results { get; private set; }
+        private LearnerDB learnerDB;
         #endregion
         public ExportReportDB(LearnerDB learnerDB)
-		{
-			this.learnerDB = learnerDB;
-			results = new Collection<ExportResult>();
-			FillDataSet(SQL_SELECT_REPORT, TABLE_REPORT);
-			LoadReports();
-		}
+        {
+            this.learnerDB = learnerDB;
+            results = new Collection<ExportResult>();
+            FillDataSet(SQL_SELECT_REPORT, TABLE_REPORT);
+            LoadReports();
+        }
 
-		private void LoadReports()
-		{
-			foreach(DataRow row in dsMain.Tables[TABLE_REPORT].Rows)
-			{
-				int learnerID = Convert.ToInt32(row["LearnerID"]);
-				string fullReport = row["FullReport"].ToString();
-				string summary = row["Summary"].ToString();
+        private void LoadReports()
+        {
+            foreach (DataRow row in dsMain.Tables[TABLE_REPORT].Rows)
+            {
+                int learnerID = Convert.ToInt32(row["LearnerID"]);
+                string fullReport = row["FullReport"].ToString();
+                string summary = row["Summary"].ToString();
 
-				Learner.Learner learner = learnerDB.getLearner(learnerID);
-				ExportResult result = new ExportResult(learner, fullReport, summary);
-				results.Add(result);
-			}
-		}
+                Learner.Learner learner = learnerDB.getLearner(learnerID);
+                ExportResult result = new ExportResult(learner, fullReport, summary);
+                results.Add(result);
+            }
+        }
 
         #region Update DataSet
 
         private void FillDataRow(DataRow row, ExportResult result)
-		{
-			row["LearnerID"] = result.learner.learnerID;
-			row["FullReport"] = result.fullReport;
-			row["Summary"] = result.summary;
-		}
+        {
+            row["LearnerID"] = result.learner.learnerID;
+            row["FullReport"] = result.fullReport;
+            row["Summary"] = result.summary;
+        }
 
-		private DataRow FindDataRow(ExportResult result)
-		{
-			foreach(DataRow row in dsMain.Tables[TABLE_REPORT].Rows)
-			{
-				if (Convert.ToInt32(row["LearnerID"]) == result.learner.learnerID)
-				{
-					return row;
-				}
-			}
-			return null;
-		}
+        private DataRow FindDataRow(ExportResult result)
+        {
+            foreach (DataRow row in dsMain.Tables[TABLE_REPORT].Rows)
+            {
+                if (Convert.ToInt32(row["LearnerID"]) == result.learner.learnerID)
+                {
+                    return row;
+                }
+            }
+            return null;
+        }
 
         public void DataSetChange(ExportResult result, DBOperation operation)
         {
@@ -111,51 +111,41 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO ExportReport (@LearnerID,@FullReport,@Summary) VALUES (LearnerID,FullReport,Summary)");
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO ExportReport (LearnerID, FullReport, Summary) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE ExportReport SET (@LearnerID,@FullReport,@Summary) WHERE LearnerID = @LearnerID");
+            daMain.UpdateCommand = new OleDbCommand("UPDATE ExportReport SET FullReport = ?, Summary = ? WHERE LearnerID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM ExportReport WHERE LearnerID = @LearnerID");
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM ExportReport WHERE LearnerID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullReport", SqlDbType.NChar, 255, "FullReport");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Summary", SqlDbType.NChar, 255, "Summary");
-            daMain.InsertCommand.Parameters.Add(param);
+            daMain.InsertCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@FullReport", OleDbType.LongVarWChar, 0, "FullReport"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@Summary", OleDbType.LongVarWChar, 0, "Summary"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullReport", SqlDbType.NChar, 255, "FullReport");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Summary", SqlDbType.NChar, 255, "Summary");
-            daMain.UpdateCommand.Parameters.Add(param);
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@FullReport", OleDbType.LongVarWChar, 0, "FullReport"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@Summary", OleDbType.LongVarWChar, 0, "Summary"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daMain.DeleteCommand.Parameters.Add(param);
+            daMain.DeleteCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
         }
+
         #endregion
     }
 }

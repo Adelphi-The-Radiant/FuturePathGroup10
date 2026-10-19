@@ -9,13 +9,13 @@ using System.Data.SqlClient;
 
 namespace FuturePathGroup10.Data
 {
-	public class UserAccountDB : DB
-	{
+    public class UserAccountDB : DB
+    {
         #region Attributes
         private const string USERACCOUNT_TABLE = "UserAccount";
-		private const string SQL_SELECT_USERACCOUNT = "SELECT * FROM UserAccount";
-		public Collection<UserAccount> accounts { get; private set; }
-		private LearnerDB learnerDB;
+        private const string SQL_SELECT_USERACCOUNT = "SELECT * FROM UserAccount";
+        public Collection<UserAccount> accounts { get; private set; }
+        private LearnerDB learnerDB;
         private AdminDB adminDB;
         private CareerAdvisorDB advisorDB;
         #endregion
@@ -32,46 +32,46 @@ namespace FuturePathGroup10.Data
         #endregion
 
         private void LoadAccounts()
-		{
-			foreach (DataRow row in dsMain.Tables[USERACCOUNT_TABLE].Rows)
-			{
+        {
+            foreach (DataRow row in dsMain.Tables[USERACCOUNT_TABLE].Rows)
+            {
                 string username = row["Username"].ToString();
                 string password = row["Password"].ToString();
-				DateTime dateCreated = row.Field<DateTime>("DateCreated");
-				UserAccount.Permission permissionLevel = (UserAccount.Permission) Convert.ToInt16(row["PermissionLevel"]);
+                DateTime dateCreated = row.Field<DateTime>("DateCreated");
+                UserAccount.Permission permissionLevel = (UserAccount.Permission)Convert.ToInt16(row["PermissionLevel"]);
 
-				UserAccount account = new UserAccount(username, password, dateCreated, permissionLevel);
-				accounts.Add(account);
+                UserAccount account = new UserAccount(username, password, dateCreated, permissionLevel);
+                accounts.Add(account);
                 //Check each collection to find a username match and when we do we continue to the next loop to prevent wasted work
                 if (Utilities.FindAndSetAccountHolder(learnerDB.learners, account))
                 {
                     continue;
                 }
-                
+
                 if (Utilities.FindAndSetAccountHolder(adminDB.admins, account))
                 {
                     continue;
                 }
-                
+
                 if (Utilities.FindAndSetAccountHolder(advisorDB.advisors, account))
                 {
                     continue;
                 }
             }
-		}
+        }
 
         #region Dataset Updates
 
         private void FillDataRow(DataRow row, UserAccount account)
-		{
-			row["Username"] = account.username;
-			row["Password"] = account.password;
-			row["DateCreated"] = account.dateCreated;
-			row["PermissionLevel"] = account.permissionLevel;
-		}
+        {
+            row["Username"] = account.username;
+            row["Password"] = account.password;
+            row["DateCreated"] = account.dateCreated;
+            row["PermissionLevel"] = (int)account.permissionLevel;
+        }
 
-		private DataRow findDataRow(UserAccount account)
-		{
+        private DataRow findDataRow(UserAccount account)
+        {
             for (int i = 0; i < dsMain.Tables[USERACCOUNT_TABLE].Rows.Count; i++)
             {
                 if ((dsMain.Tables[USERACCOUNT_TABLE].Rows[i]["Username"].Equals(account.username)))
@@ -82,14 +82,14 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
-		public void DataSetChange(UserAccount account, DBOperation operation)
-		{
+        public void DataSetChange(UserAccount account, DBOperation operation)
+        {
             DataRow row;
-			switch (operation)
-			{
+            switch (operation)
+            {
                 case DBOperation.Add:
                     row = dsMain.Tables[USERACCOUNT_TABLE].NewRow();
-                    FillDataRow(row,account);
+                    FillDataRow(row, account);
                     dsMain.Tables[USERACCOUNT_TABLE].Rows.Add(row);
 
                     accounts.Add(account);
@@ -121,7 +121,7 @@ namespace FuturePathGroup10.Data
                     break;
             }
 
-		}
+        }
         #endregion
 
         #region CRUD
@@ -133,56 +133,41 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO UserAccount (@Username, @Password, @DateCreated,@PermissionLevel) VALUES (Username,Password,DateCreated,PermissionLevel)", cnMain);
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO UserAccount (Username, [Password], DateCreated, PermissionLevel) VALUES (?, ?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE UserAccount SET (@Username, @Password, @DateCreated,@PermissionLevel) WHERE Username = @Username", cnMain);
+            daMain.UpdateCommand = new OleDbCommand("UPDATE UserAccount SET [Password] = ?, DateCreated = ?, PermissionLevel = ? WHERE Username = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM UserAccount WHERE Username = @Username", cnMain);
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM UserAccount WHERE Username = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Password", SqlDbType.NChar, 255, "Password");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "DateCreated");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@PermissionLevel", SqlDbType.Int, 2, "PermissionLevel");
-            daMain.InsertCommand.Parameters.Add(param);
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@Username", OleDbType.VarWChar, 255, "Username"));
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@Password", OleDbType.VarWChar, 255, "Password"));
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@DateCreated", OleDbType.Date, 8, "DateCreated"));
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@PermissionLevel", OleDbType.Integer, 4, "PermissionLevel"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Password", SqlDbType.NChar, 255, "Password");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@DateCreated", SqlDbType.DateTime, 255, "DateCreated");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@PermissionLevel", SqlDbType.Int, 2, "PermissionLevel");
-            daMain.UpdateCommand.Parameters.Add(param);
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@Password", OleDbType.VarWChar, 255, "Password"));
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@DateCreated", OleDbType.Date, 8, "DateCreated"));
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@PermissionLevel", OleDbType.Integer, 4, "PermissionLevel"));
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@Username", OleDbType.VarWChar, 255, "Username"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@Delete", SqlDbType.NChar, 255, "Delete");
-            daMain.DeleteCommand.Parameters.Add(param);
+            daMain.DeleteCommand.Parameters.Add(new OleDbParameter("@Username", OleDbType.VarWChar, 255, "Username"));
         }
 
         #endregion

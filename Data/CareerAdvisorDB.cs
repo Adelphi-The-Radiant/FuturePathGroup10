@@ -130,50 +130,39 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO Administrator (@AdvisorID, @Username, @FullName) VALUES (AdvisorID, Username, FullName)", cnMain);
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO CareerAdvisor (AdvisorID, Username, FullName) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE Administrator SET (@AdvisorID, @Username, @FullName) WHERE AdvisorID = @AdvisorID", cnMain);
+            daMain.UpdateCommand = new OleDbCommand("UPDATE CareerAdvisor SET Username = ?, FullName = ? WHERE AdvisorID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM Administrator WHERE AdvisorID = @AdvisorID", cnMain);
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM CareerAdvisor WHERE AdvisorID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@AdvisorID", SqlDbType.Int, 32, "AdvisorID");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullName", SqlDbType.NChar, 255, "FullName");
-            daMain.InsertCommand.Parameters.Add(param);
+            daMain.InsertCommand.Parameters.Add(CreateParam("@AdvisorID", OleDbType.Integer, 4, "AdvisorID"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@Username", OleDbType.VarWChar, 255, "Username"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@FullName", OleDbType.VarWChar, 255, "FullName"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@AdvisorID", SqlDbType.Int, 32, "AdvisorID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullName", SqlDbType.NChar, 255, "FullName");
-            daMain.UpdateCommand.Parameters.Add(param);
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@Username", OleDbType.VarWChar, 255, "Username"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@FullName", OleDbType.VarWChar, 255, "FullName"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@AdvisorID", OleDbType.Integer, 4, "AdvisorID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@AdvisorID", SqlDbType.Int, 32, "AdvisorID");
-            daMain.DeleteCommand.Parameters.Add(param);
+            daMain.DeleteCommand.Parameters.Add(CreateParam("@AdvisorID", OleDbType.Integer, 4, "AdvisorID"));
         }
 
         #endregion

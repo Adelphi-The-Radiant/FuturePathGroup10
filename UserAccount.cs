@@ -7,10 +7,10 @@ namespace FuturePathGroup10
     // AuthController stereotype
     public class UserAccount
     {
-        public string username {get; private set;}
-        public string password {get; private set;}
+        public string username { get; private set; }
+        public string password { get; private set; }
         // Should be a more specialized type for dates
-        public DateTime dateCreated { get; private set;}
+        public DateTime dateCreated { get; private set; }
         public Permission permissionLevel { get; private set; }
 
         public enum Permission
@@ -26,6 +26,11 @@ namespace FuturePathGroup10
             this.password = password;
             this.dateCreated = dateCreated;
             this.permissionLevel = permissionLevel;
+        }
+
+        public bool CheckPassword(string attempt)
+        {
+            return string.Equals(password, attempt);
         }
 
         public void login(string username, string password)

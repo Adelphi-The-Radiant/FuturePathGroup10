@@ -101,6 +101,8 @@
             // 
             // facultyComboBox
             // 
+            facultyComboBox.DisplayMember = "title";
+            facultyComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             facultyComboBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             facultyComboBox.FormattingEnabled = true;
             facultyComboBox.Location = new Point(67, 208);
@@ -108,6 +110,7 @@
             facultyComboBox.Name = "facultyComboBox";
             facultyComboBox.Size = new Size(541, 32);
             facultyComboBox.TabIndex = 5;
+            facultyComboBox.SelectedIndexChanged += facultyComboBox_SelectedIndexChanged;
             // 
             // pictureBox2
             // 
@@ -134,6 +137,8 @@
             // 
             // qualificationComboBox
             // 
+            qualificationComboBox.DisplayMember = "title";
+            qualificationComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             qualificationComboBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             qualificationComboBox.FormattingEnabled = true;
             qualificationComboBox.Location = new Point(67, 328);

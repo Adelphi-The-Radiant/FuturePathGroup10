@@ -61,7 +61,7 @@ namespace FuturePathGroup10.Data
 
         public Faculty getFaculty(int facultyID)
         {
-            foreach(Faculty faculty in faculties)
+            foreach (Faculty faculty in faculties)
             {
                 if (faculty.facultyID == facultyID)
                 {
@@ -99,7 +99,7 @@ namespace FuturePathGroup10.Data
                     title = (string)row["Title"];
                     description = (string)row["Description"];
                     //Ensures we dont have a bunch of duplicate subjects as this is a many to one relation
-                    faculty = new Faculty(facultyID, title, description,this);
+                    faculty = new Faculty(facultyID, title, description, this);
                     faculties.Add(faculty);
                 }
 
@@ -121,7 +121,7 @@ namespace FuturePathGroup10.Data
         {
             row["LearnerID"] = enrollment.learner.learnerID;
             row["FacultyID"] = enrollment.faculty.facultyID;
-            row["Date"] = enrollment.date;
+            row["EnrollmentDate"] = enrollment.date;
         }
 
         private void FillFacultyRow(DataRow row, Faculty faculty)
@@ -231,71 +231,53 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daEnrollmentList.InsertCommand = new OleDbCommand("INSERT INTO EnrollmentList (LearnerID, FacultyID, Date) VALUES (@LearnerID, @FacultyID, @Date)", cnMain);
-            daFaculty.InsertCommand = new OleDbCommand("INSERT INTO Faculty (FacultyID, Title, Description) VALUES (@FacultyID, @Title, @Description)", cnMain);
+            daEnrollmentList.InsertCommand = new OleDbCommand("INSERT INTO EnrollmentList (LearnerID, FacultyID, EnrollmentDate) VALUES (?, ?, ?)", cnMain);
+            daFaculty.InsertCommand = new OleDbCommand("INSERT INTO Faculty (FacultyID, Title, Description) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daEnrollmentList.UpdateCommand = new OleDbCommand("UPDATE EnrollmentList SET (@LearnerID, @FacultyID, @Date) WHERE LearnerID = @LearnerID AND FacultyID = @FacultyID", cnMain);
-            daFaculty.UpdateCommand = new OleDbCommand("UPDATE Faculty SET ( @Title, @Description) WHERE FacultyID = @FacultyID", cnMain);
+            daEnrollmentList.UpdateCommand = new OleDbCommand("UPDATE EnrollmentList SET EnrollmentDate = ? WHERE LearnerID = ? AND FacultyID = ?", cnMain);
+            daFaculty.UpdateCommand = new OleDbCommand("UPDATE Faculty SET Title = ?, Description = ? WHERE FacultyID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daEnrollmentList.DeleteCommand = new OleDbCommand("DELETE FROM EnrollmentLIst WHERE LearnerID = @LearnerID AND FacultyID = @FacultyID", cnMain);
-            daFaculty.DeleteCommand = new OleDbCommand("DELETE FROM Faculty WHERE FacultyID = @FacultyID", cnMain);
+            daEnrollmentList.DeleteCommand = new OleDbCommand("DELETE FROM EnrollmentList WHERE LearnerID = ? AND FacultyID = ?", cnMain);
+            daFaculty.DeleteCommand = new OleDbCommand("DELETE FROM Faculty WHERE FacultyID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daEnrollmentList.InsertCommand.Parameters.Add(param);
+            daEnrollmentList.InsertCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daEnrollmentList.InsertCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
+            daEnrollmentList.InsertCommand.Parameters.Add(CreateParam("@EnrollmentDate", OleDbType.Date, 8, "EnrollmentDate"));
 
-            param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
-            daEnrollmentList.InsertCommand.Parameters.Add(param);
-            daFaculty.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Date", SqlDbType.Date, 8, "Date");
-            daFaculty.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Title", SqlDbType.NVarChar, 255, "Title");
-            daFaculty.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Description", SqlDbType.NVarChar, -1, "Description");
-            daFaculty.InsertCommand.Parameters.Add(param);
+            daFaculty.InsertCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
+            daFaculty.InsertCommand.Parameters.Add(CreateParam("@Title", OleDbType.VarWChar, 255, "Title"));
+            daFaculty.InsertCommand.Parameters.Add(CreateParam("@Description", OleDbType.LongVarWChar, 0, "Description"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daEnrollmentList.UpdateCommand.Parameters.Add(param);
+            daEnrollmentList.UpdateCommand.Parameters.Add(CreateParam("@EnrollmentDate", OleDbType.Date, 8, "EnrollmentDate"));
+            daEnrollmentList.UpdateCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daEnrollmentList.UpdateCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
 
-            param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
-            daEnrollmentList.UpdateCommand.Parameters.Add(param);
-            daFaculty.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Date", SqlDbType.Date, 8, "Date");
-            daFaculty.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Title", SqlDbType.NVarChar, 255, "Title");
-            daFaculty.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Description", SqlDbType.NVarChar, -1, "Description");
-            daFaculty.UpdateCommand.Parameters.Add(param);
+            daFaculty.UpdateCommand.Parameters.Add(CreateParam("@Title", OleDbType.VarWChar, 255, "Title"));
+            daFaculty.UpdateCommand.Parameters.Add(CreateParam("@Description", OleDbType.LongVarWChar, 0, "Description"));
+            daFaculty.UpdateCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daEnrollmentList.DeleteCommand.Parameters.Add(param);
+            daEnrollmentList.DeleteCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daEnrollmentList.DeleteCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
 
-            param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
-            daEnrollmentList.DeleteCommand.Parameters.Add(param);
-            daFaculty.DeleteCommand.Parameters.Add(param);
+            daFaculty.DeleteCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
         }
 
         #endregion

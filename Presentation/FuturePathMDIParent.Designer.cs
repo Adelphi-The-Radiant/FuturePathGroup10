@@ -411,7 +411,6 @@
             exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
             exitToolStripMenuItem1.Size = new Size(359, 44);
             exitToolStripMenuItem1.Text = "Exit";
-            exitToolStripMenuItem1.Click += exitToolStripMenuItem1_Click;
             // 
             // toolStrip
             // 

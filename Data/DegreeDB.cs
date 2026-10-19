@@ -18,7 +18,7 @@ namespace FuturePathGroup10.Data
         private const string JOINED_TABLE = "DegreeJoined";
 
         private const string TABLE_DEGREE = "Degree";
-        private const string TABLE_DEGREEPROGRAMME= "DegreeProgramme";
+        private const string TABLE_DEGREEPROGRAMME = "DegreeProgramme";
 
         private const string SQL_SELECT_DEGREE = "SELECT * FROM Degree";
         private const string SQL_SELECT_DEGREEPROGRAMME = "SELECT * FROM DegreeProgramme";
@@ -35,7 +35,7 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Constructor
-        public DegreeDB(FacultyDB facultyDB) :base()
+        public DegreeDB(FacultyDB facultyDB) : base()
         {
             degrees = new Collection<Degree>();
             this.facultyDB = facultyDB;
@@ -84,15 +84,15 @@ namespace FuturePathGroup10.Data
 
                 facultyID = Convert.ToInt32(row["FacultyID"]);
                 faculty = facultyDB.getFaculty(facultyID);
-                faculty.addDegree(degree);
-                
+                faculty?.addDegree(degree);
+
             }
         }
         #endregion
         #region getters
         public Degree getDegree(int degreeID)
         {
-            foreach(Degree degree in degrees)
+            foreach (Degree degree in degrees)
             {
                 if (degree.degreeID == degreeID)
                 {
@@ -189,12 +189,12 @@ namespace FuturePathGroup10.Data
             switch (operation)
             {
                 case DBOperation.Add:
-                    row= dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].NewRow();
-                    FillDegreeProgrammeRow(row, degree,faculty);
+                    row = dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].NewRow();
+                    FillDegreeProgrammeRow(row, degree, faculty);
                     dsDegreeProgramme.Tables[TABLE_DEGREEPROGRAMME].Rows.Add(row);
                     break;
                 case DBOperation.Edit:
-                    row = FindDegreeProgrammeRow(degree,faculty);
+                    row = FindDegreeProgrammeRow(degree, faculty);
                     if (row != null)
                     {
                         FillDegreeProgrammeRow(row, degree, faculty);
@@ -234,65 +234,52 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daDegreeProgramme.InsertCommand = new OleDbCommand("INSERT INTO DegreeProgramme (FacultyID, DegreeID) VALUES (@FacultyID, @DegreeID)", cnMain);
-            daDegree.InsertCommand = new OleDbCommand("INSERT INTO Degree (DegreeID, Title, Description) VALUES (@DegreeID, @Title, @Description)", cnMain);
+            daDegreeProgramme.InsertCommand = new OleDbCommand("INSERT INTO DegreeProgramme (FacultyID, DegreeID) VALUES (?, ?)", cnMain);
+            daDegree.InsertCommand = new OleDbCommand("INSERT INTO Degree (DegreeID, Title, Description) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daDegreeProgramme.UpdateCommand = new OleDbCommand("UPDATE DegreeProgramme SET (@FacultyID, @DegreeID) WHERE FacultyID = @FacultyID AND DegreeID = @DegreeID", cnMain);
-            daDegree.UpdateCommand = new OleDbCommand("UPDATE Degree SET (@DegreeID, @Title, @Description) WHERE DegreeID = @DegreeID", cnMain);
+            daDegreeProgramme.UpdateCommand = new OleDbCommand("UPDATE DegreeProgramme SET FacultyID = ? WHERE FacultyID = ? AND DegreeID = ?", cnMain);
+            daDegree.UpdateCommand = new OleDbCommand("UPDATE Degree SET Title = ?, Description = ? WHERE DegreeID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daDegreeProgramme.DeleteCommand = new OleDbCommand("DELETE FROM DegreeProgramme WHERE FacultyID = @FacultyID AND DegreeID = @DegreeID", cnMain);
-            daDegree.DeleteCommand = new OleDbCommand("DELETE FROM Degree WHERE DegreeID = @DegreeID", cnMain);
+            daDegreeProgramme.DeleteCommand = new OleDbCommand("DELETE FROM DegreeProgramme WHERE FacultyID = ? AND DegreeID = ?", cnMain);
+            daDegree.DeleteCommand = new OleDbCommand("DELETE FROM Degree WHERE DegreeID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
-            daDegreeProgramme.InsertCommand.Parameters.Add(param);
+            daDegreeProgramme.InsertCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
+            daDegreeProgramme.InsertCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
 
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daDegreeProgramme.InsertCommand.Parameters.Add(param);
-            daDegree.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Title", SqlDbType.NVarChar, 255, "Title");
-            daDegree.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Description", SqlDbType.NVarChar, -1, "Description");
-            daDegree.InsertCommand.Parameters.Add(param);
+            daDegree.InsertCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
+            daDegree.InsertCommand.Parameters.Add(CreateParam("@Title", OleDbType.VarWChar, 255, "Title"));
+            daDegree.InsertCommand.Parameters.Add(CreateParam("@Description", OleDbType.LongVarWChar, 0, "Description"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
-            daDegreeProgramme.UpdateCommand.Parameters.Add(param);
+            daDegreeProgramme.UpdateCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
+            daDegreeProgramme.UpdateCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
+            daDegreeProgramme.UpdateCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
 
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daDegreeProgramme.UpdateCommand.Parameters.Add(param);
-            daDegree.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Title", SqlDbType.NVarChar, 255, "Title");
-            daDegree.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Description", SqlDbType.NVarChar, -1, "Description");
-            daDegree.UpdateCommand.Parameters.Add(param);
+            daDegree.UpdateCommand.Parameters.Add(CreateParam("@Title", OleDbType.VarWChar, 255, "Title"));
+            daDegree.UpdateCommand.Parameters.Add(CreateParam("@Description", OleDbType.LongVarWChar, 0, "Description"));
+            daDegree.UpdateCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@FacultyID", SqlDbType.Int, 4, "FacultyID");
-            daDegreeProgramme.DeleteCommand.Parameters.Add(param);
+            daDegreeProgramme.DeleteCommand.Parameters.Add(CreateParam("@FacultyID", OleDbType.Integer, 4, "FacultyID"));
+            daDegreeProgramme.DeleteCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
 
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daDegree.DeleteCommand.Parameters.Add(param);
-            daDegreeProgramme.DeleteCommand.Parameters.Add(param);
+            daDegree.DeleteCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
         }
 
         #endregion

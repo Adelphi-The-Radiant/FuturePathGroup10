@@ -14,7 +14,7 @@ namespace FuturePathGroup10.Data
     {
         #region Attributes
         public Collection<Learner.Learner> learners { get; private set; }
-        
+
         private DataSet learnerDS;
         private DataSet gradeDS;
 
@@ -57,25 +57,15 @@ namespace FuturePathGroup10.Data
 
         public int getNextID()
         {
-            int count = 0;
-            for (int i = 0; i < learners.Count; i++)
+            int highest = 0;
+            foreach (Learner.Learner learner in learners)
             {
-                bool check = true;
-                foreach (Learner.Learner learner in learners)
+                if (learner.learnerID > highest)
                 {
-                    if (count == learner.learnerID)
-                    {
-                        check = false;
-                        break;
-                    }
-
-                }
-                if (check)
-                {
-                    return i;
+                    highest = learner.learnerID;
                 }
             }
-            return -1;
+            return highest + 1;
         }
 
         #endregion
@@ -92,8 +82,8 @@ namespace FuturePathGroup10.Data
                     string learnerID = row["LearnerID"].ToString();
                     string username = row["Username"].ToString();
                     DataRow gradeRow = getGrades(Convert.ToInt32(learnerID));
-                    string grade11 = gradeRow["Grade11Mark"].ToString();
-                    string grade12 = gradeRow["Grade12Mark"].ToString();
+                    string grade11 = gradeRow?["Grade11Result"].ToString() ?? "";
+                    string grade12 = gradeRow?["Grade12Result"].ToString() ?? "";
                     string phoneNumber = row["PhoneNumber"].ToString();
                     string fullname = row["FullName"].ToString();
                     string school = row["School"].ToString();
@@ -114,10 +104,14 @@ namespace FuturePathGroup10.Data
         //Ensure that GradeLevel is a 1 to 1 relation. If its not this code will just take the first entry and take the average.
         private DataRow getGrades(int learnerID)
         {
-            FillDataSet(SQL_SELECT_GRADE_MEET + learnerID, TABLE_GRADE);
-            DataSet GradeDSRow = dsMain;
-   
-            return GradeDSRow.Tables[TABLE_GRADE].Rows[0];
+            foreach (DataRow row in gradeDS.Tables[TABLE_GRADE].Rows)
+            {
+                if (row.RowState != DataRowState.Deleted && Convert.ToInt32(row["LearnerID"]) == learnerID)
+                {
+                    return row;
+                }
+            }
+            return null;
         }
         #endregion
 
@@ -137,8 +131,8 @@ namespace FuturePathGroup10.Data
         private void FillGradeRow(DataRow row, int learnerID, float grade11Mark, float grade12Mark)
         {
             row["LearnerID"] = learnerID;
-            row["Grade11Mark"] = grade11Mark;
-            row["Grade12Mark"] = grade12Mark;
+            row["Grade11Result"] = grade11Mark;
+            row["Grade12Result"] = grade12Mark;
         }
         //overloaded of previous
         private void FillGradeRow(DataRow row, Learner.Learner learner)
@@ -196,7 +190,7 @@ namespace FuturePathGroup10.Data
                     learnerDS.Tables[TABLE_LEARNERS].Rows.Add(learnerRow);
 
                     gradeRow = gradeDS.Tables[TABLE_GRADE].NewRow();
-                    FillGradeRow(gradeRow,learner);
+                    FillGradeRow(gradeRow, learner);
                     gradeDS.Tables[TABLE_GRADE].Rows.Add(gradeRow);
                     learners.Add(learner);
                     break;
@@ -234,109 +228,81 @@ namespace FuturePathGroup10.Data
         #endregion
 
         #region Build Parameters, Create Commands & Update database
-        internal override bool UpdateAllSources() 
+        internal override bool UpdateAllSources()
         {
             dsMain = learnerDS;
-            bool check1 = UpdateDataSource(SQL_SELECT_LEARNERS,TABLE_LEARNERS, learnerDA);
+            bool check1 = UpdateDataSource(SQL_SELECT_LEARNERS, TABLE_LEARNERS, learnerDA);
             learnerDS = dsMain;
             dsMain = gradeDS;
-            bool check2 = UpdateDataSource(SQL_SELECT_GRADE,TABLE_GRADE, gradeDA);
+            bool check2 = UpdateDataSource(SQL_SELECT_GRADE, TABLE_GRADE, gradeDA);
             gradeDS = dsMain;
             return check1 && check2;
         }
 
         internal override void Create_INSERT_Command()
         {
-            learnerDA.InsertCommand = new OleDbCommand("INSERT into Learners (LearnerID, FullName, PhoneNumber, Email, Username, School, Province) VALUES (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province)", cnMain);
-            gradeDA.InsertCommand = new OleDbCommand("INSERT into Grade_Level (LearnerID, Grade11Mark, Grade12Mark) VALUES (@LearnerID, @Grade11Mark, @Grade12Mark)", cnMain);
+            learnerDA.InsertCommand = new OleDbCommand("INSERT INTO Learner (LearnerID, FullName, PhoneNumber, Email, Username, School, Province) VALUES (?, ?, ?, ?, ?, ?, ?)", cnMain);
+            gradeDA.InsertCommand = new OleDbCommand("INSERT INTO GradeLevel (LearnerID, Grade11Result, Grade12Result) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            learnerDA.UpdateCommand = new OleDbCommand("UPDATE Learners SET (@LearnerID, @FullName, @PhoneNumber, @Email, @Username, @School, @Province) WHERE LearnerID = @LearnerID",cnMain);
-            gradeDA.UpdateCommand = new OleDbCommand("UPDATE Grade_Level SET(@LearnerID, @Grade11Mark, @Grade12Mark) WHERE LearnerID = @LearnerID", cnMain);
-            Build_UPDATE_Parameters();  
+            learnerDA.UpdateCommand = new OleDbCommand("UPDATE Learner SET FullName = ?, PhoneNumber = ?, Email = ?, Username = ?, School = ?, Province = ? WHERE LearnerID = ?", cnMain);
+            gradeDA.UpdateCommand = new OleDbCommand("UPDATE GradeLevel SET Grade11Result = ?, Grade12Result = ? WHERE LearnerID = ?", cnMain);
+            Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            learnerDA.DeleteCommand = new OleDbCommand("DELETE FROM LEARNERS  WHERE LearnerID = @LearnerID", cnMain);
-            gradeDA.DeleteCommand = new OleDbCommand("DELETE from Grade_Level  WHERE LearnerID = @LearnerID", cnMain);
+            learnerDA.DeleteCommand = new OleDbCommand("DELETE FROM Learner WHERE LearnerID = ?", cnMain);
+            gradeDA.DeleteCommand = new OleDbCommand("DELETE FROM GradeLevel WHERE LearnerID = ?", cnMain);
             Build_DELETE_Parameters();
+        }
+
+        private static OleDbParameter Param(string name, OleDbType type, int size, string sourceColumn)
+        {
+            return new OleDbParameter(name, type, size, sourceColumn);
+        }
+
+        private void AddLearnerParams(OleDbCommand command, bool idLast)
+        {
+            if (!idLast) command.Parameters.Add(Param("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            command.Parameters.Add(Param("@FullName", OleDbType.VarWChar, 255, "FullName"));
+            command.Parameters.Add(Param("@PhoneNumber", OleDbType.VarWChar, 255, "PhoneNumber"));
+            command.Parameters.Add(Param("@Email", OleDbType.VarWChar, 255, "Email"));
+            command.Parameters.Add(Param("@Username", OleDbType.VarWChar, 255, "Username"));
+            command.Parameters.Add(Param("@School", OleDbType.VarWChar, 255, "School"));
+            command.Parameters.Add(Param("@Province", OleDbType.VarWChar, 255, "Province"));
+            if (idLast) command.Parameters.Add(Param("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+        }
+
+        private void AddGradeParams(OleDbCommand command, bool idLast)
+        {
+            if (!idLast) command.Parameters.Add(Param("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            command.Parameters.Add(Param("@Grade11Result", OleDbType.Single, 4, "Grade11Result"));
+            command.Parameters.Add(Param("@Grade12Result", OleDbType.Single, 4, "Grade12Result"));
+            if (idLast) command.Parameters.Add(Param("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
         }
 
         internal override void Build_INSERT_Parameters()
         {
             //LearnerDA setup
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 32, "ID");
-            learnerDA.InsertCommand.Parameters.Add(param);
-            gradeDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255, "FullName");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10, "PhoneNumber");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255, "Username");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255, "Province");
-            learnerDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
-            gradeDA.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
-            gradeDA.InsertCommand.Parameters.Add(param);
+            AddLearnerParams(learnerDA.InsertCommand, false);
+            AddGradeParams(gradeDA.InsertCommand, false);
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-            gradeDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullName", SqlDbType.NVarChar, 255, "FullName");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@PhoneNumber", SqlDbType.NVarChar, 10, "PhoneNumber");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Email", SqlDbType.NVarChar, 255, "Email");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Username", SqlDbType.NVarChar, 255, "Username");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@School", SqlDbType.NVarChar, 255, "School");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Province", SqlDbType.NVarChar, 255, "Province");
-            learnerDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Grade11Mark", SqlDbType.Float, 4, "Grade11Mark");
-            gradeDA.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Grade12Mark", SqlDbType.Float, 4, "Grade12Mark");
-            gradeDA.UpdateCommand.Parameters.Add(param);
+            AddLearnerParams(learnerDA.UpdateCommand, true);
+            AddGradeParams(gradeDA.UpdateCommand, true);
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4,"LearnerID");
-            learnerDA.DeleteCommand.Parameters.Add(param);
-            gradeDA.DeleteCommand.Parameters.Add(param);
+            learnerDA.DeleteCommand.Parameters.Add(Param("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            gradeDA.DeleteCommand.Parameters.Add(Param("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
         }
-
-
 
         #endregion
 

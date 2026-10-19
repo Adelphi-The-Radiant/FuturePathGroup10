@@ -22,7 +22,9 @@ namespace FuturePathGroup10.Presentation
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            if (nameTextBox.Text == string.Empty || passwordTextBox.Text == string.Empty)
+            string username = nameTextBox.Text.Trim();
+
+            if (username == string.Empty || passwordTextBox.Text == string.Empty)
             {
                 MessageBox.Show(
                     "Username and password must be filled in to log in.",
@@ -34,12 +36,10 @@ namespace FuturePathGroup10.Presentation
                 return;
             }
 
-            UserAccount loginAccount;
-            try
-            {
-                loginAccount = _userAccountDb.accounts.First(account => account.username == nameTextBox.Text);
-            }
-            catch
+            UserAccount? loginAccount = _userAccountDb.accounts.FirstOrDefault(
+                account => string.Equals(account.username?.Trim(), username, StringComparison.OrdinalIgnoreCase)
+            );
+            if (loginAccount is null)
             {
                 MessageBox.Show(
                     "Username does not exist. Please register if you want to create an account.",
@@ -47,6 +47,20 @@ namespace FuturePathGroup10.Presentation
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
+
+                return;
+            }
+
+            if (!loginAccount.CheckPassword(passwordTextBox.Text))
+            {
+                MessageBox.Show(
+                    "Incorrect password. Please try again.",
+                    "Incorrect Password",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                passwordTextBox.Clear();
+                passwordTextBox.Focus();
 
                 return;
             }

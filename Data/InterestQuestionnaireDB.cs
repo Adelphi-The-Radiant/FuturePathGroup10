@@ -11,7 +11,7 @@ namespace FuturePathGroup10.Data
 {
 
     public class InterestQuestionnaireDB : DB
-	{
+    {
         #region Attributes
         private const string SQL_SELECT_JOINED = "SELECT InterestQuestionnaire.QuestionID AS QuestionID, InterestQuestionnaire.ResponseID AS ResponseID, InterestQuestionnaire.Response AS Response, InterestQuestion.InterestCategoryID AS InterestCategoryID, InterestQuestion.Question AS Question " +
         "FROM InterestQuestionnaire LEFT JOIN InterestQuestion ON InterestQuestionnaire.QuestionID = InterestQuestion.QuestionID " +
@@ -39,7 +39,7 @@ namespace FuturePathGroup10.Data
 
         #region Constructors
         public InterestQuestionnaireDB(LearnerInterestResponseDB LIRDB)
-		{
+        {
             this.LIRDB = LIRDB;
             questionnaires = new Collection<InterestQuestionnaire>();
             questions = new Collection<InterestQuestion>();
@@ -54,8 +54,9 @@ namespace FuturePathGroup10.Data
 
             FillDataSet(SQL_SELECT_JOINED, TABLE_JOINED);
 
+            LoadQuestions();
             LoadQuestionnaires();
-		}
+        }
 
         #endregion
 
@@ -71,60 +72,66 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
+        private void LoadQuestions()
+        {
+            foreach (DataRow row in dsQuestion.Tables[TABLE_QUESTION].Rows)
+            {
+                int questionID = Convert.ToInt32(row["QuestionID"]);
+                int interestCategoryID = row["InterestCategoryID"] is DBNull ? 0 : Convert.ToInt32(row["InterestCategoryID"]);
+                string question = row["Question"].ToString();
+
+                questions.Add(new InterestQuestion(questionID, interestCategoryID, question));
+            }
+        }
+
         private void LoadQuestionnaires()
         {
-            int questionID = 0;
-            int candidateResponseID = 0;
             int responseID = -1;
 
-            int interestCategoryID = 0;
-            string response = "";
-            string question = "";
-
-            InterestQuestion interestQuestion = null;
             InterestQuestionnaire questionnaire = null;
             LearnerInterestResponse LIR = null;
 
-            foreach(DataRow row in dsMain.Tables[TABLE_JOINED].Rows)
+            foreach (DataRow row in dsMain.Tables[TABLE_JOINED].Rows)
             {
-                candidateResponseID = Convert.ToInt32(row["QuestionID"]);
+                int rowResponseID = Convert.ToInt32(row["ResponseID"]);
 
-                if (responseID != candidateResponseID)
+                if (rowResponseID != responseID)
                 {
-                    questionID = candidateResponseID;
-                    response = row["Response"].ToString();
-                    responseID = Convert.ToInt32(row["ResponseID"]);
+                    responseID = rowResponseID;
                     LIR = LIRDB.getLIR(responseID);
 
-                    questionnaire = new InterestQuestionnaire(LIR,response);
+                    if (LIR == null)
+                    {
+                        questionnaire = null;
+                        continue;
+                    }
+
+                    questionnaire = new InterestQuestionnaire(LIR, row["Response"].ToString());
                     LIR.setQuestionnaire(questionnaire);
 
                     questionnaires.Add(questionnaire);
                 }
 
-                interestCategoryID = Convert.ToInt32(row["InterestCategoryID"]);
-                question = row["Question"].ToString();
-                interestQuestion = new InterestQuestion(questionID, interestCategoryID, question);
-                questionnaire.addQuestion(interestQuestion);
+                if (questionnaire == null) continue;
 
-                if (!questions.Contains(interestQuestion))
+                InterestQuestion interestQuestion = getQuestion(Convert.ToInt32(row["QuestionID"]));
+                if (interestQuestion != null)
                 {
-                    questions.Add(interestQuestion);
+                    questionnaire.addQuestion(interestQuestion);
                 }
-                
-
             }
         }
 
         #region Update Database
-        private void FillDataRow(DataRow row,InterestQuestionnaire questionnaire, InterestQuestion question)
+        private void FillDataRow(DataRow row, InterestQuestionnaire questionnaire, InterestQuestion question)
         {
             row["QuestionID"] = question.questionID;
             row["ResponseID"] = questionnaire.LIR.responseID;
             row["Response"] = questionnaire.response;
         }
 
-        private void FillDataRow(DataRow row, InterestQuestion question) {
+        private void FillDataRow(DataRow row, InterestQuestion question)
+        {
             row["QuestionID"] = question.questionID;
             row["InterestCategoryID"] = question.interestCategoryID;
             row["Question"] = question.question;
@@ -147,11 +154,12 @@ namespace FuturePathGroup10.Data
 
         private DataRow FindDataRow(InterestQuestion question)
         {
-            for(int i = 0; i < dsQuestion.Tables[TABLE_QUESTION].Rows.Count; i++)
+            for (int i = 0; i < dsQuestion.Tables[TABLE_QUESTION].Rows.Count; i++)
             {
                 DataRow row = dsQuestion.Tables[TABLE_QUESTION].Rows[i];
 
-                if (Convert.ToInt32(row["QuestionID"]) == question.questionID) { 
+                if (Convert.ToInt32(row["QuestionID"]) == question.questionID)
+                {
                     return row;
                 }
             }
@@ -165,14 +173,14 @@ namespace FuturePathGroup10.Data
             {
                 case DBOperation.Add:
                     row = dsQuestionnaire.Tables[TABLE_QUESTIONNAIRE].NewRow();
-                    FillDataRow(row, questionnaire,question);
+                    FillDataRow(row, questionnaire, question);
                     dsQuestionnaire.Tables[TABLE_QUESTIONNAIRE].Rows.Add(row);
 
                     questionnaires.Add(questionnaire);
                     break;
 
                 case DBOperation.Edit:
-                    row = FindDataRow(questionnaire,question);
+                    row = FindDataRow(questionnaire, question);
                     if (row != null)
                     {
                         FillDataRow(row, questionnaire, question);
@@ -205,7 +213,7 @@ namespace FuturePathGroup10.Data
             {
                 case DBOperation.Add:
                     row = dsQuestion.Tables[TABLE_QUESTION].NewRow();
-                    FillDataRow(row,question);
+                    FillDataRow(row, question);
                     dsQuestionnaire.Tables[TABLE_QUESTION].Rows.Add(row);
 
                     questions.Add(question);
@@ -253,73 +261,65 @@ namespace FuturePathGroup10.Data
             return check1 && check2;
         }
 
+        private static OleDbParameter IntParam(string name, string column)
+        {
+            return new OleDbParameter(name, OleDbType.Integer, 4, column);
+        }
+
+        private static OleDbParameter TextParam(string name, string column)
+        {
+            return new OleDbParameter(name, OleDbType.VarWChar, 255, column);
+        }
+
         internal override void Create_INSERT_Command()
         {
-            daQuestionnaire.InsertCommand = new OleDbCommand("INSERT INTO InterestQuestionnaire (@ResponseID,@QuestionID,@Response) VALUES (ResponseID,QuestionID,Response)", cnMain);
-            daQuestion.InsertCommand = new OleDbCommand("INSERT INTO InterestQuestion (@QuestionID, @InterestCategoryID, @Question) VALUES (QuestionID, InterestCategoryID, Question)", cnMain);
+            daQuestionnaire.InsertCommand = new OleDbCommand("INSERT INTO InterestQuestionnaire (ResponseID, QuestionID, Response) VALUES (?, ?, ?)", cnMain);
+            daQuestion.InsertCommand = new OleDbCommand("INSERT INTO InterestQuestion (QuestionID, InterestCategoryID, Question) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daQuestionnaire.UpdateCommand = new OleDbCommand("UPDATE InterestQuestionnaire SET (@ResponseID,@QuestionID,@Response) WHERE ResponseID = @ResponseID AND QuestionID = @QuestionID", cnMain);
-            daQuestion.UpdateCommand = new OleDbCommand("Update InterestQuestion SET (@QuestionID, @InterestCategoryID, @Question) WHERE  QuestionID = @QuestionID", cnMain);
+            daQuestionnaire.UpdateCommand = new OleDbCommand("UPDATE InterestQuestionnaire SET Response = ? WHERE ResponseID = ? AND QuestionID = ?", cnMain);
+            daQuestion.UpdateCommand = new OleDbCommand("UPDATE InterestQuestion SET InterestCategoryID = ?, Question = ? WHERE QuestionID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daQuestionnaire.DeleteCommand = new OleDbCommand("DELETE FROM InterestQuestionnaire WHERE ResponseID = @ResponseID AND QuestionID = @QuestionID");
-            daQuestion.DeleteCommand = new OleDbCommand("DELETE FROM InterestQuestion WHERE QuestionID = @QuestionID");
+            daQuestionnaire.DeleteCommand = new OleDbCommand("DELETE FROM InterestQuestionnaire WHERE ResponseID = ? AND QuestionID = ?", cnMain);
+            daQuestion.DeleteCommand = new OleDbCommand("DELETE FROM InterestQuestion WHERE QuestionID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ResponseID", SqlDbType.Int, 4, "ResponseID");
-            daQuestionnaire.InsertCommand.Parameters.Add(param);
+            daQuestionnaire.InsertCommand.Parameters.Add(IntParam("@ResponseID", "ResponseID"));
+            daQuestionnaire.InsertCommand.Parameters.Add(IntParam("@QuestionID", "QuestionID"));
+            daQuestionnaire.InsertCommand.Parameters.Add(TextParam("@Response", "Response"));
 
-            param = new SqlParameter("@QuestionID", SqlDbType.Int, 4, "QuestionID");
-            daQuestionnaire.InsertCommand.Parameters.Add(param);
-            daQuestion.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@InterestCategoryID", SqlDbType.Int, 4, "InterestCategoryID");
-            daQuestion.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Response", SqlDbType.NVarChar, 255, "Response");
-            daQuestionnaire.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Question", SqlDbType.NVarChar, 255, "Question");
-            daQuestion.InsertCommand.Parameters.Add(param);
+            daQuestion.InsertCommand.Parameters.Add(IntParam("@QuestionID", "QuestionID"));
+            daQuestion.InsertCommand.Parameters.Add(IntParam("@InterestCategoryID", "InterestCategoryID"));
+            daQuestion.InsertCommand.Parameters.Add(TextParam("@Question", "Question"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ResponseID", SqlDbType.Int, 4, "ResponseID");
-            daQuestionnaire.UpdateCommand.Parameters.Add(param);
+            daQuestionnaire.UpdateCommand.Parameters.Add(TextParam("@Response", "Response"));
+            daQuestionnaire.UpdateCommand.Parameters.Add(IntParam("@ResponseID", "ResponseID"));
+            daQuestionnaire.UpdateCommand.Parameters.Add(IntParam("@QuestionID", "QuestionID"));
 
-            param = new SqlParameter("@QuestionID", SqlDbType.Int, 4, "QuestionID");
-            daQuestionnaire.UpdateCommand.Parameters.Add(param);
-            daQuestion.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@InterestCategoryID", SqlDbType.Int, 4, "InterestCategoryID");
-            daQuestion.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Response", SqlDbType.NVarChar, 255, "Response");
-            daQuestionnaire.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Question", SqlDbType.NVarChar, 255, "Question");
-            daQuestion.UpdateCommand.Parameters.Add(param);
+            daQuestion.UpdateCommand.Parameters.Add(IntParam("@InterestCategoryID", "InterestCategoryID"));
+            daQuestion.UpdateCommand.Parameters.Add(TextParam("@Question", "Question"));
+            daQuestion.UpdateCommand.Parameters.Add(IntParam("@QuestionID", "QuestionID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ResponseID", SqlDbType.Int, 4, "ResponseID");
-            daQuestionnaire.DeleteCommand.Parameters.Add(param);
+            daQuestionnaire.DeleteCommand.Parameters.Add(IntParam("@ResponseID", "ResponseID"));
+            daQuestionnaire.DeleteCommand.Parameters.Add(IntParam("@QuestionID", "QuestionID"));
 
-            param = new SqlParameter("@QuestionID", SqlDbType.Int, 4, "QuestionID");
-            daQuestionnaire.DeleteCommand.Parameters.Add(param);
-            daQuestion.DeleteCommand.Parameters.Add(param);
+            daQuestion.DeleteCommand.Parameters.Add(IntParam("@QuestionID", "QuestionID"));
         }
 
         #endregion

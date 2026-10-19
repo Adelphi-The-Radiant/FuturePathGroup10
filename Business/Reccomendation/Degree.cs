@@ -30,6 +30,7 @@ namespace FuturePathGroup10.Reccomendation
             this.title = title;
             this.description = description;
             options = new Collection<FundingOption>();
+            categories = new Collection<InterestCategory>();
             requirements = new Collection<ProgrammeRequirement>();
         }
 

@@ -71,7 +71,7 @@
             label2.Name = "label2";
             label2.Size = new Size(1109, 36);
             label2.TabIndex = 2;
-            label2.Text = "Here are a list of qualifications/fields that you do qualify for based off your interests:";
+            label2.Text = "Here is a list of other qualifications that you could qualify for based on your marks:";
             // 
             // listLabel
             // 

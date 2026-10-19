@@ -33,6 +33,7 @@
             summaryTextBox = new TextBox();
             backButton = new Button();
             exportButton = new Button();
+            saveFileDialog = new SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -63,6 +64,8 @@
             summaryTextBox.Location = new Point(33, 71);
             summaryTextBox.Multiline = true;
             summaryTextBox.Name = "summaryTextBox";
+            summaryTextBox.ReadOnly = true;
+            summaryTextBox.ScrollBars = ScrollBars.Vertical;
             summaryTextBox.Size = new Size(719, 259);
             summaryTextBox.TabIndex = 2;
             // 
@@ -78,6 +81,7 @@
             backButton.TabIndex = 3;
             backButton.Text = "Back";
             backButton.UseVisualStyleBackColor = false;
+            backButton.Click += backButton_Click;
             // 
             // exportButton
             // 
@@ -91,6 +95,13 @@
             exportButton.TabIndex = 4;
             exportButton.Text = "Export Report";
             exportButton.UseVisualStyleBackColor = false;
+            exportButton.Click += exportButton_Click;
+            // 
+            // saveFileDialog
+            // 
+            saveFileDialog.DefaultExt = "txt";
+            saveFileDialog.Filter = "Text file (*.txt)|*.txt";
+            saveFileDialog.Title = "Export Report";
             // 
             // LearnerReportForm
             // 
@@ -117,5 +128,6 @@
         private TextBox summaryTextBox;
         private Button backButton;
         private Button exportButton;
+        private SaveFileDialog saveFileDialog;
     }
 }

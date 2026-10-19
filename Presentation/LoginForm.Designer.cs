@@ -181,6 +181,7 @@
             // LoginForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
+            AcceptButton = loginButton;
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(79, 184, 156);
             ClientSize = new Size(914, 600);

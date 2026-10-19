@@ -12,101 +12,105 @@ using static System.Windows.Forms.Design.AxImporter;
 namespace FuturePathGroup10.Data
 {
 
-	public class ProgrammeRequirementDB : DB
-	{
+    public class ProgrammeRequirementDB : DB
+    {
         #region Attributes
         private const string TABLE_PR = "ProgrammeRequirement";
-		private const string TABLE_REQUIREMENT = "Requirements";
-		private const string TABLE_JOINED = "RequirementsJoined";
+        private const string TABLE_REQUIREMENT = "Requirements";
+        private const string TABLE_JOINED = "RequirementsJoined";
 
-        private const string SQL_SELECT_JOINED = "SELECT ProgrammeRequirement.ProgrammeRequirementID AS ProgrammeRequirementID, Requirements.SubjectName AS SubjectName, Requirements.MinRequiredGrade AS MinRequiredGrade, Requirements.DegreeID AS DegreeID " +
+        private const string SQL_SELECT_JOINED = "SELECT ProgrammeRequirement.ProgrammeRequirementID AS ProgrammeRequirementID, ProgrammeRequirement.SubjectName AS SubjectName, ProgrammeRequirement.MinRequiredGrade AS MinRequiredGrade, Requirements.DegreeID AS DegreeID " +
             "FROM ProgrammeRequirement LEFT JOIN Requirements ON ProgrammeRequirement.ProgrammeRequirementID = Requirements.ProgrammeRequirementID " +
             "ORDER BY ProgrammeRequirement.ProgrammeRequirementID";
-		private const string SQL_SELECT_PR = "SELECT * FROM ProgrammeRequirement";
-		private const string SQL_SELECT_REQUIREMENT = "SELECT * FROM Requirements";
+        private const string SQL_SELECT_PR = "SELECT * FROM ProgrammeRequirement";
+        private const string SQL_SELECT_REQUIREMENT = "SELECT * FROM Requirements";
 
-		private DataSet dsPR;
-		private DataSet dsRequirement;
+        private DataSet dsPR;
+        private DataSet dsRequirement;
 
-		private OleDbDataAdapter daPR;
-		private OleDbDataAdapter daRequirement;
+        private OleDbDataAdapter daPR;
+        private OleDbDataAdapter daRequirement;
 
-		private SubjectDB subjectDB;
-		private DegreeDB degreeDB;
+        private SubjectDB subjectDB;
+        private DegreeDB degreeDB;
 
-		public Collection<ProgrammeRequirement> requirements;
+        public Collection<ProgrammeRequirement> requirements;
         #endregion
         #region Constructor
         public ProgrammeRequirementDB(SubjectDB subjectDB, DegreeDB degreeDB)
-		{
-			this.subjectDB = subjectDB;
-			this.degreeDB = degreeDB;
-			requirements = new Collection<ProgrammeRequirement>();
+        {
+            this.subjectDB = subjectDB;
+            this.degreeDB = degreeDB;
+            requirements = new Collection<ProgrammeRequirement>();
 
-			FillDataSet(SQL_SELECT_PR, TABLE_PR);
-			dsPR = dsMain;
-			daPR = daMain;
-			FillDataSet(SQL_SELECT_REQUIREMENT, TABLE_REQUIREMENT);
-			dsRequirement = dsMain;
-			daRequirement = daMain;
+            FillDataSet(SQL_SELECT_PR, TABLE_PR);
+            dsPR = dsMain;
+            daPR = daMain;
+            FillDataSet(SQL_SELECT_REQUIREMENT, TABLE_REQUIREMENT);
+            dsRequirement = dsMain;
+            daRequirement = daMain;
 
-			FillDataSet(SQL_SELECT_JOINED, TABLE_JOINED);
-			LoadRequirements();
-		}
+            FillDataSet(SQL_SELECT_JOINED, TABLE_JOINED);
+            LoadRequirements();
+        }
         #endregion
         #region Load DataSet
 
         private void LoadRequirements()
-		{
-			int requirementID = -1;
-			ProgrammeRequirement requirement = null;
+        {
+            int requirementID = -1;
+            ProgrammeRequirement requirement = null;
 
-			foreach(DataRow row in dsMain.Tables[TABLE_JOINED].Rows)
-			{
-				int candidateID = Convert.ToInt32(row["ProgrammeRequirementID"]);
+            foreach (DataRow row in dsMain.Tables[TABLE_JOINED].Rows)
+            {
+                int candidateID = Convert.ToInt32(row["ProgrammeRequirementID"]);
 
-				if (requirementID != candidateID)
-				{
-					requirementID = candidateID;
-					string subjectName = row["SubjectName"].ToString();
-					Subject subject = subjectDB.getSubject(subjectName);
-					decimal requiredGrade = Convert.ToDecimal(row["MinRequiredGrade"]);
-					requirement = new ProgrammeRequirement(requirementID, subject, Convert.ToDouble(requiredGrade));
-					requirements.Add(requirement);
-				}
-				int degreeID = Convert.ToInt32(row["DegreeID"]);
-				Degree degree = degreeDB.getDegree(degreeID);
-				degree.addRequirement(requirement);
+                if (requirementID != candidateID)
+                {
+                    requirementID = candidateID;
+                    requirement = null;
 
-			}
+                    Subject subject = row["SubjectName"] is DBNull ? null : subjectDB.getSubject(row["SubjectName"].ToString());
+                    if (subject != null && row["MinRequiredGrade"] is not DBNull)
+                    {
+                        requirement = new ProgrammeRequirement(requirementID, subject, Convert.ToDouble(row["MinRequiredGrade"]));
+                        requirements.Add(requirement);
+                    }
+                }
 
-		}
+                if (requirement == null || row["DegreeID"] is DBNull) continue;
+
+                Degree degree = degreeDB.getDegree(Convert.ToInt32(row["DegreeID"]));
+                degree?.addRequirement(requirement);
+            }
+
+        }
         #endregion
 
         #region Update DataSet
-		private void FillDataRow(DataRow row, ProgrammeRequirement requirement)
-		{
-			row["ProgrammeRequirementID"] = requirement.programmeRequirementID;
-			row["SubjectName"] = requirement.subject.subjectName;
-			row["MinRequiredGrade"] = requirement.minRequiredGrade;
-		}
+        private void FillDataRow(DataRow row, ProgrammeRequirement requirement)
+        {
+            row["ProgrammeRequirementID"] = requirement.programmeRequirementID;
+            row["SubjectName"] = requirement.subject.subjectName;
+            row["MinRequiredGrade"] = requirement.minRequiredGrade;
+        }
 
         private void FillDataRow(DataRow row, ProgrammeRequirement requirement, Degree degree)
         {
             row["ProgrammeRequirementID"] = requirement.programmeRequirementID;
-			row["DegreeID"] = degree.degreeID;
+            row["DegreeID"] = degree.degreeID;
         }
 
-		private DataRow FindDataRow(ProgrammeRequirement requirement)
-		{
-            foreach(DataRow row in dsPR.Tables[TABLE_PR].Rows)
-			{
-				if (Convert.ToInt32(row["ProgrammeRequirementID"]) == requirement.programmeRequirementID)
-				{
-					return row;
-				}
-			}
-			return null;
+        private DataRow FindDataRow(ProgrammeRequirement requirement)
+        {
+            foreach (DataRow row in dsPR.Tables[TABLE_PR].Rows)
+            {
+                if (Convert.ToInt32(row["ProgrammeRequirementID"]) == requirement.programmeRequirementID)
+                {
+                    return row;
+                }
+            }
+            return null;
         }
 
         private DataRow FindDataRow(ProgrammeRequirement requirement, Degree degree)
@@ -160,7 +164,7 @@ namespace FuturePathGroup10.Data
             {
                 case DBOperation.Add:
                     row = dsRequirement.Tables[TABLE_REQUIREMENT].NewRow();
-                    FillDataRow(row, requirement,degree);
+                    FillDataRow(row, requirement, degree);
                     dsRequirement.Tables[TABLE_REQUIREMENT].Rows.Add(row);
 
                     break;
@@ -198,62 +202,53 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daPR.InsertCommand = new OleDbCommand("INSERT INTO ProgrammeRequirement (@ProgrammeRequirementID,@SubjectName,@MinRequiredGrade) VALUES (ProgrammeRequirementID,SubjectName,MinRequiredGrade)", cnMain);
-            daRequirement.InsertCommand = new OleDbCommand("INSERT INTO Requirements (@DegreeID,@ProgrammeRequirementID) VALUES (DegreeID,ProgrammeRequirementID)", cnMain);
+            daPR.InsertCommand = new OleDbCommand("INSERT INTO ProgrammeRequirement (ProgrammeRequirementID, SubjectName, MinRequiredGrade) VALUES (?, ?, ?)", cnMain);
+            daRequirement.InsertCommand = new OleDbCommand("INSERT INTO Requirements (DegreeID, ProgrammeRequirementID) VALUES (?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
+
         internal override void Create_UPDATE_Command()
         {
-            daPR.UpdateCommand = new OleDbCommand("UPDATE ProgrammeRequirement (@ProgrammeRequirementID,@SubjectName,@MinRequiredGrade) WHERE ProgrammeRequirementID = @ProgrammeRequirementID", cnMain);
+            daPR.UpdateCommand = new OleDbCommand("UPDATE ProgrammeRequirement SET SubjectName = ?, MinRequiredGrade = ? WHERE ProgrammeRequirementID = ?", cnMain);
             //Not possible anyway
-            daRequirement.UpdateCommand = new OleDbCommand("UPDATE Requirements (@DegreeID,@ProgrammeRequirementID) WHERE ProgrammeRequirementID = @ProgrammeRequirementID AND DegreeID = @DegreeID", cnMain);
+            daRequirement.UpdateCommand = new OleDbCommand("UPDATE Requirements SET ProgrammeRequirementID = ? WHERE ProgrammeRequirementID = ? AND DegreeID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
+
         internal override void Create_DELETE_Command()
         {
-            daPR.DeleteCommand = new OleDbCommand("DELETE FROM ProgrammeRequirement WHERE ProgrammeRequirementID = @ProgrammeRequirementID", cnMain);
-            daRequirement.DeleteCommand = new OleDbCommand("DELETE FROM Requirements WHERE ProgrammeRequirementID = @ProgrammeRequirementID AND DegreeID = @DegreeID", cnMain);
+            daPR.DeleteCommand = new OleDbCommand("DELETE FROM ProgrammeRequirement WHERE ProgrammeRequirementID = ?", cnMain);
+            daRequirement.DeleteCommand = new OleDbCommand("DELETE FROM Requirements WHERE ProgrammeRequirementID = ? AND DegreeID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ProgrammeRequirementID", SqlDbType.Int, 4, "ProgrammeRequirementID");
-            daPR.InsertCommand.Parameters.Add(param);
-            daRequirement.InsertCommand.Parameters.Add(param);
+            daPR.InsertCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
+            daPR.InsertCommand.Parameters.Add(CreateParam("@SubjectName", OleDbType.VarWChar, 255, "SubjectName"));
+            daPR.InsertCommand.Parameters.Add(CreateParam("@MinRequiredGrade", OleDbType.Double, 8, "MinRequiredGrade"));
 
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daRequirement.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@SubjectName", SqlDbType.NVarChar, 255, "SubjectName");
-            daPR.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@MinRequiredGrade", SqlDbType.Decimal, 32, "MinRequiredGrade");
-            daPR.InsertCommand.Parameters.Add(param);
+            daRequirement.InsertCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
+            daRequirement.InsertCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
         }
+
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ProgrammeRequirementID", SqlDbType.Int, 4, "ProgrammeRequirementID");
-            daPR.UpdateCommand.Parameters.Add(param);
-            daRequirement.UpdateCommand.Parameters.Add(param);
+            daPR.UpdateCommand.Parameters.Add(CreateParam("@SubjectName", OleDbType.VarWChar, 255, "SubjectName"));
+            daPR.UpdateCommand.Parameters.Add(CreateParam("@MinRequiredGrade", OleDbType.Double, 8, "MinRequiredGrade"));
+            daPR.UpdateCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
 
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daRequirement.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@SubjectName", SqlDbType.NVarChar, 255, "SubjectName");
-            daPR.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@MinRequiredGrade", SqlDbType.Decimal, 32, "MinRequiredGrade");
-            daPR.UpdateCommand.Parameters.Add(param);
+            daRequirement.UpdateCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
+            daRequirement.UpdateCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
+            daRequirement.UpdateCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
         }
+
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ProgrammeRequirementID", SqlDbType.Int, 4, "ProgrammeRequirementID");
-            daPR.DeleteCommand.Parameters.Add(param);
-            daRequirement.DeleteCommand.Parameters.Add(param);
+            daPR.DeleteCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
 
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daRequirement.DeleteCommand.Parameters.Add(param);
+            daRequirement.DeleteCommand.Parameters.Add(CreateParam("@ProgrammeRequirementID", OleDbType.Integer, 4, "ProgrammeRequirementID"));
+            daRequirement.DeleteCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
         }
 
         #endregion

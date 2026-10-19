@@ -8,42 +8,43 @@ using System.Security.Principal;
 
 namespace FuturePathGroup10.Data
 {
-	public class LearnerInterestResponseDB : DB
-	{
+    public class LearnerInterestResponseDB : DB
+    {
         #region Attributes
         private const string TABLE_LIR = "LearnerInterestResponse";
-		private const string SQL_SELECT_LIR = "SELECT * FROM LearnerInterestResponse";
+        private const string SQL_SELECT_LIR = "SELECT * FROM LearnerInterestResponse";
 
         public Collection<LearnerInterestResponse> LIRs;
-		private LearnerDB learnerDB;
+        private LearnerDB learnerDB;
         #endregion
         public LearnerInterestResponseDB(LearnerDB learnerDB)
-		{
-			LIRs = new Collection<LearnerInterestResponse>();
+        {
+            LIRs = new Collection<LearnerInterestResponse>();
             this.learnerDB = learnerDB;
-			FillDataSet(SQL_SELECT_LIR, TABLE_LIR);
+            FillDataSet(SQL_SELECT_LIR, TABLE_LIR);
             LoadLIR();
-		}
+        }
 
-		private void LoadLIR()
-		{
-			foreach(DataRow row in dsMain.Tables[TABLE_LIR].Rows)
-			{
+        private void LoadLIR()
+        {
+            foreach (DataRow row in dsMain.Tables[TABLE_LIR].Rows)
+            {
 
-				int responseID = Convert.ToInt32(row["ResponseID"]);
-				int learnerID = Convert.ToInt32(row["LearnerID"]);
-				string result = row["Result"].ToString();
+                int responseID = Convert.ToInt32(row["ResponseID"]);
+                int learnerID = Convert.ToInt32(row["LearnerID"]);
+                string result = row["Result"].ToString();
 
-				Learner.Learner learner = learnerDB.getLearner(learnerID);
+                Learner.Learner learner = learnerDB.getLearner(learnerID);
 
-				LearnerInterestResponse LIR = new LearnerInterestResponse(responseID, learner, result);
-				learner.addLIR(LIR);
-			}
-		}
+                LearnerInterestResponse LIR = new LearnerInterestResponse(responseID, learner, result);
+                LIRs.Add(LIR);
+                learner?.addLIR(LIR);
+            }
+        }
 
         public LearnerInterestResponse getLIR(int responseID)
         {
-            foreach(LearnerInterestResponse LIR in LIRs)
+            foreach (LearnerInterestResponse LIR in LIRs)
             {
                 if (LIR.responseID == responseID)
                 {
@@ -56,17 +57,17 @@ namespace FuturePathGroup10.Data
         #region Update Database
 
         private void FillDataRow(DataRow row, LearnerInterestResponse LIR)
-		{
-			row["ResponseID"] = LIR.responseID;
-			row["LearnerID"] = LIR.learner.learnerID;
-			row["Result"] = LIR.result;
-		}
+        {
+            row["ResponseID"] = LIR.responseID;
+            row["LearnerID"] = LIR.learner.learnerID;
+            row["Result"] = LIR.result;
+        }
 
-		private DataRow FindDataRow(LearnerInterestResponse LIR)
-		{
+        private DataRow FindDataRow(LearnerInterestResponse LIR)
+        {
             for (int i = 0; i < dsMain.Tables[TABLE_LIR].Rows.Count; i++)
             {
-                if ((dsMain.Tables[TABLE_LIR].Rows[i]["ResponseID"].Equals(LIR.responseID)))
+                if (Convert.ToInt32(dsMain.Tables[TABLE_LIR].Rows[i]["ResponseID"]) == LIR.responseID)
                 {
                     return dsMain.Tables[TABLE_LIR].Rows[i];
                 }
@@ -74,8 +75,8 @@ namespace FuturePathGroup10.Data
             return null;
         }
 
-		public void DataSetChange(LearnerInterestResponse LIR, DBOperation operation)
-		{
+        public void DataSetChange(LearnerInterestResponse LIR, DBOperation operation)
+        {
             DataRow row;
             switch (operation)
             {
@@ -125,49 +126,38 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO LearnerInterestResponse (@ResponseID, @LearnerID, @Result) VALUES (ResponseID,LearnerID,Result)", cnMain);
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO LearnerInterestResponse (ResponseID, LearnerID, Result) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE LearnerInterestResponse SET (@ResponseID, @LearnerID, @Result) WHERE ResponseID = @ResponseID", cnMain);
+            daMain.UpdateCommand = new OleDbCommand("UPDATE LearnerInterestResponse SET LearnerID = ?, Result = ? WHERE ResponseID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM LearnerInterestResponse WHERE ResponseID = @ResponseID", cnMain);
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM LearnerInterestResponse WHERE ResponseID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ResponseID", SqlDbType.Int, 4, "ResponseID");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Result", SqlDbType.NChar, 255, "Result");
-            daMain.InsertCommand.Parameters.Add(param);
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@ResponseID", OleDbType.Integer, 4, "ResponseID"));
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daMain.InsertCommand.Parameters.Add(new OleDbParameter("@Result", OleDbType.VarWChar, 255, "Result"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ResponseID", SqlDbType.Int, 4, "ResponseID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Result", SqlDbType.NChar, 255, "Result");
-            daMain.UpdateCommand.Parameters.Add(param);
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@Result", OleDbType.VarWChar, 255, "Result"));
+            daMain.UpdateCommand.Parameters.Add(new OleDbParameter("@ResponseID", OleDbType.Integer, 4, "ResponseID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@ResponseID", SqlDbType.Int, 4, "ResponseID");
-            daMain.DeleteCommand.Parameters.Add(param);
+            daMain.DeleteCommand.Parameters.Add(new OleDbParameter("@ResponseID", OleDbType.Integer, 4, "ResponseID"));
         }
 
         #endregion

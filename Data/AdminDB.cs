@@ -9,12 +9,12 @@ using System.Data.SqlClient;
 namespace FuturePathGroup10.Data
 {
 
-	public class AdminDB : DB
-	{
+    public class AdminDB : DB
+    {
 
-		#region Attributes
+        #region Attributes
 
-		private const string ADMIN_TABLE = "Administrator";
+        private const string ADMIN_TABLE = "Administrator";
         private const string SQL_SELECT_ADMIN = "SELECT * FROM Administrator;";
 
 
@@ -22,34 +22,34 @@ namespace FuturePathGroup10.Data
 
         #endregion
         public AdminDB()
-		{
-			admins = new Collection<Administrator>();
-			FillDataSet(SQL_SELECT_ADMIN, ADMIN_TABLE);
+        {
+            admins = new Collection<Administrator>();
+            FillDataSet(SQL_SELECT_ADMIN, ADMIN_TABLE);
             LoadAdmins();
-		}
+        }
 
-		private void LoadAdmins()
-		{
-			foreach(DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
-			{
+        private void LoadAdmins()
+        {
+            foreach (DataRow row in dsMain.Tables[ADMIN_TABLE].Rows)
+            {
 
-				int adminID = Convert.ToInt32(row["AdminID"]);
-				string username = row["Username"].ToString();
-				string fullName = row["FullName"].ToString();
+                int adminID = Convert.ToInt32(row["AdminID"]);
+                string username = row["Username"].ToString();
+                string fullName = row["FullName"].ToString();
 
-				Administrator admin = new Administrator(adminID, fullName, username);
-				admins.Add(admin);
-			}
-		}
+                Administrator admin = new Administrator(adminID, fullName, username);
+                admins.Add(admin);
+            }
+        }
 
         #region Database Updates
 
         private void FillDataRow(DataRow row, Administrator admin)
-		{
-			row["AdminID"] = admin.adminID;
-			row["Username"] = admin.Username;
-			row["FullName"] = admin.fullName;
-		}
+        {
+            row["AdminID"] = admin.adminID;
+            row["Username"] = admin.Username;
+            row["FullName"] = admin.fullName;
+        }
 
         private DataRow FindDataRow(Administrator admin)
         {
@@ -115,50 +115,39 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-            daMain.InsertCommand = new OleDbCommand("INSERT INTO Administrator (@AdminID, @Username, @FullName) VALUES (AdminID, Username, FullName)", cnMain);
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO Administrator (AdminID, Username, FullName) VALUES (?, ?, ?)", cnMain);
             Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-            daMain.UpdateCommand = new OleDbCommand("UPDATE Administrator SET (@AdminID, @Username, @FullName) WHERE AdminID = @AdminID", cnMain);
+            daMain.UpdateCommand = new OleDbCommand("UPDATE Administrator SET Username = ?, FullName = ? WHERE AdminID = ?", cnMain);
             Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM Administrator WHERE AdminID = @AdminID", cnMain);
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM Administrator WHERE AdminID = ?", cnMain);
             Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-            SqlParameter param = new SqlParameter("@AdminID", SqlDbType.Int, 32, "AdminID");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
-            daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullName", SqlDbType.NChar, 255, "FullName");
-            daMain.InsertCommand.Parameters.Add(param);
+            daMain.InsertCommand.Parameters.Add(CreateParam("@AdminID", OleDbType.Integer, 4, "AdminID"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@Username", OleDbType.VarWChar, 255, "Username"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@FullName", OleDbType.VarWChar, 255, "FullName"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@AdminID", SqlDbType.Int, 32, "AdminID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Username", SqlDbType.NChar, 255, "Username");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@FullName", SqlDbType.NChar, 255, "FullName");
-            daMain.UpdateCommand.Parameters.Add(param);
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@Username", OleDbType.VarWChar, 255, "Username"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@FullName", OleDbType.VarWChar, 255, "FullName"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@AdminID", OleDbType.Integer, 4, "AdminID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@AdminID", SqlDbType.Int, 32, "AdminID");
-            daMain.DeleteCommand.Parameters.Add(param);
+            daMain.DeleteCommand.Parameters.Add(CreateParam("@AdminID", OleDbType.Integer, 4, "AdminID"));
         }
 
         #endregion

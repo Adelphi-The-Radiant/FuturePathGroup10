@@ -23,7 +23,7 @@ namespace FuturePathGroup10.Presentation
 
         private void createAccountButton_Click(object sender, EventArgs e)
         {
-            if (nameTextBox.Text == string.Empty
+            if (string.IsNullOrWhiteSpace(nameTextBox.Text)
                 || gradeComboBox.SelectedItem is null
                 || schoolTextBox.Text == string.Empty
                 || provinceComboBox.SelectedItem is null
@@ -91,7 +91,7 @@ namespace FuturePathGroup10.Presentation
                 schoolTextBox.Text, 
                 (string)provinceComboBox.SelectedItem, 
                 phoneTextBox.Text, 
-                emailTextBox.SelectedText, 
+                emailTextBox.Text, 
                 passwordTextBox.Text
             );
         }

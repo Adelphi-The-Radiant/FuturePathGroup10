@@ -147,61 +147,43 @@ namespace FuturePathGroup10.Data
 
         internal override void Create_INSERT_Command()
         {
-			daMain.InsertCommand = new OleDbCommand("INSERT INTO ReccommendationResult (@LearnerID,@DegreeID,@ResultDate,@Results) VALUES (LearnerID,DegreeID,ResultDate,Results)", cnMain);
-			Build_INSERT_Parameters();
+            daMain.InsertCommand = new OleDbCommand("INSERT INTO ReccommendationResult (LearnerID, DegreeID, ResultDate, Results) VALUES (?, ?, ?, ?)", cnMain);
+            Build_INSERT_Parameters();
         }
 
         internal override void Create_UPDATE_Command()
         {
-			daMain.UpdateCommand = new OleDbCommand("UPDATE ReccommendationResult SET (@LearnerID,@DegreeID,@ResultDate,@Results) WHERE LearnerID = @LearnerID AND DegreeID = @DegreeID",cnMain);
-			Build_UPDATE_Parameters();
+            daMain.UpdateCommand = new OleDbCommand("UPDATE ReccommendationResult SET ResultDate = ?, Results = ? WHERE LearnerID = ? AND DegreeID = ?", cnMain);
+            Build_UPDATE_Parameters();
         }
 
         internal override void Create_DELETE_Command()
         {
-            daMain.DeleteCommand = new OleDbCommand("DELETE FROM ReccommendationResult WHERE LearnerID = @LearnerID AND DegreeID = @DegreeID", cnMain);
-			Build_DELETE_Parameters();
+            daMain.DeleteCommand = new OleDbCommand("DELETE FROM ReccommendationResult WHERE LearnerID = ? AND DegreeID = ?", cnMain);
+            Build_DELETE_Parameters();
         }
 
         internal override void Build_INSERT_Parameters()
         {
-			SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-			daMain.InsertCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daMain.InsertCommand.Parameters.Add(param);
-
-			param = new SqlParameter("@ResultDate", SqlDbType.DateTime, 64, "ResultDate");
-            daMain.InsertCommand.Parameters.Add(param);
-
-			param = new SqlParameter("@Results", SqlDbType.NVarChar, 255, "Results");
-            daMain.InsertCommand.Parameters.Add(param);
+            daMain.InsertCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@ResultDate", OleDbType.Date, 8, "ResultDate"));
+            daMain.InsertCommand.Parameters.Add(CreateParam("@Results", OleDbType.LongVarWChar, 0, "Results"));
         }
 
         internal override void Build_UPDATE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@ResultDate", SqlDbType.DateTime, 64, "ResultDate");
-            daMain.UpdateCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@Results", SqlDbType.NVarChar, 255, "Results");
-            daMain.UpdateCommand.Parameters.Add(param);
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@ResultDate", OleDbType.Date, 8, "ResultDate"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@Results", OleDbType.LongVarWChar, 0, "Results"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daMain.UpdateCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
         }
 
         internal override void Build_DELETE_Parameters()
         {
-            SqlParameter param = new SqlParameter("@LearnerID", SqlDbType.Int, 4, "LearnerID");
-			daMain.DeleteCommand.Parameters.Add(param);
-
-            param = new SqlParameter("@DegreeID", SqlDbType.Int, 4, "DegreeID");
-            daMain.DeleteCommand.Parameters.Add(param);
+            daMain.DeleteCommand.Parameters.Add(CreateParam("@LearnerID", OleDbType.Integer, 4, "LearnerID"));
+            daMain.DeleteCommand.Parameters.Add(CreateParam("@DegreeID", OleDbType.Integer, 4, "DegreeID"));
         }
-
 
         #endregion
 

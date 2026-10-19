@@ -35,6 +35,7 @@
             label1 = new Label();
             statusLabel = new Label();
             yapLabel = new Label();
+            detailsTextBox = new TextBox();
             label2 = new Label();
             backButton = new Button();
             reportButton = new Button();
@@ -118,6 +119,21 @@
             yapLabel.Size = new Size(42, 20);
             yapLabel.TabIndex = 6;
             yapLabel.Text = "<yap>";
+            yapLabel.Visible = false;
+            // 
+            // detailsTextBox
+            // 
+            detailsTextBox.BackColor = Color.White;
+            detailsTextBox.BorderStyle = BorderStyle.None;
+            detailsTextBox.Font = new Font("Arial Narrow", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            detailsTextBox.Location = new Point(56, 194);
+            detailsTextBox.Multiline = true;
+            detailsTextBox.Name = "detailsTextBox";
+            detailsTextBox.ReadOnly = true;
+            detailsTextBox.ScrollBars = ScrollBars.Vertical;
+            detailsTextBox.Size = new Size(680, 70);
+            detailsTextBox.TabIndex = 12;
+            detailsTextBox.TabStop = false;
             // 
             // label2
             // 
@@ -143,6 +159,7 @@
             backButton.TabIndex = 8;
             backButton.Text = "Back";
             backButton.UseVisualStyleBackColor = false;
+            backButton.Click += backButton_Click;
             // 
             // reportButton
             // 
@@ -156,6 +173,7 @@
             reportButton.TabIndex = 9;
             reportButton.Text = "View Report";
             reportButton.UseVisualStyleBackColor = false;
+            reportButton.Click += reportButton_Click;
             // 
             // fundButton
             // 
@@ -169,6 +187,7 @@
             fundButton.TabIndex = 10;
             fundButton.Text = "Funding Options";
             fundButton.UseVisualStyleBackColor = false;
+            fundButton.Click += fundButton_Click;
             // 
             // alternativeButton
             // 
@@ -182,6 +201,7 @@
             alternativeButton.TabIndex = 11;
             alternativeButton.Text = "Alternative Options";
             alternativeButton.UseVisualStyleBackColor = false;
+            alternativeButton.Click += alternativeButton_Click;
             // 
             // EligibilityForm
             // 
@@ -189,6 +209,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(79, 184, 156);
             ClientSize = new Size(800, 450);
+            Controls.Add(detailsTextBox);
             Controls.Add(alternativeButton);
             Controls.Add(fundButton);
             Controls.Add(reportButton);
@@ -217,6 +238,7 @@
         private Label label1;
         private Label statusLabel;
         private Label yapLabel;
+        private TextBox detailsTextBox;
         private Label label2;
         private Button backButton;
         private Button reportButton;

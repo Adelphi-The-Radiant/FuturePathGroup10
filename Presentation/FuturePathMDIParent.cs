@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using FuturePathGroup10.Data;
@@ -76,8 +77,16 @@ namespace FuturePathGroup10.Presentation
             }
 
             _userAccount = authorizedAccount;
+            _learnerController.loadLearner(authorizedAccount.username);
 
             CurrentForm = new HomeForm();
+        }
+
+        public void Logout()
+        {
+            _userAccount = null;
+            _learnerController.loadLearner(null);
+            CurrentForm = new LoginForm(_userAccountDb);
         }
 
         public void StartRegistration()
@@ -87,21 +96,104 @@ namespace FuturePathGroup10.Presentation
 
         public void Register(string username, int grade, string school, string province, string phone, string email, string password)
         {
+            username = username.Trim();
+
+            if (_userAccountDb.accounts.Any(a => string.Equals(a.username?.Trim(), username, StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show(
+                    "That username is already taken. Please choose another one.",
+                    "Username Taken",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            FuturePathGroup10.Learner.Learner? existingLearner = _learnerController.learnerDB.learners.FirstOrDefault(
+                l => string.Equals(l.Username?.Trim(), username, StringComparison.OrdinalIgnoreCase)
+            );
+
+            if (existingLearner is null && _learnerController.learnerDB.learners.Any(
+                l => string.Equals(l.email?.Trim(), email.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                MessageBox.Show(
+                    "That email address is already registered. Please use another one.",
+                    "Email Taken",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
             UserAccount newAccount = new(username, password, DateTime.Now, UserAccount.Permission.user);
-            FuturePathGroup10.Learner.Learner newLearner = new(_learnerController.learnerDB.getNextID(), username, phone, username, school, null, null, email, province);
-            _learnerController.createProfile(newLearner, out string error);
+            try
+            {
+                _userAccountDb.DataSetChange(newAccount, DB.DBOperation.Add);
+                if (!_userAccountDb.UpdateDataSource(DB.DBOperation.Add))
+                {
+                    _userAccountDb.accounts.Remove(newAccount);
+                    MessageBox.Show("Could not save your account. Please try again.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _userAccountDb.accounts.Remove(newAccount);
+                MessageBox.Show("Could not save your account: " + ex.Message, "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (existingLearner is not null)
+            {
+                existingLearner.Account = newAccount;
+                _learnerController.loadLearner(username);
+            }
+            else
+            {
+                FuturePathGroup10.Learner.Learner newLearner = new(0, username, phone.Trim(), username, school.Trim(), null, null, email.Trim(), province);
+                newLearner.Account = newAccount;
+
+                if (!_learnerController.createProfile(newLearner, out string error))
+                {
+                    try
+                    {
+                        _userAccountDb.DataSetChange(newAccount, DB.DBOperation.Delete);
+                        _userAccountDb.UpdateDataSource(DB.DBOperation.Delete);
+                    }
+                    catch (Exception) { }
+
+                    MessageBox.Show(error, "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+            MessageBox.Show(
+                "Your account has been created. Your home page will now open.",
+                "Registration Successful",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+
+            _userAccount = newAccount;
             CurrentForm = new HomeForm();
         }
 
         public void StartInterestQuestionnaire()
         {
-            CurrentForm = new Learner.QuestionnaireForm(_learnerController);
-            bool success = _learnerController.startQuestionnaire(out string error);
-            if (!success)
+            if (!_learnerController.startQuestionnaire(out string error))
             {
-                MessageBox.Show(error);
+                MessageBox.Show(
+                    error,
+                    "Could Not Start Questionnaire",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
             }
+
+            CurrentForm = new Learner.QuestionnaireForm(_learnerController);
         }
+
         public void OpenMarksCapture()
         {
             CurrentForm = new Learner.CaptureMarksForm(_learnerController.subjectDB, _learnerController);
@@ -112,9 +204,39 @@ namespace FuturePathGroup10.Presentation
             CurrentForm = new Learner.SelectQualificationForm(_learnerController);
         }
 
+        public void OpenAlternatives()
+        {
+            CurrentForm = new Learner.AlternativesForm(_learnerController);
+        }
+
+        public void OpenFunding(FuturePathGroup10.Reccomendation.Degree degree, bool fromAlternatives)
+        {
+            try
+            {
+                _learnerController.viewFundingOptions();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Could not load the funding options: " + ex.Message,
+                    "Funding Options",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            CurrentForm = new Learner.FundingForm(degree.options.FirstOrDefault(), degree, fromAlternatives);
+        }
+
+        public void OpenLearnerReport()
+        {
+            CurrentForm = new Learner.LearnerReportForm(_learnerController);
+        }
+
         public void StartAdvisoryForm()
         {
-            CurrentForm = new Learner.EligibilityForm();
+            CurrentForm = new Learner.EligibilityForm(_learnerController);
         }
 
         private void CurrentForm_FormClosed(object? sender, FormClosedEventArgs e)
@@ -124,7 +246,7 @@ namespace FuturePathGroup10.Presentation
 
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CurrentForm = new LoginForm(_userAccountDb);
+            Logout();
         }
 
         private void ExitToolsStripMenuItem_Click(object sender, EventArgs e)

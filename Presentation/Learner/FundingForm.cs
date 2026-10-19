@@ -15,15 +15,17 @@ namespace FuturePathGroup10.Presentation.Learner
 {
     public partial class FundingForm : Form
     {
-        private FundingOption fundingOption;
+        private FundingOption? fundingOption;
         private Reccomendation.Degree degree;
+        private readonly bool fromAlternatives;
 
-        public FundingForm(FundingOption fundingOption, Reccomendation.Degree degree)
+        public FundingForm(FundingOption? fundingOption, Reccomendation.Degree degree, bool fromAlternatives)
         {
             InitializeComponent();
 
             this.fundingOption = fundingOption;
             this.degree = degree;
+            this.fromAlternatives = fromAlternatives;
 
             displayAll();
         }
@@ -37,21 +39,27 @@ namespace FuturePathGroup10.Presentation.Learner
             {
                 info += fund.optionToString() + "\n";
             }
-            fundingInfoLabel.Text = info;
+            fundingInfoLabel.Text = info == "" ? "No funding options are listed for this qualification yet." : info;
         }
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            HomeForm hf = new HomeForm();
-            hf.Show();
-            this.Close();
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+
+            if (fromAlternatives)
+            {
+                parent.OpenAlternatives();
+            }
+            else
+            {
+                parent.StartAdvisoryForm();
+            }
         }
 
         private void reportButton_Click(object sender, EventArgs e)
         {
-            LearnerReportForm rf = new LearnerReportForm();
-            rf.Show();
-            this.Close();
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.OpenLearnerReport();
         }
     }
 }

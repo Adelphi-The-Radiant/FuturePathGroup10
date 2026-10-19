@@ -42,7 +42,9 @@ namespace FuturePathGroup10.Presentation.Learner
             // Allow the user to select any subject from the database
             foreach (SubjectMarkInput input in _subjectMarkInputs)
             {
-                input.SubjectInput.DataSource = subjectDB.subjects;
+                List<Subject> source = subjectDB.subjects.ToList();
+                input.SubjectInput.DataSource = source;
+                input.SubjectInput.SelectedIndex = -1;
             }
         }
 
@@ -54,10 +56,26 @@ namespace FuturePathGroup10.Presentation.Learner
 
         private void submitButton_Click(object sender, EventArgs e)
         {
+            Dictionary<Subject, double> marks;
+            try
+            {
+                marks = GatherSubjectMarks();
+            }
+            catch (ArgumentException)
+            {
+                MessageBox.Show(
+                    "Multiple marks were entered for the same subject. Please only enter one mark per subject.",
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+
+                return;
+            }
+
             try
             {
                 // Fail if no subjects were entered
-                Dictionary<Subject, double> marks = GatherSubjectMarks();
                 if (marks.Count == 0)
                 {
                     MessageBox.Show(
@@ -95,7 +113,7 @@ namespace FuturePathGroup10.Presentation.Learner
 
                 // Successfully captured subjects and marks
                 MessageBox.Show(
-                    "Successfully captured subject marks. The form will now close.",
+                    "Successfully captured subject marks. The interest questionnaire will now open.",
                     "Successfully Captured Marks",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
@@ -104,16 +122,15 @@ namespace FuturePathGroup10.Presentation.Learner
                 FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
                 parent.StartInterestQuestionnaire();
             }
-            catch (ArgumentException)
+            catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Multiple marks were entered for the same subject. Please only enter one mark per subject.",
+                    "Something went wrong after the marks were submitted: " + ex.Message,
                     "Error",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
             }
-
         }
 
         private Dictionary<Subject, double> GatherSubjectMarks()

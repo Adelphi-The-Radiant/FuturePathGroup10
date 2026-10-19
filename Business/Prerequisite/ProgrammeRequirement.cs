@@ -35,7 +35,7 @@ namespace FuturePathGroup10.Prerequisites
 
         //  the requirement gets its own group and is mandatory.
         public ProgrammeRequirement(int programmeRequirementID, Subject subject, double minRequiredGrade)
-            : this(programmeRequirementID, subject, minRequiredGrade, programmeRequirementID, true)
+            : this(programmeRequirementID, subject, minRequiredGrade, programmeRequirementID, true, null, null)
         {
         }
 

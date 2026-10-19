@@ -8,7 +8,7 @@ namespace FuturePathGroup10.Learner
 {
     public class Learner : AccountHolder
     {
-        public int learnerID { get;  set; }
+        public int learnerID { get; set; }
         public string phoneNumber { get; private set; }
         public string email { get; private set; }
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
@@ -18,29 +18,38 @@ namespace FuturePathGroup10.Learner
         public float overallGrade12 { get; private set; }
         public string province { get; private set; }
 
-        private Collection<LearnerSubject> learnerSubjects;
+        public Collection<LearnerSubject> learnerSubjects;
         private Collection<LearnerInterestResponse> LIRs;
         private Collection<InterestQuestionnaire>? questionnaires;
 
-        public Learner(int learnerID,string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province) : base(username)
+        public Learner(int learnerID, string username, string phoneNumber, string fullname, string school, string grade11, string grade12, string email, string province) : base(username)
         {
             this.learnerID = learnerID;
             this.phoneNumber = phoneNumber;
             this.email = email;
             this.fullname = fullname;
             this.school = school;
-            this.overallGrade11 = Convert.ToInt32(grade11);
-            this.overallGrade12 = Convert.ToInt32(grade12);
+            this.overallGrade11 = ParseGrade(grade11);
+            this.overallGrade12 = ParseGrade(grade12);
             this.province = province;
             this.learnerSubjects = new Collection<LearnerSubject>();
             this.LIRs = new Collection<LearnerInterestResponse>();
         }
 
 
+        private static float ParseGrade(string? grade)
+        {
+            return float.TryParse(grade, out float parsed) ? parsed : 0;
+        }
 
         public void addLearnerSubject(LearnerSubject learnerSubject)
         {
             learnerSubjects.Add(learnerSubject);
+        }
+
+        public void removeLearnerSubject(LearnerSubject learnerSubject)
+        {
+            learnerSubjects.Remove(learnerSubject);
         }
 
         public void addLIR(LearnerInterestResponse LIR)

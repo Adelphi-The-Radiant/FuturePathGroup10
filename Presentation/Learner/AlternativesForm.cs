@@ -1,4 +1,5 @@
-﻿using FuturePathGroup10.Business;
+﻿using FuturePathGroup10.Business.Prerequisite;
+using FuturePathGroup10.Business;
 using FuturePathGroup10.Data;
 using FuturePathGroup10.Learner;
 using FuturePathGroup10.Prerequisites;
@@ -8,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -15,56 +17,67 @@ namespace FuturePathGroup10.Presentation.Learner
 {
     public partial class AlternativesForm : Form
     {
-        DegreeDB degreeDB;
-        Learner.Learner learner;
-        public AlternativesForm(DegreeDB degreeDB, Learner.Learner learner)
+        private readonly LearnerController _learnerController;
+        private readonly List<EligibilityResult> _alternatives;
+
+        public AlternativesForm(LearnerController learnerController)
         {
             InitializeComponent();
-            this.degreeDB = degreeDB;
-            this.learner = learner;
+            _learnerController = learnerController;
 
+
+            _alternatives = _learnerController.getAlternatives();
             display();
         }
 
         private void display()
         {
-            string output = "";
-            foreach (var deg in degreeDB.degrees)
+            if (_alternatives.Count == 0)
             {
-                Collection<ProgrammeRequirement> p = deg.requirements;
-                foreach (var req in p)
-                {
-                    if (req.subject in learner.LearnerSubject) {
-                        LearnerSubject ls = learner.LearnerSubject;
-                        if (ls.result >=req.minRequiredGrade)
-                        {
-                            output += deg.GetDegree();
-                        }
-                    }
-                }
+                listLabel.Text = "No other qualifications match your marks at the moment.";
+                return;
             }
-            listLabel.Text = output;
+
+            StringBuilder output = new();
+            foreach (EligibilityResult alternative in _alternatives)
+            {
+                output.AppendLine("- " + alternative.DegreeTitle + ": " +
+                    (alternative.Outcome == AdvisoryOutcome.StrongMatch ? "Strong Match" : "Possible Match"));
+            }
+            listLabel.Text = output.ToString();
         }
 
         private void backButton_Click(object sender, EventArgs e)
         {
-            HomeForm hf = new HomeForm();
-            hf.Show();
-            this.Close();
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.StartAdvisoryForm();
         }
 
         private void reportButton_Click(object sender, EventArgs e)
         {
-            LearnerReportForm rf = new LearnerReportForm();
-            rf.Show();
-            this.Close();
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.OpenLearnerReport();
         }
 
         private void fundButton_Click(object sender, EventArgs e)
         {
-            FundingForm ff = new FundingForm();
-            ff.Show();
-            this.Close();
+            FuturePathGroup10.Reccomendation.Degree? best = _alternatives.Count == 0
+                ? null
+                : _learnerController.degreeDB.degrees.FirstOrDefault(d => d.title == _alternatives[0].DegreeTitle);
+
+            if (best is null)
+            {
+                MessageBox.Show(
+                    "There are no alternative qualifications to show funding options for.",
+                    "No Alternatives",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return;
+            }
+
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.OpenFunding(best, true);
         }
     }
 }

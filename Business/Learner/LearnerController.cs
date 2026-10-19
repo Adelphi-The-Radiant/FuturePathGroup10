@@ -31,10 +31,7 @@ namespace FuturePathGroup10.Learner
         public InterestQuestionnaireDB questionnaireDB;
         public InterestCategoryDB categoryDB;
 
-        public CareerAdvisorDB CADB;
-        public AdminDB ADB;
-
-        public UserAccountDB UDB;
+        private FundingOptionDB? fundingDB;
 
 
         // The learner's current sitting of the questionnaire (null until started)
@@ -48,10 +45,6 @@ namespace FuturePathGroup10.Learner
             this.subjectDB = new SubjectDB(learnerDB);
             this.facultyDB = new FacultyDB(learnerDB);
             this.degreeDB = new DegreeDB(facultyDB);
-            this.CADB = new CareerAdvisorDB();
-            this.ADB = new AdminDB();
-
-            this.UDB = new UserAccountDB(learnerDB, ADB, CADB);
             this.activeLearner = null;
         }
         #endregion
@@ -70,6 +63,7 @@ namespace FuturePathGroup10.Learner
         #endregion
 
         #region Eligibility data members
+        private ProgrammeRequirementDB? requirementDB;
         private Dictionary<string, double> currentMarks =
             new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
         public EligibilityResult lastResult { get; private set; }
@@ -78,11 +72,10 @@ namespace FuturePathGroup10.Learner
         #region Create and Update learner profile
         //this should be called after register
 
-        public bool createProfile(UserAccount account, string phoneNumber, string fullname, string school,
+        public bool createProfile(string username, string phoneNumber, string fullname, string school,
                           string grade11, string grade12, string email, string province, out string error)
         {
             error = "";
-            string username = account.username;
 
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -95,12 +88,6 @@ namespace FuturePathGroup10.Learner
             {
                 learner = new Learner(learnerDB.getNextID(), username.Trim(), Clean(phoneNumber), Clean(fullname), Clean(school),
                                       Clean(grade11), Clean(grade12), Clean(email), Clean(province));
-                learner.Account = account;
-                learnerDB.DataSetChange(learner, DB.DBOperation.Add);
-                learnerDB.UpdateDataSource(DB.DBOperation.Add);
-
-                UDB.DataSetChange(account, DB.DBOperation.Add);
-                UDB.UpdateDataSource(DB.DBOperation.Add);
             }
             catch (Exception ex)
             {
@@ -127,14 +114,23 @@ namespace FuturePathGroup10.Learner
                 int nextId = learnerDB.getNextID();
                 learner.learnerID = nextId;
 
-                learnerDB.DataSetChange(learner, DB.DBOperation.Add);        
-                if (!learnerDB.UpdateDataSource(DB.DBOperation.Add))         
+                learnerDB.DataSetChange(learner, DB.DBOperation.Add);
+                if (!learnerDB.UpdateDataSource(DB.DBOperation.Add))
                 {
+                    try
+                    {
+                        learnerDB.DataSetChange(learner, DB.DBOperation.Delete);
+                        learnerDB.UpdateDataSource(DB.DBOperation.Delete);
+                    }
+                    catch
+                    {
+                        learnerDB.learners.Remove(learner);
+                    }
+
                     error = "Could not save the profile.";
                     return false;
                 }
 
-                learnerDB.learners.Add(learner);    
                 activeLearner = learner;
                 return true;
             }
@@ -143,6 +139,22 @@ namespace FuturePathGroup10.Learner
                 error = "Could not create profile: " + ex.Message;
                 return false;
             }
+        }
+
+        public bool loadLearner(string? username)
+        {
+            activeLearner = null;
+            if (username == null) return true;
+
+            foreach (Learner existing in learnerDB.learners)
+            {
+                if (string.Equals(existing.Username, username))
+                {
+                    activeLearner = existing;
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool updateProfile(Learner learner, out string error)
@@ -158,8 +170,8 @@ namespace FuturePathGroup10.Learner
 
             try
             {
-                learnerDB.DataSetChange(learner, DB.DBOperation.Edit);       
-                if (!learnerDB.UpdateDataSource(DB.DBOperation.Edit))        
+                learnerDB.DataSetChange(learner, DB.DBOperation.Edit);
+                if (!learnerDB.UpdateDataSource(DB.DBOperation.Edit))
                 {
                     error = "Could not save the changes.";
                     return false;
@@ -188,6 +200,12 @@ namespace FuturePathGroup10.Learner
         #endregion
 
         #region Selection
+        public void clearSelection()
+        {
+            SelectedFaculty = null;
+            SelectedDegree = null;
+        }
+
         public bool selectFaculty(Reccomendation.Faculty faculty, out string error)
         {
             error = "";
@@ -224,7 +242,7 @@ namespace FuturePathGroup10.Learner
 
             if (activeLearner == null)
             {
-                error = "Create or load a learner first.";
+                error = "No learner was found for the logged in account, so marks cannot be saved.";
                 return false;
             }
 
@@ -235,7 +253,15 @@ namespace FuturePathGroup10.Learner
             }
             // add them all, then write once
             try
-            {   
+            {
+                foreach (LearnerSubject previous in activeLearner.learnerSubjects.ToList())
+                {
+                    if (!marks.ContainsKey(previous.subject))
+                    {
+                        subjectDB.DataSetChange(previous, DB.DBOperation.Delete);
+                    }
+                }
+
                 foreach (KeyValuePair<Subject, double> entry in marks)
                 {
                     LearnerSubject eachSubject = new LearnerSubject(activeLearner, entry.Key, entry.Value);
@@ -272,7 +298,7 @@ namespace FuturePathGroup10.Learner
 
             if (activeLearner == null)
             {
-                error = "Create or load a learner first.";
+                error = "No learner was found for the logged in account, so marks cannot be saved.";
                 return false;
             }
 
@@ -291,8 +317,8 @@ namespace FuturePathGroup10.Learner
 
                 LearnerInterestResponse response = new LearnerInterestResponse(nextId, activeLearner, "");
 
-                lirDB.DataSetChange(response, DB.DBOperation.Add);          
-                if (!lirDB.UpdateDataSource(DB.DBOperation.Add))            
+                lirDB.DataSetChange(response, DB.DBOperation.Add);
+                if (!lirDB.UpdateDataSource(DB.DBOperation.Add))
                 {
                     error = "Could not start the questionnaire.";
                     return false;
@@ -367,10 +393,10 @@ namespace FuturePathGroup10.Learner
 
             if (answers.Count == 0)
             {
-                return new Dictionary<int, double>();         
+                return new Dictionary<int, double>();
             }
-            
-            return new  Interest.InterestScorer().CalculateCategoryScores(questionnaireDB.questions, answers);
+
+            return new Interest.InterestScorer().CalculateCategoryScores(questionnaireDB.questions, answers);
         }
 
         // Reads this learner's current answers out of the in-memory collection: questionID -> answer
@@ -442,7 +468,7 @@ namespace FuturePathGroup10.Learner
         #region Funding
         public Collection<FundingOption> viewFundingOptions()
         {
-            FundingOptionDB fundingDB = new FundingOptionDB(facultyDB, degreeDB);
+            fundingDB ??= new FundingOptionDB(facultyDB, degreeDB);
 
             return fundingDB.options;
         }
@@ -468,7 +494,7 @@ namespace FuturePathGroup10.Learner
                 return false;
             }
 
-            
+
             foreach (KeyValuePair<Subject, double> entry in marks)
             {
                 if (entry.Value < 0 || entry.Value > 100)
@@ -486,17 +512,18 @@ namespace FuturePathGroup10.Learner
 
             return true;
         }
-        
 
-        
+
+
         // Check the learner against the selected degree.
         // ALWAYS returns a result: when something is missing the outcome is "More Information Needed",
         // with the reason
         public EligibilityResult checkEligibility()
         {
+            refreshMarks();
             EligibilityChecker checker = new EligibilityChecker();
 
-            if (SelectedDegree == null )
+            if (SelectedDegree == null)
             {
                 EligibilityResult missing = new EligibilityResult();
                 missing.Outcome = AdvisoryOutcome.MoreInformationNeeded;
@@ -506,7 +533,7 @@ namespace FuturePathGroup10.Learner
                 return missing;
             }
 
-            double? interest = getInterestMatchOrNull();
+            double? interest = getInterestMatchOrNull(SelectedDegree);
 
             lastResult = checker.Check(SelectedDegree.title,
                                        currentMarks,
@@ -519,12 +546,22 @@ namespace FuturePathGroup10.Learner
         // Pass in all the loaded degrees (later: degreeDB.degrees).
         public List<EligibilityResult> getAlternatives()
         {
+            try
+            {
+                loadRequirements();
+            }
+            catch (Exception)
+            {
+                return new List<EligibilityResult>();
+            }
+            refreshMarks();
+
             Collection<Degree> alldegrees = degreeDB.degrees;
             Dictionary<string, List<ProgrammeRequirement>> byDegree = new Dictionary<string, List<ProgrammeRequirement>>();
 
             foreach (Degree d in alldegrees)
             {
-                if (d == null )
+                if (d == null)
                 {
                     continue;
                 }
@@ -537,7 +574,7 @@ namespace FuturePathGroup10.Learner
             }
 
             string selected = "";
-            if (SelectedDegree != null )
+            if (SelectedDegree != null)
             {
                 selected = SelectedDegree.title;
             }
@@ -545,17 +582,74 @@ namespace FuturePathGroup10.Learner
             return new EligibilityChecker().FindAlternatives(currentMarks, byDegree, selected);
         }
 
+        private void loadRequirements()
+        {
+            if (requirementDB != null) return;
+            requirementDB = new ProgrammeRequirementDB(subjectDB, degreeDB);
+        }
+
+        private void refreshMarks()
+        {
+            if (activeLearner == null) return;
+
+            currentMarks.Clear();
+            foreach (LearnerSubject learnerSubject in activeLearner.learnerSubjects)
+            {
+                if (learnerSubject.subject != null)
+                {
+                    currentMarks[learnerSubject.subject.subjectName] = learnerSubject.result;
+                }
+            }
+        }
+
+        public List<EligibilityResult> checkSelectionEligibility(out string error)
+        {
+            error = "";
+            List<EligibilityResult> results = new List<EligibilityResult>();
+
+            try
+            {
+                loadRequirements();
+            }
+            catch (Exception ex)
+            {
+                error = "Could not load the qualification requirements: " + ex.Message;
+                return results;
+            }
+
+            if (SelectedDegree != null)
+            {
+                results.Add(checkEligibility());
+                return results;
+            }
+
+            if (SelectedFaculty != null)
+            {
+                refreshMarks();
+                EligibilityChecker checker = new EligibilityChecker();
+
+                foreach (Degree degree in SelectedFaculty.degreesOffered)
+                {
+                    results.Add(checker.Check(degree.title, currentMarks, degree.requirements, getInterestMatchOrNull(degree)));
+                }
+
+                results.Sort((a, b) => a.Outcome != b.Outcome ? a.Outcome.CompareTo(b.Outcome) : a.Gaps.Count.CompareTo(b.Gaps.Count));
+            }
+
+            return results;
+        }
+
         // Interest match for the selected degree, or null if it can't be worked out yet
         // (no questionnaire answers, or the degree has no interest categories).
         // Null just means "not assessed": the checker then decides on subjects and marks alone.
-        private double? getInterestMatchOrNull()
+        private double? getInterestMatchOrNull(Degree? degree)
         {
-            if (SelectedDegree == null  || SelectedDegree.categories == null)
+            if (degree == null || degree.categories == null)
             {
                 return null;
             }
 
-            if (SelectedDegree.categories.Count == 0)
+            if (degree.categories.Count == 0)
             {
                 return null;
             }
@@ -567,7 +661,7 @@ namespace FuturePathGroup10.Learner
             }
 
             List<int> categoryIds = new List<int>();
-            foreach (FuturePathGroup10.Interest.InterestCategory c in SelectedDegree.categories)
+            foreach (FuturePathGroup10.Interest.InterestCategory c in degree.categories)
             {
                 categoryIds.Add(c.interestCategoryID);
             }
