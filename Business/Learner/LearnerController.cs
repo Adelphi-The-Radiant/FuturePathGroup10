@@ -93,7 +93,7 @@ namespace FuturePathGroup10.Learner
             Learner learner;
             try
             {
-                learner = new Learner(0, username.Trim(), Clean(phoneNumber), Clean(fullname), Clean(school),
+                learner = new Learner(learnerDB.getNextID(), username.Trim(), Clean(phoneNumber), Clean(fullname), Clean(school),
                                       Clean(grade11), Clean(grade12), Clean(email), Clean(province));
                 learner.Account = account;
                 learnerDB.DataSetChange(learner, DB.DBOperation.Add);
@@ -124,15 +124,7 @@ namespace FuturePathGroup10.Learner
             try
             {
                 // assigning the next free ID
-                int nextId = 1;
-                foreach (Learner existing in learnerDB.learners)
-                {
-                    if (existing.learnerID >= nextId)
-                    {
-                        nextId = existing.learnerID + 1;
-                    }
-                }
-
+                int nextId = learnerDB.getNextID();
                 learner.learnerID = nextId;
 
                 learnerDB.DataSetChange(learner, DB.DBOperation.Add);        
