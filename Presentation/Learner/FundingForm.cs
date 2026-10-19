@@ -16,15 +16,13 @@ namespace FuturePathGroup10.Presentation.Learner
     public partial class FundingForm : Form
     {
         private FundingOption fundingOption;
-        private CareerAdvisor careerAdvisor;
         private Reccomendation.Degree degree;
 
-        public FundingForm(FundingOption fundingOption, CareerAdvisor careerAdvisor, Reccomendation.Degree degree)
+        public FundingForm(FundingOption fundingOption, Reccomendation.Degree degree)
         {
             InitializeComponent();
 
             this.fundingOption = fundingOption;
-            this.careerAdvisor = careerAdvisor;
             this.degree = degree;
 
             displayAll();
