@@ -1,5 +1,10 @@
-﻿using System;
+﻿using FuturePathGroup10.Business;
+using FuturePathGroup10.Data;
+using FuturePathGroup10.Learner;
+using FuturePathGroup10.Prerequisites;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -10,11 +15,35 @@ namespace FuturePathGroup10.Presentation.Learner
 {
     public partial class AlternativesForm : Form
     {
-        public AlternativesForm()
+        DegreeDB degreeDB;
+        Learner.Learner learner;
+        public AlternativesForm(DegreeDB degreeDB, Learner.Learner learner)
         {
             InitializeComponent();
+            this.degreeDB = degreeDB;
+            this.learner = learner;
 
+            display();
+        }
 
+        private void display()
+        {
+            string output = "";
+            foreach (var deg in degreeDB.degrees)
+            {
+                Collection<ProgrammeRequirement> p = deg.requirements;
+                foreach (var req in p)
+                {
+                    if (req.subject in learner.LearnerSubject) {
+                        LearnerSubject ls = learner.LearnerSubject;
+                        if (ls.result >=req.minRequiredGrade)
+                        {
+                            output += deg.GetDegree();
+                        }
+                    }
+                }
+            }
+            listLabel.Text = output;
         }
 
         private void backButton_Click(object sender, EventArgs e)
