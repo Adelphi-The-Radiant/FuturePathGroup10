@@ -87,7 +87,7 @@ namespace FuturePathGroup10.Presentation
             FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
             parent.Register(
                 nameTextBox.Text, 
-                (int)gradeComboBox.SelectedItem, 
+                int.TryParse(gradeComboBox.SelectedItem), 
                 schoolTextBox.Text, 
                 (string)provinceComboBox.SelectedItem, 
                 phoneTextBox.Text, 
