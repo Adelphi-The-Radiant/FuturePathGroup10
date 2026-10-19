@@ -113,11 +113,13 @@ namespace FuturePathGroup10.Advisory
             return output;
         }
 
+        // i have no clue what to do here
         public string getAdvisoryOutcome()
         {
-            
+            throw new NotImplementedException();
         }
 
+        // .. or here
         public string advisoryOutcomeReason()
         {
             throw new NotImplementedException();
