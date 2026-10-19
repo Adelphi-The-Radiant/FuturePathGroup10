@@ -57,7 +57,7 @@ namespace FuturePathGroup10.Presentation
             CurrentForm = new LoginForm(_userAccountDb);
         }
 
-        public void ReturnHome() 
+        public void ReturnHome()
         {
             if (_userAccount is null)
             {
@@ -180,6 +180,11 @@ namespace FuturePathGroup10.Presentation
             {
                 childForm.Close();
             }
+        }
+
+        private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }
