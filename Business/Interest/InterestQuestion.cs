@@ -25,6 +25,15 @@ namespace FuturePathGroup10.Interest
             this.InterestQuestionnaireDB = interestQuestionnaireDB;
         }
 
+        public InterestQuestion(int questionID, int interestCategoryID, string question)
+        {
+            this.questionID = questionID;
+            this.interestCategoryID = interestCategoryID;
+            this.question = question;
+            categories = new Collection<InterestCategory>();
+            this.InterestQuestionnaireDB = null;
+        }
+
         public void addCategory(InterestCategory category)
         {
             categories.Add(category);
@@ -52,6 +61,19 @@ namespace FuturePathGroup10.Interest
             }
         }
 
+        public void add(InterestQuestionnaireDB interestQuestionnaireDB)
+        {
+            try
+            {
+                InterestQuestionnaireDB.DataSetChange(this, DB.DBOperation.Add);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error adding Question: " + ex.Message);
+            }
+        }
+        
+
         public override void deactivate()
         {
             try
@@ -64,7 +86,31 @@ namespace FuturePathGroup10.Interest
             }
         }
 
+        public void deactivate(InterestQuestionnaireDB interestQuestionnaireDB)
+        {
+            try
+            {
+                InterestQuestionnaireDB.DataSetChange(this, DB.DBOperation.Delete);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting Question: " + ex.Message);
+            }
+        }
+
         public override void update()
+        {
+            try
+            {
+                InterestQuestionnaireDB.DataSetChange(this, DB.DBOperation.Edit);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating Question: " + ex.Message);
+            }
+        }
+
+        public void update(InterestQuestionnaireDB interestQuestionnaireDB)
         {
             try
             {

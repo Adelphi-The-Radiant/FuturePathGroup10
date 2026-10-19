@@ -44,16 +44,23 @@ namespace FuturePathGroup10.Data
         #region Update the DateSet
         public void FillDataSet(string aSQLstring, string aTable)
         {
+            daMain = new OleDbDataAdapter(aSQLstring, cnMain);
             try
             {
-                daMain = new OleDbDataAdapter(aSQLstring, cnMain);
                 cnMain.Open();
                 daMain.Fill(dsMain, aTable);
-                cnMain.Close();
             }
-            catch (Exception errObj)
+            catch (Exception)
             {
-                MessageBox.Show(errObj.Message + "  " + errObj.StackTrace);
+                // Ensure connection is closed and rethrow so callers can react to the failure
+                if (cnMain.State == ConnectionState.Open)
+                    cnMain.Close();
+                throw;
+            }
+            finally
+            {
+                if (cnMain.State == ConnectionState.Open)
+                    cnMain.Close();
             }
         }
 

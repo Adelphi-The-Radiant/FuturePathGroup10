@@ -22,14 +22,12 @@ namespace FuturePathGroup10.Data {
 		private const string SQL_SELECT_FF = "SELECT * FROM FundingFaculty";
 		private const string SQL_SELECT_FP = "SELECT * FROM FundingProgramme";
 		private const string SQL_SELECT_FO = "SELECT * FROM FundingOption";
-		private const string SQL_SELECT_FFJOINFO = "SELECT * FROM " +
-			"(SELECT * FROM FundingOption LEFT JOIN FundingFaculty ON FundingOption.OptionID = FundingFaculty.OptionID " +
-			"ORDER BY FundingOption.OptionID) " +
-			"AS FFJoinFO";
-		private const string SQL_SELECT_FPJOINFO = "SELECT * FROM " +
-			"(SELECT * FROM FundingOption LEFT JOIN FundingProgramme ON FundingOption.OptionID = FundingProgramme.OptionID " +
-			"ORDER BY FundingOption.OptionID) " +
-			"AS FPJoinFO";
+		private const string SQL_SELECT_FFJOINFO = "SELECT FundingOption.OptionID AS OptionID, FundingOption.Description AS Description, FundingOption.Amount AS Amount, FundingFaculty.FacultyID AS FacultyID " +
+			"FROM FundingOption LEFT JOIN FundingFaculty ON FundingOption.OptionID = FundingFaculty.OptionID " +
+			"ORDER BY FundingOption.OptionID";
+		private const string SQL_SELECT_FPJOINFO = "SELECT FundingOption.OptionID AS OptionID, FundingOption.Description AS Description, FundingOption.Amount AS Amount, FundingProgramme.DegreeID AS DegreeID " +
+			"FROM FundingOption LEFT JOIN FundingProgramme ON FundingOption.OptionID = FundingProgramme.OptionID " +
+			"ORDER BY FundingOption.OptionID";
 
 		private DataSet dsFF;
 		private DataSet dsFP;

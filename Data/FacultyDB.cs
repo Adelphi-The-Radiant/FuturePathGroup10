@@ -14,9 +14,9 @@ namespace FuturePathGroup10.Data
     {
         #region Attributes
         // joins Faculty with Enrollment table
-        private const string SQL_SELECT_FACULTY_JOIN = "SELECT * FROM " +
-            "(SELECT * FROM Faculty LEFT JOIN EnrollmentList ON Faculty.FacultyID = EnrollmentList.FacultyID ORDER BY Faculty.title) " +
-            "AS FacultyJoined";
+        private const string SQL_SELECT_FACULTY_JOIN = "SELECT Faculty.FacultyID AS FacultyID, Faculty.Title AS Title, Faculty.Description AS Description, EnrollmentList.LearnerID AS LearnerID, EnrollmentList.EnrollmentDate AS [Date] " +
+            "FROM Faculty LEFT JOIN EnrollmentList ON Faculty.FacultyID = EnrollmentList.FacultyID " +
+            "ORDER BY Faculty.Title";
         private const string JOINED_TABLE = "FacultyJoined";
 
         private const string TABLE_FACULTY = "Faculty";
@@ -44,7 +44,7 @@ namespace FuturePathGroup10.Data
             faculties = new Collection<Faculty>();
             this.learnerDB = learnerDB;
 
-            FillDataSet(SQL_SELECT_FACULTY, TABLE_ENROLLMENTLIST);
+            FillDataSet(SQL_SELECT_ENROLLMENTLIST, TABLE_ENROLLMENTLIST);
             dsEnrollmentList = dsMain;
             daEnrollmentList = daMain;
 
@@ -74,6 +74,10 @@ namespace FuturePathGroup10.Data
         #region Load Faculties
         private void LoadFaculties()
         {
+            // Fail-fast if the joined table wasn't created by FillDataSet
+            if (dsMain == null || !dsMain.Tables.Contains(JOINED_TABLE))
+                throw new InvalidOperationException($"Missing dataset table: {JOINED_TABLE}. Ensure FillDataSet succeeded and the SQL/schema are correct.");
+
             int facultyID = -1;
             string candidateString;
             string title;

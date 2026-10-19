@@ -23,7 +23,7 @@ namespace FuturePathGroup10.Learner
 
         public Faculty? SelectedFaculty { get; private set; }
 
-        public DegreeProgramme? Programme { get; private set; }
+        public Degree? SelectedDegree { get; private set; }
 
         public Learner? activeLearner { get; private set; }
 
@@ -68,6 +68,38 @@ namespace FuturePathGroup10.Learner
 
         #region Create and Update learner profile
         //this should be called after register
+
+        public bool createProfile(string username, string phoneNumber, string fullname, string school,
+                          string grade11, string grade12, string email, string province, out string error)
+        {
+            error = "";
+
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                error = "A username is required (it links the profile to the login account).";
+                return false;
+            }
+
+            Learner learner;
+            try
+            {
+                learner = new Learner(0, username.Trim(), Clean(phoneNumber), Clean(fullname), Clean(school),
+                                      Clean(grade11), Clean(grade12), Clean(email), Clean(province));
+            }
+            catch (Exception ex)
+            {
+                error = "The profile details are not valid: " + ex.Message;
+                return false;
+            }
+
+            return createProfile(learner, out error);
+        }
+
+        private static string Clean(string text)
+        {
+            if (text == null) return "";
+            return text.Trim();
+        }
         public bool createProfile(Learner learner, out string error)
         {
             error = Validate(learner);
@@ -162,17 +194,17 @@ namespace FuturePathGroup10.Learner
             return true;
         }
 
-        public bool selectDegreeProgramme(Reccomendation.DegreeProgramme programme, out string error)
+        public bool selectDegree(Degree degree, out string error)
         {
             error = "";
 
-            if (programme == null)
+            if (degree == null)
             {
-                error = "Please choose a valid degree programme.";
+                error = "Please choose a valid degree degree.";
                 return false;
             }
 
-            Programme = programme;
+            SelectedDegree = degree;
             return true;
         }
         #endregion
@@ -369,7 +401,7 @@ namespace FuturePathGroup10.Learner
         {
             error = "";
 
-            if (Programme == null)
+            if (SelectedDegree == null)
             {
                 error = "Select a degree first.";
                 return 0;
@@ -383,7 +415,7 @@ namespace FuturePathGroup10.Learner
             }
 
             List<int> categoryIds = new List<int>();
-            foreach (InterestCategory c in Programme.categories)
+            foreach (InterestCategory c in SelectedDegree.categories)
             {
                 categoryIds.Add(c.interestCategoryID);
             }
@@ -411,12 +443,12 @@ namespace FuturePathGroup10.Learner
         #region Eligibility
         public EligibilityResult checkEligibility(Dictionary<string, double> marks, double? interestMatch)
         {
-            if (Programme == null)
+            if (SelectedDegree == null)
             {
                 return new EligibilityChecker().Check("", marks, null, interestMatch);   // gives More Information Needed
             }
-            return new EligibilityChecker().Check(Programme.degree.title, marks,
-                                                  Programme.degree.requirements, interestMatch);
+            return new EligibilityChecker().Check(SelectedDegree.title, marks,
+                                                  SelectedDegree.requirements, interestMatch);
         }
         public bool setMarks(Dictionary<Subject, double> marks, out string error)
         {
@@ -456,7 +488,7 @@ namespace FuturePathGroup10.Learner
         {
             EligibilityChecker checker = new EligibilityChecker();
 
-            if (Programme == null || Programme.degree == null)
+            if (SelectedDegree == null )
             {
                 EligibilityResult missing = new EligibilityResult();
                 missing.Outcome = AdvisoryOutcome.MoreInformationNeeded;
@@ -468,37 +500,38 @@ namespace FuturePathGroup10.Learner
 
             double? interest = getInterestMatchOrNull();
 
-            lastResult = checker.Check(Programme.degree.title,
+            lastResult = checker.Check(SelectedDegree.title,
                                        currentMarks,
-                                       Programme.degree.requirements,
+                                       SelectedDegree.requirements,
                                        interest);
             return lastResult;
         }
 
         // Other qualifications the learner could consider, best first.
-        // Pass in all the loaded programmes (later: degreeDB.programmes).
-        public List<EligibilityResult> getAlternatives(IEnumerable<DegreeProgramme> allProgrammes)
+        // Pass in all the loaded degrees (later: degreeDB.degrees).
+        public List<EligibilityResult> getAlternatives()
         {
+            Collection<Degree> alldegrees = degreeDB.degrees;
             Dictionary<string, List<ProgrammeRequirement>> byDegree = new Dictionary<string, List<ProgrammeRequirement>>();
 
-            foreach (DegreeProgramme p in allProgrammes)
+            foreach (Degree d in alldegrees)
             {
-                if (p == null || p.degree == null)
+                if (d == null )
                 {
                     continue;
                 }
 
-                string title = p.degree.title;
+                string title = d.title;
                 if (!byDegree.ContainsKey(title))          // a degree may appear under more than one faculty
                 {
-                    byDegree[title] = new List<ProgrammeRequirement>(p.degree.requirements);
+                    byDegree[title] = new List<ProgrammeRequirement>(d.requirements);
                 }
             }
 
             string selected = "";
-            if (Programme != null && Programme.degree != null)
+            if (SelectedDegree != null )
             {
-                selected = Programme.degree.title;
+                selected = SelectedDegree.title;
             }
 
             return new EligibilityChecker().FindAlternatives(currentMarks, byDegree, selected);
@@ -509,12 +542,12 @@ namespace FuturePathGroup10.Learner
         // Null just means "not assessed": the checker then decides on subjects and marks alone.
         private double? getInterestMatchOrNull()
         {
-            if (Programme == null || Programme.degree == null || Programme.degree.categories == null)
+            if (SelectedDegree == null  || SelectedDegree.categories == null)
             {
                 return null;
             }
 
-            if (Programme.degree.categories.Count == 0)
+            if (SelectedDegree.categories.Count == 0)
             {
                 return null;
             }
@@ -526,7 +559,7 @@ namespace FuturePathGroup10.Learner
             }
 
             List<int> categoryIds = new List<int>();
-            foreach (FuturePathGroup10.Interest.InterestCategory c in Programme.degree.categories)
+            foreach (FuturePathGroup10.Interest.InterestCategory c in SelectedDegree.categories)
             {
                 categoryIds.Add(c.interestCategoryID);
             }

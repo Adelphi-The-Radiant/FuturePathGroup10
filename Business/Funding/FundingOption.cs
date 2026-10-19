@@ -24,6 +24,14 @@ namespace FuturePathGroup10.Funding
             this.fundingOptionDB = fundingOptionDB;
         }
 
+        public FundingOption(int optionID, string description, double amount) : base()
+        {
+            this.optionID = optionID;
+            this.description = description;
+            this.amount = amount;
+            this.fundingOptionDB = null;
+        }
+
         public override bool Equals(object? obj)
         {
             if (obj is FundingOption)
@@ -44,12 +52,24 @@ namespace FuturePathGroup10.Funding
         }
 
         // This takes no parameters and returns a string? Weird for a setter
-        public string setFundingOptions()
+        public void setFundingOptions()
         {
             throw new NotImplementedException();
         }
 
         public override void add()
+        {
+            try
+            {
+                fundingOptionDB.DataSetChange(this, DB.DBOperation.Add);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error adding Funding option: " + ex.Message);
+            }
+        }
+
+        public void add(FundingOptionDB fundingOptionDB)
         {
             try
             {
@@ -73,7 +93,31 @@ namespace FuturePathGroup10.Funding
             }
         }
 
+        public void deactivate(FundingOptionDB fundingOptionDB)
+        {
+            try
+            {
+                fundingOptionDB.DataSetChange(this, DB.DBOperation.Delete);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error deleting Funding option: " + ex.Message);
+            }
+        }
+
         public override void update()
+        {
+            try
+            {
+                fundingOptionDB.DataSetChange(this, DB.DBOperation.Edit);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error updating Funding Option: " + ex.Message);
+            }
+        }
+
+        public void update(FundingOptionDB fundingOptionDB)
         {
             try
             {

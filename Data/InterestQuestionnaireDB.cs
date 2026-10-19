@@ -13,11 +13,9 @@ namespace FuturePathGroup10.Data
     public class InterestQuestionnaireDB : DB
 	{
         #region Attributes
-        private const string SQL_SELECT_JOINED = "SELECT * FROM " +
-        "(SELECT * FROM InterestQuestionnaire LEFT JOIN InterestQuestion " +
-        "ON InterestQuestionnaire.QuestionID = InterestQuestion.QuestionID " +
-        "ORDER BY InterestQuestionnaire.ResponseID)" +
-        " AS JoinedTable";
+        private const string SQL_SELECT_JOINED = "SELECT InterestQuestionnaire.QuestionID AS QuestionID, InterestQuestionnaire.ResponseID AS ResponseID, InterestQuestionnaire.Response AS Response, InterestQuestion.InterestCategoryID AS InterestCategoryID, InterestQuestion.Question AS Question " +
+        "FROM InterestQuestionnaire LEFT JOIN InterestQuestion ON InterestQuestionnaire.QuestionID = InterestQuestion.QuestionID " +
+        "ORDER BY InterestQuestionnaire.ResponseID";
         private const string TABLE_JOINED = "JoinedTable";
 
         private const string TABLE_QUESTIONNAIRE = "InterestQuestionnaire";

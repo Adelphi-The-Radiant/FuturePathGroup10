@@ -14,8 +14,8 @@ namespace FuturePathGroup10.Learner
         // This appears as fullName elsewhere (CareerAdvisor), check out the capitalization
         public string fullname { get; private set; }
         public string school { get; private set; }
-        public int overallGrade11 { get; private set; }
-        public int overallGrade12 { get; private set; }
+        public float overallGrade11 { get; private set; }
+        public float overallGrade12 { get; private set; }
         public string province { get; private set; }
 
         private Collection<LearnerSubject> learnerSubjects;
@@ -48,19 +48,24 @@ namespace FuturePathGroup10.Learner
             LIRs.Add(LIR);
         }
 
-        public void setCurrentGrade(string currentGrade)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool isProfileComplete()
-        {
-            throw new NotImplementedException();
+        //in the case of a grade11 learner they won't have grade12 overall
+        public void setCurrrentGrade(string currentGrade)
+        {   //assuming null will be turned to zero
+            if (overallGrade11 == 0)
+                overallGrade12 = Convert.ToInt32(currentGrade);
+            else if (overallGrade12 == 0)
+                overallGrade11 = Convert.ToInt32(currentGrade);
         }
 
         public string getFullProfile()
         {
-            throw new NotImplementedException();
+            StringBuilder profile = new StringBuilder();
+            profile.AppendLine("Name: " + (string.IsNullOrWhiteSpace(fullname) ? "Not provided" : fullname));
+            profile.AppendLine("School: " + school);
+            profile.AppendLine("Province: " + province);
+            if (!string.IsNullOrWhiteSpace(phoneNumber)) profile.AppendLine("Phone: " + phoneNumber);
+            if (!string.IsNullOrWhiteSpace(email)) profile.AppendLine("Email: " + email);
+            return profile.ToString();
         }
 
         public void addSubjectMark(Subject subject, int mark)
@@ -76,8 +81,18 @@ namespace FuturePathGroup10.Learner
 
         public override int GetHashCode()
         {
-            throw new NotImplementedException();
+            return learnerID.GetHashCode();
 
+        }
+
+        public bool isProfileComplete()
+        {
+            return !string.IsNullOrWhiteSpace(fullname) &&
+                 !string.IsNullOrWhiteSpace(phoneNumber) &&
+                 !string.IsNullOrWhiteSpace(email) &&
+                 !string.IsNullOrWhiteSpace(school) &&
+                 !string.IsNullOrWhiteSpace(province) &&
+                 overallGrade11 > 0;
         }
 
     }

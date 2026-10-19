@@ -96,6 +96,11 @@ namespace FuturePathGroup10.Presentation
         public void StartInterestQuestionnaire()
         {
             CurrentForm = new Learner.QuestionnaireForm(_learnerController);
+            bool success = _learnerController.startQuestionnaire(out string error);
+            if (!success)
+            {
+                MessageBox.Show(error);
+            }
         }
         public void OpenMarksCapture()
         {

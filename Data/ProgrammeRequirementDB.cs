@@ -19,9 +19,9 @@ namespace FuturePathGroup10.Data
 		private const string TABLE_REQUIREMENT = "Requirements";
 		private const string TABLE_JOINED = "RequirementsJoined";
 
-		private const string SQL_SELECT_JOINED = "SELECT * FROM (SELECT * FROM ProgrammeRequirement LEFT JOIN Requirements ON " +
-			"ProgrammeRequirement.ProgrammeRequirementID = Requirements.ProgrammeRequirementID ORDER BY ProgrammeRequirement.ProgrammeRequirementID) " +
-			"AS RequirementsJoined";
+        private const string SQL_SELECT_JOINED = "SELECT ProgrammeRequirement.ProgrammeRequirementID AS ProgrammeRequirementID, Requirements.SubjectName AS SubjectName, Requirements.MinRequiredGrade AS MinRequiredGrade, Requirements.DegreeID AS DegreeID " +
+            "FROM ProgrammeRequirement LEFT JOIN Requirements ON ProgrammeRequirement.ProgrammeRequirementID = Requirements.ProgrammeRequirementID " +
+            "ORDER BY ProgrammeRequirement.ProgrammeRequirementID";
 		private const string SQL_SELECT_PR = "SELECT * FROM ProgrammeRequirement";
 		private const string SQL_SELECT_REQUIREMENT = "SELECT * FROM Requirements";
 
@@ -71,7 +71,7 @@ namespace FuturePathGroup10.Data
 					string subjectName = row["SubjectName"].ToString();
 					Subject subject = subjectDB.getSubject(subjectName);
 					decimal requiredGrade = Convert.ToDecimal(row["MinRequiredGrade"]);
-					requirement = new ProgrammeRequirement(requirementID, subject, requiredGrade);
+					requirement = new ProgrammeRequirement(requirementID, subject, Convert.ToDouble(requiredGrade));
 					requirements.Add(requirement);
 				}
 				int degreeID = Convert.ToInt32(row["DegreeID"]);

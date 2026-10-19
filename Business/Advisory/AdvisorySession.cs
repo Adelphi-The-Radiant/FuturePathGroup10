@@ -16,7 +16,7 @@ namespace FuturePathGroup10.Advisory
         public DateTime date;
         public string notes;
 
-        private Collection<LearnerSubject> subjects;
+        public Collection<LearnerSubject> subjects;
         private Collection<DegreeProgramme> programmes;
 
         public AdvisorySession(int sessionID, Learner.Learner learner, CareerAdvisor advisor, DateTime date, string notes, SubjectDB subjectDB)
@@ -28,6 +28,18 @@ namespace FuturePathGroup10.Advisory
             this.notes = notes;
 
             this.subjects = subjectDB.learnerSubjects;
+            this.programmes = new Collection<DegreeProgramme>();
+        }
+
+        public AdvisorySession(int sessionID, Learner.Learner learner, CareerAdvisor advisor, DateTime date, string notes)
+        {
+            this.sessionID = sessionID;
+            this.learner = learner;
+            this.advisor = advisor;
+            this.date = date;
+            this.notes = notes;
+
+            this.subjects = null;
             this.programmes = new Collection<DegreeProgramme>();
         }
 
@@ -116,7 +128,7 @@ namespace FuturePathGroup10.Advisory
         // i have no clue what to do here
         public string getAdvisoryOutcome()
         {
-            throw new NotImplementedException();
+            
         }
 
         // .. or here
