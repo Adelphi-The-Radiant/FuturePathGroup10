@@ -43,9 +43,10 @@
             // pictureBox1
             // 
             pictureBox1.BackColor = Color.White;
-            pictureBox1.Location = new Point(29, 27);
+            pictureBox1.Location = new Point(54, 58);
+            pictureBox1.Margin = new Padding(6, 6, 6, 6);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(743, 386);
+            pictureBox1.Size = new Size(1380, 823);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -53,10 +54,11 @@
             // 
             label1.AutoSize = true;
             label1.BackColor = Color.White;
-            label1.Font = new Font("Arial Narrow", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(43, 43);
+            label1.Font = new Font("Microsoft Sans Serif", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label1.Location = new Point(80, 92);
+            label1.Margin = new Padding(6, 0, 6, 0);
             label1.Name = "label1";
-            label1.Size = new Size(156, 29);
+            label1.Size = new Size(376, 55);
             label1.TabIndex = 1;
             label1.Text = "Funding Options";
             // 
@@ -64,10 +66,11 @@
             // 
             label2.AutoSize = true;
             label2.BackColor = Color.White;
-            label2.Font = new Font("Arial Narrow", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label2.Location = new Point(43, 94);
+            label2.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(80, 201);
+            label2.Margin = new Padding(6, 0, 6, 0);
             label2.Name = "label2";
-            label2.Size = new Size(118, 20);
+            label2.Size = new Size(282, 36);
             label2.TabIndex = 2;
             label2.Text = "Funding options for:";
             // 
@@ -75,11 +78,12 @@
             // 
             selectionButton.AutoSize = true;
             selectionButton.BackColor = Color.White;
-            selectionButton.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            selectionButton.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             selectionButton.ForeColor = Color.FromArgb(79, 184, 156);
-            selectionButton.Location = new Point(43, 114);
+            selectionButton.Location = new Point(80, 243);
+            selectionButton.Margin = new Padding(6, 0, 6, 0);
             selectionButton.Name = "selectionButton";
-            selectionButton.Size = new Size(89, 23);
+            selectionButton.Size = new Size(214, 44);
             selectionButton.TabIndex = 3;
             selectionButton.Text = "<selection>";
             // 
@@ -87,10 +91,11 @@
             // 
             fundingInfoLabel.AutoSize = true;
             fundingInfoLabel.BackColor = Color.White;
-            fundingInfoLabel.Font = new Font("Arial Narrow", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            fundingInfoLabel.Location = new Point(43, 147);
+            fundingInfoLabel.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            fundingInfoLabel.Location = new Point(80, 314);
+            fundingInfoLabel.Margin = new Padding(6, 0, 6, 0);
             fundingInfoLabel.Name = "fundingInfoLabel";
-            fundingInfoLabel.Size = new Size(43, 20);
+            fundingInfoLabel.Size = new Size(98, 36);
             fundingInfoLabel.TabIndex = 4;
             fundingInfoLabel.Text = "<info>";
             // 
@@ -98,11 +103,12 @@
             // 
             contactLabel.AutoSize = true;
             contactLabel.BackColor = Color.White;
-            contactLabel.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            contactLabel.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             contactLabel.ForeColor = Color.FromArgb(66, 159, 132);
-            contactLabel.Location = new Point(43, 305);
+            contactLabel.Location = new Point(80, 651);
+            contactLabel.Margin = new Padding(6, 0, 6, 0);
             contactLabel.Name = "contactLabel";
-            contactLabel.Size = new Size(62, 23);
+            contactLabel.Size = new Size(150, 44);
             contactLabel.TabIndex = 5;
             contactLabel.Text = "Contact";
             // 
@@ -110,11 +116,12 @@
             // 
             label3.AutoSize = true;
             label3.BackColor = Color.White;
-            label3.Font = new Font("Arial Narrow", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label3.ForeColor = Color.FromArgb(66, 159, 132);
-            label3.Location = new Point(43, 328);
+            label3.Location = new Point(80, 700);
+            label3.Margin = new Padding(6, 0, 6, 0);
             label3.Name = "label3";
-            label3.Size = new Size(564, 20);
+            label3.Size = new Size(1365, 36);
             label3.TabIndex = 6;
             label3.Text = "You can view an advisory summary in the form of a report related to the selected faculty or qualification";
             // 
@@ -122,34 +129,37 @@
             // 
             backButton.BackColor = Color.FromArgb(66, 159, 132);
             backButton.FlatStyle = FlatStyle.Popup;
-            backButton.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            backButton.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             backButton.ForeColor = SystemColors.ControlLightLight;
-            backButton.Location = new Point(48, 351);
+            backButton.Location = new Point(89, 749);
+            backButton.Margin = new Padding(6, 6, 6, 6);
             backButton.Name = "backButton";
-            backButton.Size = new Size(131, 42);
+            backButton.Size = new Size(243, 90);
             backButton.TabIndex = 7;
             backButton.Text = "Back";
             backButton.UseVisualStyleBackColor = false;
+            backButton.Click += backButton_Click;
             // 
             // reportButton
             // 
             reportButton.BackColor = Color.FromArgb(66, 159, 132);
             reportButton.FlatStyle = FlatStyle.Popup;
-            reportButton.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            reportButton.Font = new Font("Microsoft Sans Serif", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             reportButton.ForeColor = SystemColors.ControlLightLight;
-            reportButton.Location = new Point(571, 351);
+            reportButton.Location = new Point(1060, 749);
+            reportButton.Margin = new Padding(6, 6, 6, 6);
             reportButton.Name = "reportButton";
-            reportButton.Size = new Size(184, 42);
+            reportButton.Size = new Size(342, 90);
             reportButton.TabIndex = 8;
             reportButton.Text = "View Report";
             reportButton.UseVisualStyleBackColor = false;
             // 
             // FundingForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(79, 184, 156);
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1486, 960);
             Controls.Add(reportButton);
             Controls.Add(backButton);
             Controls.Add(label3);
@@ -159,6 +169,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
+            Margin = new Padding(6, 6, 6, 6);
             Name = "FundingForm";
             Text = "FundingForm";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
