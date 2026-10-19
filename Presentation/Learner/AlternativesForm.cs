@@ -13,6 +13,29 @@ namespace FuturePathGroup10.Presentation.Learner
         public AlternativesForm()
         {
             InitializeComponent();
+
+
+        }
+
+        private void backButton_Click(object sender, EventArgs e)
+        {
+            HomeForm hf = new HomeForm();
+            hf.Show();
+            this.Close();
+        }
+
+        private void reportButton_Click(object sender, EventArgs e)
+        {
+            LearnerReportForm rf = new LearnerReportForm();
+            rf.Show();
+            this.Close();
+        }
+
+        private void fundButton_Click(object sender, EventArgs e)
+        {
+            FundingForm ff = new FundingForm();
+            ff.Show();
+            this.Close();
         }
     }
 }
