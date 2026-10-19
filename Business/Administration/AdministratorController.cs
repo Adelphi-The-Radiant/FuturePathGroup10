@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using FuturePathGroup10.Administration;
 using FuturePathGroup10.Data;
@@ -13,6 +14,8 @@ namespace FuturePathGroup10.Administration
         private Administrator admin;
         private DegreeDB degreeDB;
         private FacultyDB facultyDB;
+
+        public LearnerDB learnerDB;
         // List of the reference data for the UI
         private List<ReferenceData> referenceDatas;
 
@@ -23,6 +26,7 @@ namespace FuturePathGroup10.Administration
             this.degreeDB = degreeDB;
             this.facultyDB = facultyDB;
             this.referenceDatas = new List<ReferenceData>();
+            this.learnerDB = new LearnerDB();
         }
 
         // this retrieves all current faculties
@@ -63,6 +67,9 @@ namespace FuturePathGroup10.Administration
             {
                 MessageBox.Show("Error updating: " +  ex.Message);
             }
+        }
+        public Collection<Learner.Learner> generateComboBox() { 
+            return learnerDB.learners;
         }
     }
 }

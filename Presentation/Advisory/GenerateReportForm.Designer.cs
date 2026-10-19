@@ -40,9 +40,10 @@
             // pictureBox1
             // 
             pictureBox1.BackColor = Color.White;
-            pictureBox1.Location = new Point(37, 30);
+            pictureBox1.Location = new Point(42, 40);
+            pictureBox1.Margin = new Padding(3, 4, 3, 4);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(730, 382);
+            pictureBox1.Size = new Size(834, 509);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -51,9 +52,9 @@
             label1.AutoSize = true;
             label1.BackColor = Color.White;
             label1.Font = new Font("Arial Narrow", 18F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(49, 44);
+            label1.Location = new Point(56, 59);
             label1.Name = "label1";
-            label1.Size = new Size(136, 29);
+            label1.Size = new Size(172, 35);
             label1.TabIndex = 1;
             label1.Text = "Create Report";
             // 
@@ -63,11 +64,13 @@
             comboBox1.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             comboBox1.ForeColor = SystemColors.Window;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(537, 42);
+            comboBox1.Location = new Point(614, 56);
+            comboBox1.Margin = new Padding(3, 4, 3, 4);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(217, 31);
+            comboBox1.Size = new Size(247, 37);
             comboBox1.TabIndex = 2;
             comboBox1.Text = "Select Student";
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // backButton
             // 
@@ -75,9 +78,10 @@
             backButton.FlatStyle = FlatStyle.Popup;
             backButton.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             backButton.ForeColor = SystemColors.ControlLightLight;
-            backButton.Location = new Point(49, 341);
+            backButton.Location = new Point(56, 455);
+            backButton.Margin = new Padding(3, 4, 3, 4);
             backButton.Name = "backButton";
-            backButton.Size = new Size(145, 48);
+            backButton.Size = new Size(166, 64);
             backButton.TabIndex = 3;
             backButton.Text = "Back";
             backButton.UseVisualStyleBackColor = false;
@@ -88,9 +92,10 @@
             createButton.FlatStyle = FlatStyle.Popup;
             createButton.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             createButton.ForeColor = SystemColors.ControlLightLight;
-            createButton.Location = new Point(609, 341);
+            createButton.Location = new Point(696, 455);
+            createButton.Margin = new Padding(3, 4, 3, 4);
             createButton.Name = "createButton";
-            createButton.Size = new Size(145, 48);
+            createButton.Size = new Size(166, 64);
             createButton.TabIndex = 4;
             createButton.Text = "Create";
             createButton.UseVisualStyleBackColor = false;
@@ -99,26 +104,30 @@
             // 
             reportTextBox.BackColor = SystemColors.Window;
             reportTextBox.BorderStyle = BorderStyle.FixedSingle;
-            reportTextBox.Location = new Point(49, 76);
+            reportTextBox.Location = new Point(56, 101);
+            reportTextBox.Margin = new Padding(3, 4, 3, 4);
             reportTextBox.Multiline = true;
             reportTextBox.Name = "reportTextBox";
-            reportTextBox.Size = new Size(705, 259);
+            reportTextBox.Size = new Size(805, 345);
             reportTextBox.TabIndex = 5;
+            reportTextBox.TextChanged += reportTextBox_TextChanged;
             // 
             // GenerateReportForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(79, 184, 156);
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(914, 600);
             Controls.Add(reportTextBox);
             Controls.Add(createButton);
             Controls.Add(backButton);
             Controls.Add(comboBox1);
             Controls.Add(label1);
             Controls.Add(pictureBox1);
+            Margin = new Padding(3, 4, 3, 4);
             Name = "GenerateReportForm";
             Text = "GenerateReportForm";
+            Load += GenerateReportForm_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
