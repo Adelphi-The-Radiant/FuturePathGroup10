@@ -107,6 +107,16 @@ namespace FuturePathGroup10.Presentation
             CurrentForm = new Learner.CaptureMarksForm(_learnerController.subjectDB, _learnerController);
         }
 
+        public void OpenQualificationScreen()
+        {
+            CurrentForm = new Learner.SelectQualificationForm(_learnerController);
+        }
+
+        public void StartAdvisoryForm()
+        {
+            CurrentForm = new Learner.EligibilityForm();
+        }
+
         private void CurrentForm_FormClosed(object? sender, FormClosedEventArgs e)
         {
             ReturnHome();

@@ -36,7 +36,7 @@ namespace FuturePathGroup10.Presentation.Learner
                 q6Num,
                 q7Num,
                 q8Num
-             ];
+            ];
 
             foreach (NumericUpDown input in inputs)
             {
@@ -48,6 +48,9 @@ namespace FuturePathGroup10.Presentation.Learner
                     return;
                 }
             }
+
+            FuturePathMDIParent parent = (FuturePathMDIParent)MdiParent;
+            parent.OpenQualificationScreen();
         }
     }
 }

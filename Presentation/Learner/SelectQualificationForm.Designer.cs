@@ -170,6 +170,7 @@
             beginButton.TabIndex = 10;
             beginButton.Text = "Begin Questionnaire";
             beginButton.UseVisualStyleBackColor = false;
+            beginButton.Click += beginButton_Click;
             // 
             // SelectQualificationForm
             // 
