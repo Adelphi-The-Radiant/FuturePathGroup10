@@ -31,6 +31,11 @@ namespace FuturePathGroup10.Learner
         public InterestQuestionnaireDB questionnaireDB;
         public InterestCategoryDB categoryDB;
 
+        public CareerAdvisorDB CADB;
+        public AdminDB ADB;
+
+        public UserAccountDB UDB;
+
 
         // The learner's current sitting of the questionnaire (null until started)
         public LearnerInterestResponse? activeResponse { get; private set; }
@@ -43,6 +48,10 @@ namespace FuturePathGroup10.Learner
             this.subjectDB = new SubjectDB(learnerDB);
             this.facultyDB = new FacultyDB(learnerDB);
             this.degreeDB = new DegreeDB(facultyDB);
+            this.CADB = new CareerAdvisorDB();
+            this.ADB = new AdminDB();
+
+            this.UDB = new UserAccountDB(learnerDB, ADB, CADB);
             this.activeLearner = null;
         }
         #endregion
@@ -69,10 +78,11 @@ namespace FuturePathGroup10.Learner
         #region Create and Update learner profile
         //this should be called after register
 
-        public bool createProfile(string username, string phoneNumber, string fullname, string school,
+        public bool createProfile(UserAccount account, string phoneNumber, string fullname, string school,
                           string grade11, string grade12, string email, string province, out string error)
         {
             error = "";
+            string username = account.username;
 
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -85,6 +95,12 @@ namespace FuturePathGroup10.Learner
             {
                 learner = new Learner(0, username.Trim(), Clean(phoneNumber), Clean(fullname), Clean(school),
                                       Clean(grade11), Clean(grade12), Clean(email), Clean(province));
+                learner.Account = account;
+                learnerDB.DataSetChange(learner, DB.DBOperation.Add);
+                learnerDB.UpdateDataSource(DB.DBOperation.Add);
+
+                UDB.DataSetChange(account, DB.DBOperation.Add);
+                UDB.UpdateDataSource(DB.DBOperation.Add);
             }
             catch (Exception ex)
             {
