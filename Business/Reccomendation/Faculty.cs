@@ -19,13 +19,14 @@ namespace FuturePathGroup10.Reccomendation
         private EnrollmentList enrollmentList;
 
         // constructor
-        public Faculty(int facultyID, string title, string description)
+        public Faculty(int facultyID, string title, string description, FacultyDB facultyDB)
         {
             this.facultyID = facultyID;
             this.description = description;
             this.title = title;
             options = new Collection<FundingOption>();
             degreesOffered = new Collection<Degree>();
+            this.facultyDB = facultyDB;
         }
 
         public void addFundingOption(FundingOption option)
