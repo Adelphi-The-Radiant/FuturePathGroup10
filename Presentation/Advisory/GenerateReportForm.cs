@@ -1,4 +1,5 @@
 ﻿using FuturePathGroup10.Administration;
+using FuturePathGroup10.Business;
 using FuturePathGroup10.Learner;
 using FuturePathGroup10.Data;
 using System;
@@ -19,7 +20,7 @@ namespace FuturePathGroup10.Presentation.Advisory
         //not sure where the created report goes but can be 
         private Dictionary<string, string> learnerReports = new Dictionary<string, string>();
 
-        public Learner.learner selectedLearner;
+        public FuturePathGroup10.Learner.Learner selectedLearner;
         public GenerateReportForm()
         {
             InitializeComponent();
@@ -33,7 +34,7 @@ namespace FuturePathGroup10.Presentation.Advisory
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedLearner =
-                comboBox1.SelectedItem as Learner.Learner;
+                comboBox1.SelectedItem as FuturePathGroup10.Learner.Learner;
 
             if (selectedLearner != null &&
                 learnerReports.TryGetValue(selectedLearner.fullname, out string report))
@@ -48,7 +49,7 @@ namespace FuturePathGroup10.Presentation.Advisory
 
         private void GenerateReportForm_Load(object sender, EventArgs e)
         {
-            Collection<Learner.Learner> learners =
+            Collection<FuturePathGroup10.Learner.Learner> learners =
                 administratorController.generateComboBox();
 
             comboBox1.DataSource = learners;
