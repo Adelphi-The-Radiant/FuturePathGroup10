@@ -99,7 +99,7 @@ namespace FuturePathGroup10.Data
                     title = (string)row["Title"];
                     description = (string)row["Description"];
                     //Ensures we dont have a bunch of duplicate subjects as this is a many to one relation
-                    faculty = new Faculty(facultyID, title, description);
+                    faculty = new Faculty(facultyID, title, description,this);
                     faculties.Add(faculty);
                 }
 

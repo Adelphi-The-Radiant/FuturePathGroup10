@@ -25,6 +25,7 @@ namespace FuturePathGroup10.Reccomendation
             this.description = description;
             this.title = title;
             options = new Collection<FundingOption>();
+
         }
 
         public void addFundingOption(FundingOption option)
