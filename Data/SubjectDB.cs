@@ -6,6 +6,7 @@ using FuturePathGroup10.Learner;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
+using System.DirectoryServices;
 
 namespace FuturePathGroup10.Data
 {
@@ -96,9 +97,24 @@ namespace FuturePathGroup10.Data
                     subjects.Add(subject);
                 }
 
-                result = Convert.ToSingle(row["Result"]);
 
-                learner = learnerDB.getLearner(Convert.ToInt32(row["LearnerID"]));
+                try
+                {
+                    result = Convert.ToSingle(row["Result"]);
+                }
+                catch (Exception)
+                {
+                    result = 0;
+                }
+
+                try
+                {
+                    learner = learnerDB.getLearner(Convert.ToInt32(row["LearnerID"]));
+                }
+                catch (Exception)
+                {
+                    learner = null;
+                }
 
                 learnerSubject = new LearnerSubject(learner, subject, result);
 
