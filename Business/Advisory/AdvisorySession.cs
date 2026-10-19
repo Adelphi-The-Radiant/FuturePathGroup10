@@ -128,7 +128,7 @@ namespace FuturePathGroup10.Advisory
         // i have no clue what to do here
         public string getAdvisoryOutcome()
         {
-            
+            return "";            
         }
 
         // .. or here
